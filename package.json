@@ -1,9 +1,8 @@
 {
-  "name": "tfd-nest-template",
+  "name": "tfd-nest-blog-api",
   "version": "1.0.0",
-  "description": "TFD Nest Boilerplate",
-  "author": "KimAng Kheang",
-  "license": "GPL-3.0-or-later",
+  "description": "A Nest.js API for TFD platform (Blog, Course Selling, and More)",
+  "author": "TFD",
   "scripts": {
     "prebuild": "rimraf dist",
     "build": "nest build",
