@@ -1,8 +1,8 @@
 version: "2"
 services:
-  nest:
+  server:
     build: .
-    container_name: tfd-nest
+    container_name: tfd-api-server
     depends_on:
       - db
       - redis
@@ -15,31 +15,31 @@ services:
     build:
       context: .
       dockerfile: Dockerfile-nginx
-    container_name: tfd-nest-nginx
+    container_name: tfd-api-nginx
     depends_on:
-      - nest
+      - server
     environment:
       - NGINX_SERVER_NAME=localhost
       - NEST_HOST=nest
       - NEST_PORT=3000
       - NGINX_MAX_BODY=100M
     ports:
-      - 80:80
+      - '80:80'
   db:
     image: postgres:12
-    container_name: tfd-nest-db
+    container_name: tfd-api-db
     environment:
       POSTGRES_DB: nest
       POSTGRES_USER: nest
       POSTGRES_PASSWORD: nest
     ports:
-      - 5432:5432
+      - '5432:5432'
     volumes:
       - postgresdata:/var/lib/postgresql
   redis:
     image: redis:5
-    container_name: tfd-redis
+    container_name: tfd-api-redis
     ports:
-      - 6379:6379
+      - '6379:6379'
 volumes:
   postgresdata:
