@@ -26,6 +26,7 @@ import {
 import { join } from 'path';
 import { FileModule } from '../modules/file/file.module';
 import { CourseModule } from '../modules/course/course.module';
+import { UserAuthModule } from '../modules/user-auth/user-auth.module';
 
 @Module({
   imports: [
@@ -74,6 +75,7 @@ import { CourseModule } from '../modules/course/course.module';
     UserModule,
     FileModule,
     CourseModule,
+    UserAuthModule,
     CommonModule,
   ],
   controllers: [AppController],

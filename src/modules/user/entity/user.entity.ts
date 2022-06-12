@@ -1,7 +1,9 @@
-import { Entity, Column } from 'typeorm';
+import { Entity, Column, OneToMany, ManyToOne } from 'typeorm';
 import { PasswordTransformer } from '../password.transformer';
 import { AppRoles } from '../../common/enum/roles.enum';
 import { CommonEntity } from '../../common/entity/common.entity';
+import { PurchaseEntity } from '../../course/entity/purchase.entity';
+import { UserStatus } from '../../common/enum/userStatus.enum';
 
 @Entity({
   name: 'users',
@@ -14,16 +16,34 @@ export class UserEntity extends CommonEntity {
   username: string;
 
   /**
-   * Name column
+   * FirstName column
    */
-  @Column({ type: 'text' })
-  name: string;
+  @Column({ length: 255 })
+  firstname: string;
+
+  /**
+   * LastName column
+   */
+  @Column({ length: 255 })
+  lastname: string;
 
   /**
    * Email colum
    */
   @Column({ type: 'text', unique: true })
   email: string;
+
+  /**
+   * User status
+   */
+  @Column({ type: 'enum', enum: UserStatus, default: UserStatus.UNCONFIRMED })
+  status: string;
+
+  /**
+   * Purchase List
+   */
+  @OneToMany(() => PurchaseEntity, (purchase) => purchase.byUserId)
+  purchases: PurchaseEntity[];
 
   @Column({
     type: 'simple-array',

@@ -13,6 +13,12 @@ export class ChapterEntity extends CommonEntity {
   name: string;
 
   /**
+   * chapter Number ( For displaying chapter in order)
+   */
+  @Column({ type: 'int' })
+  chapterNumber: number;
+
+  /**
    * On Course
    */
   @ManyToOne(() => CourseEntity)
@@ -20,12 +26,18 @@ export class ChapterEntity extends CommonEntity {
   /**
    * Description column
    */
-  @Column({ type: 'text' })
+  @Column({ type: 'text', nullable: true })
   description: string;
 
   /**
-   * Video URL colum
+   * Generic URL in case Vimeo not available
    */
-  @Column()
+  @Column({ nullable: true })
   url: string;
+
+  /**
+   * Vimeo ID
+   */
+  @Column({ nullable: true })
+  vimeoId: string;
 }

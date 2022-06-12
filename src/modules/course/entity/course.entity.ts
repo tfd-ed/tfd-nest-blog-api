@@ -23,7 +23,7 @@ export class CourseEntity extends CommonEntity {
   /**
    * Description column
    */
-  @Column({ type: 'text' })
+  @Column({ type: 'text', nullable: true })
   description: string;
 
   /**
@@ -51,4 +51,10 @@ export class CourseEntity extends CommonEntity {
    */
   @OneToMany(() => ChapterEntity, (chapter) => chapter.course)
   chapter: ChapterEntity[];
+
+  /**
+   * Link to Pay way
+   */
+  @Column({ type: 'text' })
+  paymentLink: string;
 }
