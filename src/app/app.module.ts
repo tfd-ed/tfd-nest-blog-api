@@ -27,6 +27,7 @@ import { join } from 'path';
 import { FileModule } from '../modules/file/file.module';
 import { CourseModule } from '../modules/course/course.module';
 import { UserAuthModule } from '../modules/user-auth/user-auth.module';
+import { PurchaseModule } from '../modules/purchase/purchase.module';
 
 @Module({
   imports: [
@@ -75,6 +76,7 @@ import { UserAuthModule } from '../modules/user-auth/user-auth.module';
     UserModule,
     FileModule,
     CourseModule,
+    PurchaseModule,
     UserAuthModule,
     CommonModule,
   ],
