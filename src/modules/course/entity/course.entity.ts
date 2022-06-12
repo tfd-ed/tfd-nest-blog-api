@@ -5,7 +5,6 @@ import {
   OneToOne,
   Index,
   OneToMany,
-  ManyToOne,
 } from 'typeorm';
 import { CommonEntity } from '../../common/entity/common.entity';
 import { FileEntity } from '../../file/entity/file.entity';

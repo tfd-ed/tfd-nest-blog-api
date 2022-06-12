@@ -24,6 +24,8 @@ import {
   typeormConfig,
 } from '../modules/common/config';
 import { join } from 'path';
+import { FileModule } from '../modules/file/file.module';
+import { CourseModule } from '../modules/course/course.module';
 
 @Module({
   imports: [
@@ -70,6 +72,8 @@ import { join } from 'path';
     }),
     AuthModule,
     UserModule,
+    FileModule,
+    CourseModule,
     CommonModule,
   ],
   controllers: [AppController],

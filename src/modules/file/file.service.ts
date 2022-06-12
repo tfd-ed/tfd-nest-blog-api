@@ -7,8 +7,6 @@ import { PutObjectCommand } from '@aws-sdk/client-s3';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const { S3Client, GetObjectCommand } = require('@aws-sdk/client-s3');
 import { v4 as uuid } from 'uuid';
-import { InjectQueue } from '@nestjs/bull';
-import { Queue } from 'bull';
 
 @Injectable()
 export class FileService {
@@ -18,7 +16,6 @@ export class FileService {
     @InjectRepository(FileEntity)
     private readonly fileRepository: Repository<FileEntity>,
     private readonly configService: ConfigService,
-    @InjectQueue('files-filter') public imageFilter: Queue,
   ) {
     this.s3 = new S3Client({
       region: this.configService.get('AWS_REGION'),
