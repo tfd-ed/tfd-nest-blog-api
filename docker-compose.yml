@@ -20,7 +20,7 @@ services:
       - server
     environment:
       - NGINX_SERVER_NAME=localhost
-      - NEST_HOST=nest
+      - NEST_HOST=server
       - NEST_PORT=3000
       - NGINX_MAX_BODY=100M
     ports:

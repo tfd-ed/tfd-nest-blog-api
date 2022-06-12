@@ -1,24 +1,12 @@
-import {
-  Entity,
-  Column,
-  PrimaryGeneratedColumn,
-  CreateDateColumn,
-  UpdateDateColumn,
-  DeleteDateColumn,
-} from 'typeorm';
+import { Entity, Column } from 'typeorm';
 import { PasswordTransformer } from '../password.transformer';
 import { AppRoles } from '../../common/enum/roles.enum';
+import { CommonEntity } from '../../common/entity/common.entity';
 
 @Entity({
   name: 'users',
 })
-export class UserEntity {
-  /**
-   * UUID column
-   */
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
-
+export class UserEntity extends CommonEntity {
   /**
    * Unique username column
    */
@@ -43,24 +31,6 @@ export class UserEntity {
     default: AppRoles.DEFAULT,
   })
   roles: AppRoles[];
-
-  /**
-   * created date column
-   */
-  @CreateDateColumn()
-  createdDate: Date;
-
-  /**
-   * updated date column
-   */
-  @UpdateDateColumn()
-  updatedDate: Date;
-
-  /**
-   * delete date column
-   */
-  @DeleteDateColumn()
-  deletedDate: Date;
 
   /**
    * Password column

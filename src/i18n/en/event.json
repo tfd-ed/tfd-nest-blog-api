@@ -1,0 +1,13 @@
+{
+  "hello": "Hello",
+  "thanks_for_registration": "Thanks for your registration in Sarpheab",
+  "we_need_to_verify": "We need to verify your email address.",
+  "after_verification": "After the verification is done, please follow our guideline to set up your confessor profile.",
+  "sarpheab_confession_right": "Sarpheab - Confession, All Rights Reserved.",
+  "you_are_receiving_this_email": "You are receiving this email because you registered in Sarpheab platform. If you did not register, and you believe someone may use this email without your consent, please just ignore it.",
+  "email": "Email",
+  "confirmation_link": "Please click on the link to confirm: ",
+  "privacy": "Privacy",
+  "tos": "Terms of service",
+  "welcome_to_sarpheab": "Welcome to Sarpheab!"
+}
