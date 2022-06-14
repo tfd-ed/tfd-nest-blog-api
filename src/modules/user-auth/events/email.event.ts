@@ -31,11 +31,11 @@ export default class EmailEvent {
     const mail = new MailMessage();
     mail
       .subject(
-        this.translateService.t('event.welcome_to_sarpheab', {
+        this.translateService.t('event.welcome_to_tfdevs', {
           lang: payload.lang,
         }),
       )
-      .view('confirmEmail', {
+      .view('confirm', {
         mjml: {
           minify: true,
         },
@@ -51,12 +51,6 @@ export default class EmailEvent {
         we_need_to_verify: this.translateService.t('event.we_need_to_verify', {
           lang: payload.lang,
         }),
-        after_verification: this.translateService.t(
-          'event.after_verification',
-          {
-            lang: payload.lang,
-          },
-        ),
         email_text: this.translateService.t('event.email', {
           lang: payload.lang,
         }),
@@ -69,12 +63,9 @@ export default class EmailEvent {
             lang: payload.lang,
           },
         ),
-        sarpheab_confession_right: this.translateService.t(
-          'event.sarpheab_confession_right',
-          {
-            lang: payload.lang,
-          },
-        ),
+        tfd_right: this.translateService.t('event.tfd_right', {
+          lang: payload.lang,
+        }),
         privacy: this.translateService.t('event.privacy', {
           lang: payload.lang,
         }),
@@ -88,7 +79,7 @@ export default class EmailEvent {
     Mailman.init()
       .to(payload.email)
       .from('"TFD" <support@tfdevs.com>')
-      .replyTo('no-reply@sarpheab.com')
+      .replyTo('no-reply@tfdevs.com')
       .send(mail)
       .then(() => {
         this.logger.log('Email to: ' + payload.email + ' sent!');

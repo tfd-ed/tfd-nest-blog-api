@@ -26,15 +26,15 @@ export class UserAuthService {
   /**
    * Register a user and invoke the mailing service
    * @param payload
-   * @param lang
+   * @param i18n
    */
-  async register(payload: RegisterPayload, lang: string) {
+  async register(payload: RegisterPayload, i18n: I18nContext) {
     const users = await this.userRepository.find({
       // Apply or where condition
       where: [{ email: payload.email }],
     });
     if (users.length) {
-      throw new BadRequestException('Users with email already existed!');
+      throw new BadRequestException(i18n.t('error.user_already_existed'));
     }
     const final = await this.userRepository.save(
       this.userRepository.create({
@@ -45,7 +45,7 @@ export class UserAuthService {
     this.eventEmitter.emit('user.registered', {
       fullName: final.firstname + ' ' + final.lastname,
       email: final.email,
-      lang: lang,
+      lang: i18n.lang,
     });
     return final;
   }

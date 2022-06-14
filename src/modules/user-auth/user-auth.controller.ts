@@ -32,7 +32,7 @@ export class UserAuthController {
     @Body() payload: RegisterPayload,
     @I18n() i18n: I18nContext,
   ) {
-    return this.service.register(payload, i18n.lang);
+    return this.service.register(payload, i18n);
   }
   /**
    * User request to confirm email address

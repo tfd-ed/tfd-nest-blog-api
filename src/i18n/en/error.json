@@ -1,5 +1,6 @@
 {
   "email_already_conformed": "This email is already confirmed!",
+  "user_already_existed": "User with this email already existed!",
   "token_expired": "Email confirmation token expired!",
   "invalid_token": "Invalid confirmation token!",
   "invalid_credential": "Invalid login credential!"
