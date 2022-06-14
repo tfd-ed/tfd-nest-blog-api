@@ -5,6 +5,11 @@ import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PurchaseEntity } from './entity/purchase.entity';
 import { PurchasePayload } from './payload/purchase.payload';
+import {
+  IPaginationOptions,
+  paginate,
+  Pagination,
+} from 'nestjs-typeorm-paginate';
 
 @Injectable()
 export class CourseService extends TypeOrmCrudService<CourseEntity> {
@@ -28,5 +33,17 @@ export class CourseService extends TypeOrmCrudService<CourseEntity> {
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
+  }
+
+  async getChapters(
+    id: string,
+    options: IPaginationOptions,
+  ): Promise<Pagination<CourseEntity>> {
+    const queryBuilder = this.courseRepository.createQueryBuilder('course');
+    queryBuilder.andWhere('course.id =:id', {
+      id: id,
+    });
+    queryBuilder.leftJoinAndSelect('course.chapters', 'chapters');
+    return paginate<CourseEntity>(queryBuilder, options);
   }
 }

@@ -10,29 +10,41 @@
         </mj-section>
         <mj-section background-color="#FFFFFF" background-repeat="repeat" padding-bottom="0px" padding-top="0">
             <mj-column width="100%">
-                <mj-text align="center" font-size="28px" color="black" font-family="Kantumruy, Source Sans Pro, sans-serif" padding-left="25px" padding-right="25px" padding-bottom="0px" padding-top="28px">{{hello}},
+                <mj-text align="center" font-size="28px" color="black" font-family="Kantumruy, Source Sans Pro, sans-serif" padding-left="25px" padding-right="25px" padding-bottom="0px" padding-top="28px">{{thanks_for_purchase}},
                     <p style="font-size:16px; color:black"><i>{{fullName}}</i></p>
                 </mj-text>
-                <mj-text align="center" color="black" font-size="12px" font-family="Kantumruy, Source Sans Pro, sans-serif" padding-left="25px" padding-right="25px" padding-bottom="24px"><i>{{email}}</i></mj-text>
             </mj-column>
         </mj-section>
         <mj-section background-color="#FFFFFF" background-repeat="repeat" padding-bottom="5px" padding-top="0">
             <mj-column width="100%">
-                <mj-divider border-color="black" border-width="2px" border-style="solid" padding-left="20px" padding-right="20px" padding-bottom="0px" padding-top="0"></mj-divider>
-                <mj-text align="center" font-family="Kantumruy, Source Sans Pro, sans-serif" line-height="28px" color="black" font-size="13px" padding-left="25px" padding-right="25px" padding-bottom="28px" padding-top="28px"><span style="font-size:20px; font-weight:bold">{{thanks_for_registration}}</span>
-                    <br />
-                    <br />
-                    <span style="font-size:15px">{{we_need_to_verify}}</span>
-                    <br />
-                    <br />
-                    <span style="font-size:15px">{{after_verification}}</span>
+                <mj-divider border-color="#2c3e50" border-width="2px" border-style="solid" padding-left="20px" padding-right="20px" padding-bottom="0px" padding-top="0"></mj-divider>
+                <mj-text align="center" font-family="Kantumruy, Source Sans Pro, sans-serif" line-height="28px" color="black" font-size="13px" padding-left="25px" padding-right="25px" padding-bottom="28px" padding-top="28px">
+
+                    <span style="font-size:28px">{{course_title}}</span>
+
                 </mj-text>
             </mj-column>
         </mj-section>
         <mj-section background-color="#FFFFFF" background-repeat="repeat" padding-bottom="15px">
             <mj-column>
-                <mj-text align="center" color="black" font-size="15px" font-family="Kantumruy, Source Sans Pro, sans-serif" padding-left="25px" padding-right="25px" padding-bottom="0px"><strong>{{confirmation_link}}</strong></mj-text>
-                <mj-text align="center" color="black" font-size="12px" font-family="Kantumruy, Source Sans Pro, sans-serif" padding-left="25px" padding-right="25px" padding-bottom="0px"><i>{{url}}</i></mj-text>
+                <mj-table font-size="36px">
+                    <tr align="center">
+                        <th>{{total}}</th>
+                        <th>${{price}}</th>
+                    </tr>
+                </mj-table>
+                <mj-button background-color="#e74c3c" color="#FFFFFF" padding="60px 0 30px 0" href="https://tfdevs.com/course" font-weight="bold" font-size="16px">{{start_learning}}</mj-button>
+                <mj-divider border-color="#2c3e50" border-width="2px" border-style="solid" padding-left="20px" padding-right="20px" padding-bottom="0px" padding-top="0"></mj-divider>
+                <mj-text color="black" font-family="Kantumruy, Source Sans Pro, sans-serif" font-size="14px" align="center" line-height="12px" align="align">
+                    {{payment_method}}
+                </mj-text>
+                <mj-image align="center" padding="10px 25px" src="https://i.imgur.com/MGe6N9C.png" width="60px"></mj-image>
+                <mj-text color="#2c3e50" font-family="Kantumruy, Source Sans Pro, sans-serif" font-size="16px" align="center" line-height="16px">
+                    $ {{price}}
+                </mj-text>
+                <mj-text color="#2c3e50" font-family="Kantumruy, Source Sans Pro, sans-serif" font-size="16px" align="center" line-height="16px">
+                    $ {{date_of_purchase}}
+                </mj-text>
             </mj-column>
         </mj-section>
         <mj-section background-color="#FFFFFF" background-repeat="repeat" padding-bottom="20px" padding-top="20px">

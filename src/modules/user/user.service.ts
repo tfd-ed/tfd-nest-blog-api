@@ -16,12 +16,17 @@ import {
 import { ResetPayload } from '../auth/payloads/reset.payload';
 import { UpdatePayload } from './payloads/update.payload';
 import { RegisterPayload } from '../auth/payloads/register.payload';
+import { CourseEntity } from '../course/entity/course.entity';
+import { PurchaseEntity } from '../course/entity/purchase.entity';
+import { PurchaseEnum } from '../common/enum/purchase.enum';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
+    @InjectRepository(PurchaseEntity)
+    private readonly purchaseRepository: Repository<PurchaseEntity>,
   ) {}
 
   async get(id: string) {
@@ -47,6 +52,21 @@ export class UsersService {
     const queryBuilder = await this.userRepository.createQueryBuilder('a');
     queryBuilder.orderBy('a.updatedDate', 'DESC');
     return paginate<UserEntity>(queryBuilder, options);
+  }
+
+  async getCourse(
+    id: string,
+    options: IPaginationOptions,
+  ): Promise<Pagination<PurchaseEntity>> {
+    const queryBuilder = this.purchaseRepository.createQueryBuilder('purchase');
+    queryBuilder.andWhere('purchase.byUserId =:id', {
+      id: id,
+    });
+    queryBuilder.andWhere('purchase.status =:status', {
+      status: PurchaseEnum.VERIFIED,
+    });
+    queryBuilder.leftJoinAndSelect('purchase.courseId', 'purchasedCourses');
+    return paginate<PurchaseEntity>(queryBuilder, options);
   }
 
   async changPassword(payload: ResetPayload): Promise<any> {

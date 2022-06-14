@@ -11,7 +11,7 @@ import {
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { UsersService } from './user.service';
-import { Pagination } from 'nestjs-typeorm-paginate';
+import { Pagination, PaginationTypeEnum } from 'nestjs-typeorm-paginate';
 import { UserEntity } from './entity/user.entity';
 import { UpdatePayload } from './payloads/update.payload';
 import { Public } from '../common/decorator/public.decorator';
@@ -23,6 +23,7 @@ import { AppRoles } from '../common/enum/roles.enum';
   version: '1',
 })
 @ApiTags('User')
+@ApiBearerAuth()
 export class UserController {
   /**
    * User controller constructor
@@ -35,7 +36,6 @@ export class UserController {
    * @param page page number
    * @param limit items limit
    */
-  @Public()
   @Get()
   @ApiQuery({ name: 'page', required: true, example: '0' })
   @ApiQuery({ name: 'limit', required: true, example: '0' })
@@ -57,7 +57,6 @@ export class UserController {
    * Get user by id
    * @param id id in UUID
    */
-  @ApiBearerAuth()
   @Get(':id')
   @ApiResponse({ status: 200, description: 'Successful ' })
   @ApiResponse({ status: 400, description: 'Bad Request' })
@@ -69,11 +68,36 @@ export class UserController {
   }
 
   /**
+   * Get course by user id
+   * @param id id in UUID
+   * @param page
+   * @param limit
+   */
+
+  @Get(':id/courses')
+  @ApiResponse({ status: 200, description: 'Successful ' })
+  @ApiResponse({ status: 400, description: 'Bad Request' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiQuery({ name: 'page', required: true, example: '1' })
+  @ApiQuery({ name: 'limit', required: true, example: '10' })
+  async getCourseByUserId(
+    @Param('id', new ParseUUIDPipe()) id: string,
+    @Query('page', ParseIntPipe) page = 1,
+    @Query('limit', ParseIntPipe) limit = 10,
+  ): Promise<any> {
+    limit = limit > 100 ? 100 : limit;
+    return await this.userService.getCourse(id, {
+      page,
+      limit,
+      paginationType: PaginationTypeEnum.TAKE_AND_SKIP,
+    });
+  }
+
+  /**
    * Update user by Id
    * @param id id in UUID
    * @param updatePayload update payload with optional parameters
    */
-  @ApiBearerAuth()
   @Put(':id')
   @ApiResponse({ status: 200, description: 'Successful ' })
   @ApiResponse({ status: 400, description: 'Bad Request' })
@@ -89,7 +113,6 @@ export class UserController {
    * Delete user by Id
    * @param id id in UUID
    */
-  @ApiBearerAuth()
   @Roles(AppRoles.ADMINS)
   @Delete(':id')
   @ApiResponse({ status: 200, description: 'Delete Profile Request Received' })
