@@ -12,7 +12,7 @@ import { EventEmitter2 } from '@nestjs/event-emitter';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { I18nContext } from 'nestjs-i18n';
-import { UserEntity } from '../user';
+import { UserEntity } from '../user/entity/user.entity';
 
 @Injectable()
 export class UserAuthService {

@@ -1,5 +1,5 @@
 import { CommonEntity } from '../../common/entity/common.entity';
-import { Column, Entity, ManyToOne } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 import { CourseEntity } from './course.entity';
 
 @Entity({
@@ -21,7 +21,8 @@ export class ChapterEntity extends CommonEntity {
   /**
    * On Course
    */
-  @ManyToOne(() => CourseEntity)
+  @ManyToOne(() => CourseEntity, (course) => course.chapters)
+  @JoinColumn({ name: 'courseId' })
   course: string;
   /**
    * Description column

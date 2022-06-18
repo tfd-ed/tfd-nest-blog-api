@@ -16,7 +16,6 @@ import {
 import { ResetPayload } from '../auth/payloads/reset.payload';
 import { UpdatePayload } from './payloads/update.payload';
 import { RegisterPayload } from '../auth/payloads/register.payload';
-import { CourseEntity } from '../course/entity/course.entity';
 import { PurchaseEntity } from '../course/entity/purchase.entity';
 import { PurchaseEnum } from '../common/enum/purchase.enum';
 

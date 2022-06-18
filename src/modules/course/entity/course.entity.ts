@@ -2,13 +2,14 @@ import {
   Entity,
   Column,
   JoinColumn,
-  OneToOne,
   Index,
   OneToMany,
+  ManyToOne,
 } from 'typeorm';
 import { CommonEntity } from '../../common/entity/common.entity';
 import { FileEntity } from '../../file/entity/file.entity';
 import { ChapterEntity } from './chapter.entity';
+import { PurchaseEntity } from './purchase.entity';
 
 @Entity({
   name: 'courses',
@@ -35,22 +36,31 @@ export class CourseEntity extends CommonEntity {
   /**
    * Price Colum
    */
-  @Column()
+  @Column({ type: 'float' })
   price: number;
 
   /**
    * Thumbnail Colum
    */
   @Index('course-tb-index')
-  @OneToOne(() => FileEntity, { nullable: true })
+  @ManyToOne(() => FileEntity)
   @JoinColumn({ name: 'thumbnailId' })
   thumbnail: string;
 
   /**
    * Chapter list
    */
-  @OneToMany(() => ChapterEntity, (chapter) => chapter.course)
-  chapter: ChapterEntity[];
+  @OneToMany(() => ChapterEntity, (chapter) => chapter.course, {
+    nullable: true,
+    eager: true,
+  })
+  chapters: string[];
+
+  /**
+   * Purchase List
+   */
+  @OneToMany(() => PurchaseEntity, (purchase) => purchase.course)
+  purchases: string[];
 
   /**
    * Link to Pay way

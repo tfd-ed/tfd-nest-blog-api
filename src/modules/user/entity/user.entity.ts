@@ -1,4 +1,4 @@
-import { Entity, Column, OneToMany, ManyToOne } from 'typeorm';
+import { Entity, Column, OneToMany } from 'typeorm';
 import { PasswordTransformer } from '../password.transformer';
 import { AppRoles } from '../../common/enum/roles.enum';
 import { CommonEntity } from '../../common/entity/common.entity';
@@ -42,8 +42,8 @@ export class UserEntity extends CommonEntity {
   /**
    * Purchase List
    */
-  @OneToMany(() => PurchaseEntity, (purchase) => purchase.byUserId)
-  purchases: PurchaseEntity[];
+  @OneToMany(() => PurchaseEntity, (purchase) => purchase.byUser)
+  purchases: string[];
 
   @Column({
     type: 'simple-array',

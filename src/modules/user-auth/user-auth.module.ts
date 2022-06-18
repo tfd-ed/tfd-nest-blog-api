@@ -6,7 +6,7 @@ import { UserAuthController } from './user-auth.controller';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import EmailEvent from './events/email.event';
-import { UserEntity } from '../user';
+import { UserEntity } from '../user/entity/user.entity';
 @Module({
   imports: [
     ConfigModule,

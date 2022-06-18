@@ -8,7 +8,6 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtAuthGuard } from '../modules/auth/jwt-guard';
 import { CommonModule } from '../modules/common/common.module';
 import { AuthModule } from '../modules/auth/auth.module';
-import { UserModule } from '../modules/user';
 import { LoggingInterceptor } from '../modules/common/interceptor/logging.interceptor';
 import { RolesGuard } from '../modules/common/guard/roles.guard';
 import { EventEmitterModule } from '@nestjs/event-emitter';
@@ -28,6 +27,7 @@ import { FileModule } from '../modules/file/file.module';
 import { CourseModule } from '../modules/course/course.module';
 import { UserAuthModule } from '../modules/user-auth/user-auth.module';
 import { PurchaseModule } from '../modules/purchase/purchase.module';
+import { UserModule } from '../modules/user/user.module';
 
 @Module({
   imports: [

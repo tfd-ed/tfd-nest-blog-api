@@ -1,16 +1,9 @@
 import { CommonEntity } from '../../common/entity/common.entity';
-import {
-  Column,
-  Entity,
-  Index,
-  JoinColumn,
-  ManyToOne,
-  OneToOne,
-} from 'typeorm';
+import { Column, Entity, Index, JoinColumn, ManyToOne } from 'typeorm';
 import { CourseEntity } from './course.entity';
-import { UserEntity } from '../../user';
 import { PurchaseEnum } from '../../common/enum/purchase.enum';
 import { FileEntity } from '../../file/entity/file.entity';
+import { UserEntity } from '../../user/entity/user.entity';
 
 @Entity({
   name: 'purchases',
@@ -20,17 +13,17 @@ export class PurchaseEntity extends CommonEntity {
    * purchase belongs to a user
    */
   @Index()
-  @ManyToOne(() => UserEntity)
+  @ManyToOne(() => UserEntity, (user) => user.purchases)
   @JoinColumn({ name: 'byUserId' })
-  byUserId: string;
+  byUser: string;
 
   /**
    * On Course
    */
   @Index()
-  @ManyToOne(() => CourseEntity)
+  @ManyToOne(() => CourseEntity, (course) => course.purchases)
   @JoinColumn({ name: 'courseId' })
-  courseId: string;
+  course: string;
 
   /**
    * Description column
@@ -41,13 +34,13 @@ export class PurchaseEntity extends CommonEntity {
   /**
    * Price in $
    */
-  @Column()
+  @Column({ type: 'float' })
   price: number;
 
   /**
    * Bank transfer screenshot attachment
    */
-  @OneToOne(() => FileEntity)
+  @ManyToOne(() => FileEntity)
   proofOfPayment: string;
 
   /**
