@@ -4,11 +4,11 @@ items:
     username: user
     firstname: '{{name.firstName}}'
     lastname: '{{name.lastName}}'
-    password: admin
+    password: adminpassword
     status: ACTIVE
     roles:
       - ADMIN
-    email: '{{internet.email}}'
+    email: 'admin@tfdevs.com'
   user{2..100}:
     username: '{{internet.userName}}-{{random.alphaNumeric(5)}}'
     firstname: '{{name.firstName}}'

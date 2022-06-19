@@ -51,7 +51,7 @@ export async function typeormConfig(configService: ConfigService) {
       username: configService.get<string>('DB_USERNAME'),
       password: configService.get<string>('DB_PASSWORD'),
       database: configService.get<string>('DB_DATABASE'),
-      maxQueryExecutionTime: 10,
+      maxQueryExecutionTime: 1000,
       // logging: true,
       synchronize: true,
       migrationsRun: false,
@@ -73,7 +73,7 @@ export async function typeormConfig(configService: ConfigService) {
       entities: [__dirname + './../**/**.entity{.ts,.js}'],
       subscribers: [__dirname + './../**/**/*.subscriber.{ts,js}'],
       migrations: [join(__dirname, './../../migrations/{.ts,*.js}')],
-      maxQueryExecutionTime: 10,
+      maxQueryExecutionTime: 1000,
       synchronize: false,
       /**
        * Migration is automatically performed on prod server

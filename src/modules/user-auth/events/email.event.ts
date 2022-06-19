@@ -78,7 +78,7 @@ export default class EmailEvent {
       });
     Mailman.init()
       .to(payload.email)
-      .from('"TFD" <support@tfdevs.com>')
+      .from('"TFD" <info@tfdevs.com>')
       .replyTo('no-reply@tfdevs.com')
       .send(mail)
       .then(() => {

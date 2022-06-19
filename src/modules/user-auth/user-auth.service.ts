@@ -39,6 +39,12 @@ export class UserAuthService {
     const final = await this.userRepository.save(
       this.userRepository.create({
         ...payload,
+        username:
+          payload.firstname.toLocaleLowerCase() +
+          '-' +
+          payload.lastname.toLocaleLowerCase() +
+          '-' +
+          Date.now(),
         status: UserStatus.UNCONFIRMED,
       }),
     );

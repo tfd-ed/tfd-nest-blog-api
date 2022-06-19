@@ -36,6 +36,10 @@ export class UsersService {
     return await this.userRepository.findOne({ username: username });
   }
 
+  async getByEmail(email: string) {
+    return await this.userRepository.findOne({ email: email });
+  }
+
   async update(id: string, updatePayload: UpdatePayload): Promise<any> {
     const admin = await this.userRepository.findOne(id);
     const updated = Object.assign(admin, updatePayload);
