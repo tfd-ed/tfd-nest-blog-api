@@ -10,6 +10,7 @@ import { CommonEntity } from '../../common/entity/common.entity';
 import { FileEntity } from '../../file/entity/file.entity';
 import { ChapterEntity } from './chapter.entity';
 import { PurchaseEntity } from './purchase.entity';
+import { CategoryEntity } from './category.entity';
 
 @Entity({
   name: 'courses',
@@ -46,6 +47,12 @@ export class CourseEntity extends CommonEntity {
   @ManyToOne(() => FileEntity)
   @JoinColumn({ name: 'thumbnailId' })
   thumbnail: string;
+
+  /**
+   * Category the course belong
+   */
+  @ManyToOne(() => CategoryEntity)
+  category: string;
 
   /**
    * Chapter list

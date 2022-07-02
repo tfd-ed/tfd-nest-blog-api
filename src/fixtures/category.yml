@@ -1,0 +1,6 @@
+entity: CategoryEntity
+items:
+  category{1..100}:
+    name: '{{commerce.productName}}'
+    description: '{{commerce.productDescription}}'
+    thumbnail: '@file*'

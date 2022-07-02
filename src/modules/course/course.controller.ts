@@ -33,6 +33,16 @@ import { Public } from '../common/decorator/public.decorator';
   model: {
     type: CourseEntity,
   },
+  query: {
+    join: {
+      category: {
+        eager: true,
+      },
+      thumbnail: {
+        eager: true,
+      },
+    },
+  },
 })
 @Controller({
   path: 'course',

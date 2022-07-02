@@ -6,4 +6,5 @@ items:
     description: '{{lorem.paragraph}}'
     instructor: '{{name.findName}}'
     thumbnail: '@file*'
+    category: '@category*'
     paymentLink: 'https://link.payway.com.kh/TFDbyK.KHEANG/ABAPAY062A10061378461106135871120844605589'
