@@ -6,6 +6,7 @@ import { ForbiddenDto } from '../common/schema/forbidden.dto';
 import { UserAuthService } from './user-auth.service';
 import { ConfirmEmail } from './payloads/confirmEmail.payload';
 import { I18n, I18nContext } from 'nestjs-i18n';
+import { ResetPayload } from './payloads/reset.payload';
 
 @Controller({
   path: 'user-auth',
@@ -53,5 +54,20 @@ export class UserAuthController {
       i18n,
     );
     return await this.service.confirmEmail(email, i18n);
+  }
+
+  @Public()
+  @Post('/reset')
+  @ApiOperation({ summary: 'User request to reset password' })
+  @ApiForbiddenResponse({
+    status: 403,
+    description: 'Forbidden',
+    type: ForbiddenDto,
+  })
+  async resetPassword(
+    @Body() payload: ResetPayload,
+    @I18n() i18n: I18nContext,
+  ) {
+    return this.service.resetPassword(payload.email, i18n);
   }
 }

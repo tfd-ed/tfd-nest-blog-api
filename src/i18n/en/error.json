@@ -3,5 +3,6 @@
   "user_already_existed": "User with this email already existed!",
   "token_expired": "Email confirmation token expired!",
   "invalid_token": "Invalid confirmation token!",
-  "invalid_credential": "Invalid login credential!"
+  "invalid_credential": "Invalid login credential!",
+  "user_not_exist": "User with this email doesn't exist!"
 }

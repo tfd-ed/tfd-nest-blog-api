@@ -55,6 +55,7 @@ export class UserAuthService {
     });
     return final;
   }
+
   async markEmailAsConfirmed(email: string) {
     return this.userRepository.update(
       { email },
@@ -63,6 +64,7 @@ export class UserAuthService {
       },
     );
   }
+
   public async decodeConfirmationToken(token: string, i18n: I18nContext) {
     try {
       const payload = await this.jwtService.verify(token, {
@@ -105,5 +107,21 @@ export class UserAuthService {
       'User with this email does not exist',
       HttpStatus.NOT_FOUND,
     );
+  }
+
+  async resetPassword(email: string, i18n: I18nContext) {
+    const users = await this.userRepository.find({
+      // Apply or where condition
+      where: [{ email: email }],
+    });
+    if (!users.length) {
+      throw new BadRequestException(i18n.t('error.user_not_exist'));
+    }
+    this.eventEmitter.emit('user.reset', {
+      fullName: users[0].firstname + ' ' + users[0].lastname,
+      email: email,
+      lang: i18n.lang,
+    });
+    return email;
   }
 }

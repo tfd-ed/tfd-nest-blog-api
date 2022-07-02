@@ -42,18 +42,15 @@ export default class EmailEvent {
         hello: this.translateService.t('event.hello', {
           lang: payload.lang,
         }),
-        thanks_for_registration: this.translateService.t(
-          'event.thanks_for_registration',
-          {
-            lang: payload.lang,
-          },
-        ),
-        we_need_to_verify: this.translateService.t('event.we_need_to_verify', {
+        header_text: this.translateService.t('event.thanks_for_registration', {
           lang: payload.lang,
         }),
-        email_text: this.translateService.t('event.email', {
+        purpose_one: this.translateService.t('event.we_need_to_verify', {
           lang: payload.lang,
         }),
+        // instruction: this.translateService.t('event.email', {
+        //   lang: payload.lang,
+        // }),
         confirmation_link: this.translateService.t('event.confirmation_link', {
           lang: payload.lang,
         }),
@@ -72,7 +69,77 @@ export default class EmailEvent {
         tos: this.translateService.t('event.tos', {
           lang: payload.lang,
         }),
-        url: url,
+        link: url,
+        fullName: payload.fullName,
+        email: payload.email,
+      });
+    Mailman.init()
+      .to(payload.email)
+      .from('"TFD" <info@tfdevs.com>')
+      .replyTo('no-reply@tfdevs.com')
+      .send(mail)
+      .then(() => {
+        this.logger.log('Email to: ' + payload.email + ' sent!');
+      });
+  }
+
+  @OnEvent('user.reset', { async: true })
+  async resetPassword(payload: any) {
+    const token = this.jwtService.sign(payload, {
+      secret: this.configService.get('JWT_VERIFICATION_TOKEN_SECRET'),
+      expiresIn: `${this.configService.get(
+        'JWT_VERIFICATION_TOKEN_EXPIRATION_TIME',
+      )}s`,
+    });
+    const url = `${this.configService.get('RESET_URL')}?token=${token}`;
+    const mail = new MailMessage();
+    mail
+      .subject(
+        this.translateService.t('event.reset_password', {
+          lang: payload.lang,
+        }),
+      )
+      .view('confirm', {
+        mjml: {
+          minify: true,
+        },
+        hello: this.translateService.t('event.hello', {
+          lang: payload.lang,
+        }),
+        header_text: this.translateService.t(
+          'event.request_to_reset_password',
+          {
+            lang: payload.lang,
+          },
+        ),
+        purpose_one: this.translateService.t(
+          'event.we_received_request_to_reset_password',
+          {
+            lang: payload.lang,
+          },
+        ),
+        // instruction: this.translateService.t('event.email', {
+        //   lang: payload.lang,
+        // }),
+        confirmation_link: this.translateService.t('event.confirmation_link', {
+          lang: payload.lang,
+        }),
+        you_are_receiving_this_email: this.translateService.t(
+          'event.you_are_receiving_this_email',
+          {
+            lang: payload.lang,
+          },
+        ),
+        tfd_right: this.translateService.t('event.tfd_right', {
+          lang: payload.lang,
+        }),
+        privacy: this.translateService.t('event.privacy', {
+          lang: payload.lang,
+        }),
+        tos: this.translateService.t('event.tos', {
+          lang: payload.lang,
+        }),
+        link: url,
         fullName: payload.fullName,
         email: payload.email,
       });

@@ -1,6 +1,8 @@
 {
   "hello": "Hello",
   "thanks_for_registration": "Thanks for your registration in TFDevs",
+  "reset_password": "Reset Password Request",
+  "request_to_reset_password": "Request to reset password",
   "thanks_for_purchase": "Thanks for your purchase",
   "we_need_to_verify": "We need to verify your email address.",
   "after_verification": "After the verification is done, please follow our guideline to set up your confessor profile.",
@@ -8,6 +10,7 @@
   "you_are_receiving_this_email": "You are receiving this email because you registered in TFD platform. If you did not register, and you believe someone may use this email without your consent, please just ignore it.",
   "email": "Email",
   "confirmation_link": "Please click on the link to confirm: ",
+  "we_received_request_to_reset_password": "We received your request to reset your password. If you didn't perform such action and believed that someone might do it on your behalf, please ignore this email.",
   "privacy": "Privacy",
   "tos": "Terms of service",
   "welcome_to_tfdevs": "Welcome to TFDevs!",
