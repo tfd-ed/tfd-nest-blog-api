@@ -127,6 +127,7 @@ export class UserAuthService {
       fullName: users[0].firstname + ' ' + users[0].lastname,
       email: email,
       lang: i18n.lang,
+      timestamp: Date.now(),
     });
     return email;
   }
@@ -162,11 +163,21 @@ export class UserAuthService {
      * Everything is okay, proceed to update password
      */
     this.userRepository
-      .update(user, {
+      .update(user.id, {
         password: payload.password,
       })
       .then(() => {
         this.logger.log('User: ' + user.username + ' password reset!');
+      });
+    /**
+     * Mark token as was used
+     */
+    this.forgotRepository
+      .update(resetToken.id, {
+        done: true,
+      })
+      .then(() => {
+        this.logger.log('Token: ' + resetToken.token + ' marked as done!');
       });
     return { message: 'Password reset' };
   }
