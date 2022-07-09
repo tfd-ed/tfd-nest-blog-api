@@ -14,8 +14,8 @@ import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { I18nContext } from 'nestjs-i18n';
 import { UserEntity } from '../user/entity/user.entity';
-import { ForgotEntity } from './entity/forgot.entity';
 import { ResetPayload } from './payloads/reset.payload';
+import { ForgotEntity } from './entity/forgot.entity';
 
 @Injectable()
 export class UserAuthService {

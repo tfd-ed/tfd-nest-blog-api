@@ -26,9 +26,9 @@ export default class EmailEvent {
   async verifyEmail(payload: any) {
     const token = this.jwtService.sign(payload, {
       secret: this.configService.get('JWT_VERIFICATION_TOKEN_SECRET'),
-      expiresIn: `${this.configService.get(
+      expiresIn: this.configService.get(
         'JWT_VERIFICATION_TOKEN_EXPIRATION_TIME',
-      )}s`,
+      ),
     });
     const url = `${this.configService.get(
       'EMAIL_CONFIRMATION_URL',
@@ -92,9 +92,7 @@ export default class EmailEvent {
   async resetPassword(payload: any) {
     const token = this.jwtService.sign(payload, {
       secret: this.configService.get('JWT_VERIFICATION_TOKEN_SECRET'),
-      expiresIn: `${this.configService.get(
-        'JWT_RESET_TOKEN_EXPIRATION_TIME',
-      )}s`,
+      expiresIn: this.configService.get('JWT_RESET_TOKEN_EXPIRATION_TIME'),
     });
     this.forgotRepository
       .save(
