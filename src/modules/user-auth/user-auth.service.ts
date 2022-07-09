@@ -3,6 +3,7 @@ import {
   HttpException,
   HttpStatus,
   Injectable,
+  Logger,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -13,12 +14,17 @@ import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { I18nContext } from 'nestjs-i18n';
 import { UserEntity } from '../user/entity/user.entity';
+import { ForgotEntity } from './entity/forgot.entity';
+import { ResetPayload } from './payloads/reset.payload';
 
 @Injectable()
 export class UserAuthService {
+  private readonly logger = new Logger(UserAuthService.name);
   constructor(
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
+    @InjectRepository(ForgotEntity)
+    private readonly forgotRepository: Repository<ForgotEntity>,
     private eventEmitter: EventEmitter2,
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService, // private readonly translateService: I18nService,
@@ -109,7 +115,7 @@ export class UserAuthService {
     );
   }
 
-  async resetPassword(email: string, i18n: I18nContext) {
+  async forgotPassword(email: string, i18n: I18nContext) {
     const users = await this.userRepository.find({
       // Apply or where condition
       where: [{ email: email }],
@@ -123,5 +129,45 @@ export class UserAuthService {
       lang: i18n.lang,
     });
     return email;
+  }
+
+  async resetPassword(payload: ResetPayload, i18n: I18nContext) {
+    const user = await this.userRepository.findOne({ email: payload.email });
+    if (!user) {
+      throw new BadRequestException(i18n.t('error.user_not_exist'));
+    }
+    const resetToken = await this.forgotRepository.findOne({
+      token: payload.token,
+    });
+    /**
+     * Check if such token existed in the database
+     */
+    if (!resetToken) {
+      throw new BadRequestException(i18n.t('error.token_not_exist'));
+    }
+    /**
+     * Check if this token is already used to reset the password before
+     */
+    if (resetToken.done) {
+      throw new BadRequestException(i18n.t('error.token_already_used'));
+    }
+    /**
+     * Check if the token is valid and not expired
+     */
+    const email = await this.decodeConfirmationToken(payload.token, i18n);
+    if (email !== payload.email) {
+      throw new BadRequestException(i18n.t('error.mismatched_email'));
+    }
+    /**
+     * Everything is okay, proceed to update password
+     */
+    this.userRepository
+      .update(user, {
+        password: payload.password,
+      })
+      .then(() => {
+        this.logger.log('User: ' + user.username + ' password reset!');
+      });
+    return { message: 'Password reset' };
   }
 }

@@ -4,6 +4,9 @@ import { Injectable, Logger } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { I18nService } from 'nestjs-i18n';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { ForgotEntity } from '../entity/forgot.entity';
 
 @Injectable()
 export default class EmailEvent {
@@ -12,6 +15,8 @@ export default class EmailEvent {
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
     private readonly translateService: I18nService,
+    @InjectRepository(ForgotEntity)
+    private readonly forgotRepository: Repository<ForgotEntity>,
   ) {}
   /**
    * An event triggered to send verification code to tester
@@ -88,9 +93,19 @@ export default class EmailEvent {
     const token = this.jwtService.sign(payload, {
       secret: this.configService.get('JWT_VERIFICATION_TOKEN_SECRET'),
       expiresIn: `${this.configService.get(
-        'JWT_VERIFICATION_TOKEN_EXPIRATION_TIME',
+        'JWT_RESET_TOKEN_EXPIRATION_TIME',
       )}s`,
     });
+    this.forgotRepository
+      .save(
+        this.forgotRepository.create({
+          email: payload.email,
+          token: token,
+        }),
+      )
+      .then(() => {
+        this.logger.log('Reset Token Created: ' + payload.email);
+      });
     const url = `${this.configService.get('RESET_URL')}?token=${token}`;
     const mail = new MailMessage();
     mail

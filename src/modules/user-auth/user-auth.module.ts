@@ -7,10 +7,11 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import EmailEvent from './events/email.event';
 import { UserEntity } from '../user/entity/user.entity';
+import { ForgotEntity } from './entity/forgot.entity';
 @Module({
   imports: [
     ConfigModule,
-    TypeOrmModule.forFeature([UserEntity]),
+    TypeOrmModule.forFeature([UserEntity, ForgotEntity]),
     PassportModule.register({ defaultStrategy: 'local' }),
     JwtModule.registerAsync({
       imports: [ConfigModule],
