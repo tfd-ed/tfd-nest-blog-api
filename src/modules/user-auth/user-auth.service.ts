@@ -132,13 +132,9 @@ export class UserAuthService {
     return email;
   }
 
-  async resetPassword(payload: ResetPayload, i18n: I18nContext) {
-    const user = await this.userRepository.findOne({ email: payload.email });
-    if (!user) {
-      throw new BadRequestException(i18n.t('error.user_not_exist'));
-    }
+  async verifyResetToken(token: string, i18n: I18nContext) {
     const resetToken = await this.forgotRepository.findOne({
-      token: payload.token,
+      token: token,
     });
     /**
      * Check if such token existed in the database
@@ -155,8 +151,20 @@ export class UserAuthService {
     /**
      * Check if the token is valid and not expired
      */
-    const email = await this.decodeConfirmationToken(payload.token, i18n);
-    if (email !== payload.email) {
+    const email = await this.decodeConfirmationToken(token, i18n);
+    return {
+      email: email,
+      resetToken: resetToken,
+    };
+  }
+
+  async resetPassword(payload: ResetPayload, i18n: I18nContext) {
+    const user = await this.userRepository.findOne({ email: payload.email });
+    if (!user) {
+      throw new BadRequestException(i18n.t('error.user_not_exist'));
+    }
+    const verified = await this.verifyResetToken(payload.token, i18n);
+    if (verified.email !== payload.email) {
       throw new BadRequestException(i18n.t('error.mismatched_email'));
     }
     /**
@@ -173,11 +181,13 @@ export class UserAuthService {
      * Mark token as was used
      */
     this.forgotRepository
-      .update(resetToken.id, {
+      .update(verified.resetToken.id, {
         done: true,
       })
       .then(() => {
-        this.logger.log('Token: ' + resetToken.token + ' marked as done!');
+        this.logger.log(
+          'Token: ' + verified.resetToken.token + ' marked as done!',
+        );
       });
     return { message: 'Password reset' };
   }

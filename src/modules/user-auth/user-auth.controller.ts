@@ -1,5 +1,12 @@
 import { ApiForbiddenResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { Body, Controller, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  ParseUUIDPipe,
+  Post,
+} from '@nestjs/common';
 import { RegisterPayload } from './payloads/register.payload';
 import { Public } from '../common/decorator/public.decorator';
 import { ForbiddenDto } from '../common/schema/forbidden.dto';
@@ -85,5 +92,20 @@ export class UserAuthController {
     @I18n() i18n: I18nContext,
   ) {
     return this.service.resetPassword(payload, i18n);
+  }
+
+  @Public()
+  @Get('/reset-token/:token')
+  @ApiOperation({ summary: 'Verify if reset token is valid' })
+  @ApiForbiddenResponse({
+    status: 403,
+    description: 'Forbidden',
+    type: ForbiddenDto,
+  })
+  async verifyResetToken(
+    @Param('token') token: string,
+    @I18n() i18n: I18nContext,
+  ) {
+    return await this.service.verifyResetToken(token, i18n);
   }
 }
