@@ -3,7 +3,7 @@ items:
   course{1..50}:
     title: 'How to be {{name.jobTitle}}'
     price: '{{commerce.price}}'
-    description: '{{lorem.paragraph}}'
+    description: '{{lorem.paragraphs(5)}}'
     instructor: '{{name.findName}}'
     thumbnail: '@file*'
     category: '@category*'

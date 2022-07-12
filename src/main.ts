@@ -1,5 +1,30 @@
 import { NestFactory } from '@nestjs/core';
 import { setupSwagger } from './swagger';
+import { CrudConfigService } from '@nestjsx/crud';
+
+/**
+ * Configure default Typeorm CRUD behavior
+ * to omit hard delete
+ */
+CrudConfigService.load({
+  query: {
+    limit: 10,
+    cache: 2000,
+  },
+  params: {
+    id: {
+      field: 'id',
+      type: 'uuid',
+      primary: true,
+    },
+  },
+  routes: {
+    updateOneBase: {
+      allowParamsOverride: true,
+    },
+    exclude: ['deleteOneBase'],
+  },
+});
 import { useContainer } from 'class-validator';
 import { ValidationPipe, VersioningType } from '@nestjs/common';
 import { AppModule } from './app/app.module';

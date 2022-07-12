@@ -3,7 +3,7 @@ items:
   chapter{1..500}:
     name: '{{name.jobType}} and {{name.jobTitle}}'
     chapterNumber: '{{datatype.number(20)}}'
-    courseId: '@course*'
+    course: '@course*'
     description: '{{lorem.paragraph}}'
-    vimeoId: '{{datatype.number}}'
+    vimeoId: '721860999'
 

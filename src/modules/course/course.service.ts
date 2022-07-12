@@ -10,12 +10,15 @@ import {
   paginate,
   Pagination,
 } from 'nestjs-typeorm-paginate';
+import { ChapterEntity } from './entity/chapter.entity';
 
 @Injectable()
 export class CourseService extends TypeOrmCrudService<CourseEntity> {
   constructor(
     @InjectRepository(CourseEntity)
     private readonly courseRepository: Repository<CourseEntity>,
+    @InjectRepository(ChapterEntity)
+    private readonly chaptersRepository: Repository<ChapterEntity>,
     @InjectRepository(PurchaseEntity)
     private readonly purchaseRepository: Repository<PurchaseEntity>,
   ) {
@@ -38,12 +41,18 @@ export class CourseService extends TypeOrmCrudService<CourseEntity> {
   async getChapters(
     id: string,
     options: IPaginationOptions,
-  ): Promise<Pagination<CourseEntity>> {
-    const queryBuilder = this.courseRepository.createQueryBuilder('course');
-    queryBuilder.andWhere('course.id =:id', {
+  ): Promise<Pagination<ChapterEntity>> {
+    const queryBuilder = this.chaptersRepository.createQueryBuilder('chapters');
+    queryBuilder.andWhere('chapters.id =:id', {
       id: id,
     });
-    queryBuilder.leftJoinAndSelect('course.chapters', 'chapters');
-    return paginate<CourseEntity>(queryBuilder, options);
+    return paginate<ChapterEntity>(queryBuilder, options);
+  }
+
+  async userPurchase(id: string, userId: string) {
+    return await this.purchaseRepository.findOne({
+      course: id,
+      byUser: userId,
+    });
   }
 }

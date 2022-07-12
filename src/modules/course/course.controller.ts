@@ -41,6 +41,9 @@ import { Public } from '../common/decorator/public.decorator';
       thumbnail: {
         eager: true,
       },
+      chapters: {
+        eager: true,
+      },
     },
   },
 })
@@ -49,6 +52,7 @@ import { Public } from '../common/decorator/public.decorator';
   version: '1',
 })
 @ApiTags('Course')
+@ApiBearerAuth()
 export class CourseController implements CrudController<CourseEntity> {
   constructor(public service: CourseService) {}
 
@@ -57,7 +61,7 @@ export class CourseController implements CrudController<CourseEntity> {
    * @param id
    * @param payload
    */
-  @ApiBearerAuth()
+  // @ApiBearerAuth()
   @Post(':id/purchase')
   @ApiOperation({ summary: 'User purchase a course' })
   @ApiForbiddenResponse({
@@ -72,28 +76,49 @@ export class CourseController implements CrudController<CourseEntity> {
     return this.service.purchase(id, payload);
   }
 
-  @ApiBearerAuth()
-  @Get(':id/chapters')
-  @ApiOperation({ summary: 'Retrives all chapter' })
+  /**
+   * Check past purchase
+   * @param id
+   * @param userId
+   */
+  // @ApiBearerAuth()
+  @Get(':id/user-purchase/:userId')
+  @ApiOperation({ summary: 'User purchase a course' })
   @ApiForbiddenResponse({
     status: 403,
     description: 'Forbidden',
     type: ForbiddenDto,
   })
-  @ApiQuery({ name: 'page', required: true, example: '1' })
-  @ApiQuery({ name: 'limit', required: true, example: '10' })
-  async getChapters(
+  async pastPurchase(
     @Param('id', new ParseUUIDPipe()) id: string,
-    @Query('page', ParseIntPipe) page = 1,
-    @Query('limit', ParseIntPipe) limit = 10,
+    @Param('userId', new ParseUUIDPipe()) userId: string,
   ) {
-    limit = limit > 100 ? 100 : limit;
-    return this.service.getChapters(id, {
-      page,
-      limit,
-      paginationType: PaginationTypeEnum.TAKE_AND_SKIP,
-    });
+    return this.service.userPurchase(id, userId);
   }
+
+  // @ApiBearerAuth()
+  // @Public()
+  // @Get(':id/chapters')
+  // @ApiOperation({ summary: 'Retrieve all chapter' })
+  // @ApiForbiddenResponse({
+  //   status: 403,
+  //   description: 'Forbidden',
+  //   type: ForbiddenDto,
+  // })
+  // @ApiQuery({ name: 'page', required: true, example: '1' })
+  // @ApiQuery({ name: 'limit', required: true, example: '10' })
+  // async getChapters(
+  //   @Param('id', new ParseUUIDPipe()) id: string,
+  //   @Query('page', ParseIntPipe) page = 1,
+  //   @Query('limit', ParseIntPipe) limit = 10,
+  // ) {
+  //   limit = limit > 100 ? 100 : limit;
+  //   return this.service.getChapters(id, {
+  //     page,
+  //     limit,
+  //     paginationType: PaginationTypeEnum.TAKE_AND_SKIP,
+  //   });
+  // }
   get base(): CrudController<CourseEntity> {
     return this;
   }
@@ -103,8 +128,18 @@ export class CourseController implements CrudController<CourseEntity> {
    * @param req
    */
   @Public()
-  @Override()
+  @Override('getManyBase')
   getMany(@ParsedRequest() req: CrudRequest) {
     return this.base.getManyBase(req);
+  }
+
+  /**
+   * Override for auth
+   * @param req
+   */
+  @Public()
+  @Override('getOneBase')
+  getOneAndDoStuff(@ParsedRequest() req: CrudRequest) {
+    return this.base.getOneBase(req);
   }
 }

@@ -5,10 +5,11 @@ import { CourseEntity } from './entity/course.entity';
 import { CourseService } from './course.service';
 import { CourseController } from './course.controller';
 import { PurchaseEntity } from './entity/purchase.entity';
+import { ChapterEntity } from './entity/chapter.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([CourseEntity, PurchaseEntity]),
+    TypeOrmModule.forFeature([CourseEntity, ChapterEntity, PurchaseEntity]),
     PassportModule.register({ defaultStrategy: 'local' }),
   ],
   exports: [CourseService],
