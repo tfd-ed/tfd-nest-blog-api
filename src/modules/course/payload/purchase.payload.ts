@@ -6,13 +6,13 @@ export class PurchasePayload {
     required: true,
   })
   @IsUUID()
-  byUserId: string;
+  byUser: string;
 
   @ApiProperty({
     required: true,
   })
   @IsUUID()
-  courseId: string;
+  course: string;
 
   @ApiProperty({
     required: true,
