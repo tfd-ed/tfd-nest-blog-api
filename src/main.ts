@@ -8,7 +8,7 @@ import { CrudConfigService } from '@nestjsx/crud';
  */
 CrudConfigService.load({
   query: {
-    limit: 10,
+    // limit: 10,
     cache: 2000,
   },
   params: {

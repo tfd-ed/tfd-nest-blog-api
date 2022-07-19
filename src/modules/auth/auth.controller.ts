@@ -44,6 +44,25 @@ export class AuthController {
   }
 
   /**
+   * Login Admin User
+   * @param payload email, password
+   * @param i18n
+   * @return {token} including expire time, jwt token and user info
+   */
+  @Public()
+  @Post('admin-login')
+  @ApiResponse({ status: 201, description: 'Successful Login' })
+  @ApiResponse({ status: 400, description: 'Bad Request' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  async adminLogin(
+    @Body() payload: LoginPayload,
+    @I18n() i18n: I18nContext,
+  ): Promise<any> {
+    const user = await this.authService.validateAdmin(payload, i18n);
+    return await this.authService.createToken(user);
+  }
+
+  /**
    * Change user password
    * @param payload change password payload
    */

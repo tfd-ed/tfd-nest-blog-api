@@ -28,6 +28,7 @@ import { CourseModule } from '../modules/course/course.module';
 import { UserAuthModule } from '../modules/user-auth/user-auth.module';
 import { PurchaseModule } from '../modules/purchase/purchase.module';
 import { UserModule } from '../modules/user/user.module';
+import { CategoryModule } from '../modules/category/category.module';
 
 @Module({
   imports: [
@@ -78,6 +79,7 @@ import { UserModule } from '../modules/user/user.module';
     CourseModule,
     PurchaseModule,
     UserAuthModule,
+    CategoryModule,
     CommonModule,
   ],
   controllers: [AppController],

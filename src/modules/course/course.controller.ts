@@ -1,18 +1,15 @@
 import {
   Body,
   Controller,
-  Post,
+  Get,
   Param,
   ParseUUIDPipe,
-  Get,
-  ParseIntPipe,
-  Query,
+  Post,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiForbiddenResponse,
   ApiOperation,
-  ApiQuery,
   ApiTags,
 } from '@nestjs/swagger';
 import { CourseService } from './course.service';
@@ -26,8 +23,10 @@ import {
 import { CourseEntity } from './entity/course.entity';
 import { ForbiddenDto } from '../common/schema/forbidden.dto';
 import { PurchasePayload } from './payload/purchase.payload';
-import { PaginationTypeEnum } from 'nestjs-typeorm-paginate';
 import { Public } from '../common/decorator/public.decorator';
+import { Roles } from '../common/decorator/roles.decorator';
+import { AppRoles } from '../common/enum/roles.enum';
+import { ChapterPayload } from './payload/chapter.payload';
 
 @Crud({
   model: {
@@ -36,13 +35,16 @@ import { Public } from '../common/decorator/public.decorator';
   query: {
     join: {
       category: {
-        eager: true,
+        eager: false,
       },
       thumbnail: {
-        eager: true,
+        eager: false,
       },
       chapters: {
-        eager: true,
+        eager: false,
+      },
+      purchases: {
+        eager: false,
       },
     },
   },
@@ -94,6 +96,18 @@ export class CourseController implements CrudController<CourseEntity> {
     @Param('userId', new ParseUUIDPipe()) userId: string,
   ) {
     return this.service.userPurchase(id, userId);
+  }
+
+  @Roles(AppRoles.ADMINS)
+  @ApiOperation({ summary: 'Create new Chapter' })
+  @ApiForbiddenResponse({
+    status: 403,
+    description: 'Forbidden',
+    type: ForbiddenDto,
+  })
+  @Post(':id/new-chapter')
+  async newChapter(@Body() payload: ChapterPayload) {
+    return this.service.newChapter(payload);
   }
 
   // @ApiBearerAuth()

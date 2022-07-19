@@ -6,4 +6,5 @@ items:
     course: '@course*'
     description: '{{lorem.paragraph}}'
     vimeoId: '721860999'
+    duration: '{{datatype.number(15)}}'
 

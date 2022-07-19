@@ -11,6 +11,7 @@ import {
   Pagination,
 } from 'nestjs-typeorm-paginate';
 import { ChapterEntity } from './entity/chapter.entity';
+import { ChapterPayload } from './payload/chapter.payload';
 
 @Injectable()
 export class CourseService extends TypeOrmCrudService<CourseEntity> {
@@ -54,5 +55,18 @@ export class CourseService extends TypeOrmCrudService<CourseEntity> {
       course: id,
       byUser: userId,
     });
+  }
+
+  async newChapter(payload: ChapterPayload) {
+    try {
+      return await this.chaptersRepository.save(
+        this.chaptersRepository.create(payload),
+      );
+    } catch (error) {
+      throw new HttpException(
+        'Something went wrong',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 }
