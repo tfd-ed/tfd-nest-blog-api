@@ -18,15 +18,18 @@ import { UpdatePayload } from './payloads/update.payload';
 import { RegisterPayload } from '../auth/payloads/register.payload';
 import { PurchaseEntity } from '../course/entity/purchase.entity';
 import { PurchaseEnum } from '../common/enum/purchase.enum';
+import { TypeOrmCrudService } from '@nestjsx/crud-typeorm';
 
 @Injectable()
-export class UsersService {
+export class UsersService extends TypeOrmCrudService<UserEntity> {
   constructor(
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
     @InjectRepository(PurchaseEntity)
     private readonly purchaseRepository: Repository<PurchaseEntity>,
-  ) {}
+  ) {
+    super(userRepository);
+  }
 
   async get(id: string) {
     return this.userRepository.findOne(id);
