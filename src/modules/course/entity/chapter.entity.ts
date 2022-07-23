@@ -6,7 +6,13 @@ import { CourseEntity } from './course.entity';
  * NestJS CRUD
  */
 import { CrudValidationGroups } from '@nestjsx/crud';
-import { IsInt, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import {
+  IsInt,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 const { CREATE, UPDATE } = CrudValidationGroups;
 
 @Entity({
@@ -50,8 +56,6 @@ export class ChapterEntity extends CommonEntity {
    * Generic URL in case Vimeo not available
    */
   @IsOptional({ groups: [UPDATE] })
-  @IsNotEmpty({ groups: [CREATE] })
-  @IsString({ groups: [CREATE, UPDATE] })
   @Column({ nullable: true })
   url: string;
 
@@ -67,7 +71,7 @@ export class ChapterEntity extends CommonEntity {
    * Course duration in second
    */
   @IsOptional({ always: true })
-  @IsString({ always: true })
+  @IsInt({ always: true })
   @Column({ type: 'int' })
   duration: number;
 }

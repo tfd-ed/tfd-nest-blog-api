@@ -29,6 +29,7 @@ import { UserAuthModule } from '../modules/user-auth/user-auth.module';
 import { PurchaseModule } from '../modules/purchase/purchase.module';
 import { UserModule } from '../modules/user/user.module';
 import { CategoryModule } from '../modules/category/category.module';
+import { ChapterModule } from '../modules/chapter/chapter.module';
 
 @Module({
   imports: [
@@ -77,6 +78,7 @@ import { CategoryModule } from '../modules/category/category.module';
     UserModule,
     FileModule,
     CourseModule,
+    ChapterModule,
     PurchaseModule,
     UserAuthModule,
     CategoryModule,
