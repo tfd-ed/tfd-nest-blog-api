@@ -30,6 +30,8 @@ import { PurchaseModule } from '../modules/purchase/purchase.module';
 import { UserModule } from '../modules/user/user.module';
 import { CategoryModule } from '../modules/category/category.module';
 import { ChapterModule } from '../modules/chapter/chapter.module';
+import { InstructorModule } from '../modules/instructor/instructor.module';
+import { CourseManagementModule } from '../modules/course-management/course-management.module';
 
 @Module({
   imports: [
@@ -83,6 +85,8 @@ import { ChapterModule } from '../modules/chapter/chapter.module';
     UserAuthModule,
     CategoryModule,
     CommonModule,
+    InstructorModule,
+    CourseManagementModule,
   ],
   controllers: [AppController],
   providers: [

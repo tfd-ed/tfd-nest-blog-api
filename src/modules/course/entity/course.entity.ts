@@ -8,21 +8,17 @@ import {
 } from 'typeorm';
 import { CommonEntity } from '../../common/entity/common.entity';
 import { FileEntity } from '../../file/entity/file.entity';
-import { ChapterEntity } from './chapter.entity';
-import { PurchaseEntity } from './purchase.entity';
+import { ChapterEntity } from '../../chapter/entity/chapter.entity';
+import { PurchaseEntity } from '../../purchase/entity/purchase.entity';
 import { CategoryEntity } from '../../category/entity/category.entity';
 /**
  * NestJS CRUD
  */
 import { CrudValidationGroups } from '@nestjsx/crud';
-import {
-  IsInt,
-  IsNotEmpty,
-  IsNumber,
-  IsOptional,
-  IsString,
-} from 'class-validator';
+import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 import { Type } from 'class-transformer';
+import { InstructorEntity } from '../../instructor/entity/instructor.entity';
+import { CourseEnum } from '../../common/enum/course.enum';
 const { CREATE, UPDATE } = CrudValidationGroups;
 
 @Entity({
@@ -39,6 +35,15 @@ export class CourseEntity extends CommonEntity {
   title: string;
 
   /**
+   * Short Description column
+   */
+  @IsOptional({ groups: [UPDATE] })
+  @IsNotEmpty({ groups: [CREATE] })
+  @IsString({ groups: [CREATE, UPDATE] })
+  @Column({ type: 'text', nullable: true })
+  shortDescription: string;
+
+  /**
    * Description column
    */
   @IsOptional({ groups: [UPDATE] })
@@ -50,10 +55,10 @@ export class CourseEntity extends CommonEntity {
   /**
    * Instructor colum
    */
-  @IsOptional({ groups: [UPDATE] })
-  @IsNotEmpty({ groups: [CREATE] })
-  @IsString({ always: true })
-  @Column({ type: 'text' })
+  @Index('course-instructor-index')
+  @Type(() => InstructorEntity)
+  @ManyToOne(() => InstructorEntity, (user) => user.instructedCourses)
+  @JoinColumn({ name: 'instructorId' })
   instructor: string;
 
   /**
@@ -110,4 +115,10 @@ export class CourseEntity extends CommonEntity {
    */
   @Column({ type: 'int', nullable: true })
   duration: number;
+
+  /**
+   * Course Enum
+   */
+  @Column({ type: 'enum', enum: CourseEnum, default: CourseEnum.DRAFTED })
+  status: string;
 }

@@ -9,7 +9,7 @@ import { Controller } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Roles } from '../common/decorator/roles.decorator';
 import { AppRoles } from '../common/enum/roles.enum';
-import { ChapterEntity } from '../course/entity/chapter.entity';
+import { ChapterEntity } from './entity/chapter.entity';
 import { ChapterService } from './chapter.service';
 
 @Crud({
@@ -18,7 +18,7 @@ import { ChapterService } from './chapter.service';
   },
 })
 @Controller({
-  path: 'chapter',
+  path: 'chapters',
   version: '1',
 })
 @ApiTags('Chapters')

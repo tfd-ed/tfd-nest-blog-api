@@ -16,7 +16,7 @@ import {
 import { ResetPayload } from '../auth/payloads/reset.payload';
 import { UpdatePayload } from './payloads/update.payload';
 import { RegisterPayload } from '../auth/payloads/register.payload';
-import { PurchaseEntity } from '../course/entity/purchase.entity';
+import { PurchaseEntity } from '../purchase/entity/purchase.entity';
 import { PurchaseEnum } from '../common/enum/purchase.enum';
 import { TypeOrmCrudService } from '@nestjsx/crud-typeorm';
 

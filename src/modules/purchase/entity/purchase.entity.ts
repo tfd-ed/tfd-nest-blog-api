@@ -1,6 +1,6 @@
 import { CommonEntity } from '../../common/entity/common.entity';
 import { Column, Entity, Index, JoinColumn, ManyToOne } from 'typeorm';
-import { CourseEntity } from './course.entity';
+import { CourseEntity } from '../../course/entity/course.entity';
 import { PurchaseEnum } from '../../common/enum/purchase.enum';
 import { FileEntity } from '../../file/entity/file.entity';
 import { UserEntity } from '../../user/entity/user.entity';

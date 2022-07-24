@@ -18,4 +18,5 @@ items:
     roles:
       - DEFAULT
     email: '{{internet.email}}'
+    profile: '@file*'
 

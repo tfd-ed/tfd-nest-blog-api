@@ -3,7 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { PassportModule } from '@nestjs/passport';
 import { PurchaseService } from './purchase.service';
 import { PurchaseController } from './purchase.controller';
-import { PurchaseEntity } from '../course/entity/purchase.entity';
+import { PurchaseEntity } from './entity/purchase.entity';
 
 @Module({
   imports: [

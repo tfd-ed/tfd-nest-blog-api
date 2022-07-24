@@ -4,7 +4,6 @@ import { Public } from '../common/decorator/public.decorator';
 import { AuthService } from './auth.service';
 import { LoginPayload } from './payloads/login.payload';
 import { ResetPayload } from './payloads/reset.payload';
-import { RegisterPayload } from './payloads/register.payload';
 import { UsersService } from '../user/user.service';
 import { I18n, I18nContext } from 'nestjs-i18n';
 

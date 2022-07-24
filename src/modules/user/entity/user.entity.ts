@@ -1,9 +1,12 @@
-import { Entity, Column, OneToMany } from 'typeorm';
+import { Entity, Column, OneToMany, ManyToOne, JoinColumn } from 'typeorm';
 import { PasswordTransformer } from '../password.transformer';
 import { AppRoles } from '../../common/enum/roles.enum';
 import { CommonEntity } from '../../common/entity/common.entity';
-import { PurchaseEntity } from '../../course/entity/purchase.entity';
+import { PurchaseEntity } from '../../purchase/entity/purchase.entity';
 import { UserStatus } from '../../common/enum/userStatus.enum';
+import { CourseEntity } from '../../course/entity/course.entity';
+import { FileEntity } from '../../file/entity/file.entity';
+import { Type } from 'class-transformer';
 
 @Entity({
   name: 'users',
@@ -34,16 +37,36 @@ export class UserEntity extends CommonEntity {
   email: string;
 
   /**
+   * DoB colum
+   */
+  @Column({ type: 'date', nullable: true })
+  dateOfBirth: string;
+
+  /**
    * User status
    */
   @Column({ type: 'enum', enum: UserStatus, default: UserStatus.UNCONFIRMED })
   status: string;
 
   /**
+   * User Profile
+   */
+  @ManyToOne(() => FileEntity, { nullable: true })
+  @JoinColumn({ name: 'profileId' })
+  @Type((t) => FileEntity)
+  profile: string;
+
+  /**
    * Purchase List
    */
   @OneToMany(() => PurchaseEntity, (purchase) => purchase.byUser)
   purchases: string[];
+
+  /**
+   * Purchase List
+   */
+  @OneToMany(() => CourseEntity, (course) => course.instructor)
+  instructedCourses: string[];
 
   @Column({
     type: 'simple-array',

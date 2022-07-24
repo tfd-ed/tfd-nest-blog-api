@@ -17,10 +17,10 @@ import { Public } from '../common/decorator/public.decorator';
   },
 })
 @Controller({
-  path: 'category',
+  path: 'categories',
   version: '1',
 })
-@ApiTags('Category')
+@ApiTags('Categories')
 @ApiBearerAuth()
 export class CategoryController implements CrudController<CategoryEntity> {
   constructor(public service: CategoryService) {}

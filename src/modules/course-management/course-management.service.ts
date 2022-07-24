@@ -1,20 +1,22 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { TypeOrmCrudService } from '@nestjsx/crud-typeorm';
-import { CourseEntity } from './entity/course.entity';
+
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PurchaseEntity } from '../purchase/entity/purchase.entity';
-import { PurchasePayload } from './payload/purchase.payload';
+
 import {
   IPaginationOptions,
   paginate,
   Pagination,
 } from 'nestjs-typeorm-paginate';
 import { ChapterEntity } from '../chapter/entity/chapter.entity';
-import { ChapterPayload } from './payload/chapter.payload';
+import { PurchasePayload } from '../course/payload/purchase.payload';
+import { ChapterPayload } from '../course/payload/chapter.payload';
+import { CourseEntity } from '../course/entity/course.entity';
 
 @Injectable()
-export class CourseService extends TypeOrmCrudService<CourseEntity> {
+export class CourseManagementService extends TypeOrmCrudService<CourseEntity> {
   constructor(
     @InjectRepository(CourseEntity)
     private readonly courseRepository: Repository<CourseEntity>,

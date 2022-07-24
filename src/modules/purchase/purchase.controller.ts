@@ -1,16 +1,18 @@
 import {
   Crud,
+  CrudAuth,
   CrudController,
   CrudRequest,
   Override,
   ParsedRequest,
 } from '@nestjsx/crud';
-import { PurchaseEntity } from '../course/entity/purchase.entity';
+import { PurchaseEntity } from './entity/purchase.entity';
 import { PurchaseService } from './purchase.service';
 import { Controller } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Roles } from '../common/decorator/roles.decorator';
 import { AppRoles } from '../common/enum/roles.enum';
+import { UserEntity } from '../user/entity/user.entity';
 
 @Crud({
   model: {
@@ -28,11 +30,17 @@ import { AppRoles } from '../common/enum/roles.enum';
   },
 })
 @Controller({
-  path: 'purchase',
+  path: 'purchases',
   version: '1',
 })
-@ApiTags('Purchase')
+@ApiTags('Purchases')
 @ApiBearerAuth()
+@CrudAuth({
+  property: 'user',
+  filter: (user: UserEntity) => {
+    console.log('Third Layer');
+  },
+})
 @Roles(AppRoles.ADMINS)
 export class PurchaseController implements CrudController<PurchaseEntity> {
   constructor(public service: PurchaseService) {}

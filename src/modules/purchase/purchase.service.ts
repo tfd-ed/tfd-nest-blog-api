@@ -1,5 +1,5 @@
 import { TypeOrmCrudService } from '@nestjsx/crud-typeorm';
-import { PurchaseEntity } from '../course/entity/purchase.entity';
+import { PurchaseEntity } from './entity/purchase.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 

@@ -1,6 +1,6 @@
 import { CommonEntity } from '../../common/entity/common.entity';
 import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
-import { CourseEntity } from './course.entity';
+import { CourseEntity } from '../../course/entity/course.entity';
 
 /**
  * NestJS CRUD

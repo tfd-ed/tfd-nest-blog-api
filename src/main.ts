@@ -22,7 +22,6 @@ CrudConfigService.load({
     updateOneBase: {
       allowParamsOverride: true,
     },
-    exclude: ['deleteOneBase'],
   },
 });
 import { useContainer } from 'class-validator';

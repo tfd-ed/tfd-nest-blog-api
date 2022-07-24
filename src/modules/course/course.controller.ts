@@ -24,10 +24,16 @@ import { CourseEntity } from './entity/course.entity';
 import { ForbiddenDto } from '../common/schema/forbidden.dto';
 import { PurchasePayload } from './payload/purchase.payload';
 import { Public } from '../common/decorator/public.decorator';
-import { Roles } from '../common/decorator/roles.decorator';
-import { AppRoles } from '../common/enum/roles.enum';
-import { ChapterPayload } from './payload/chapter.payload';
 
+import { CourseEnum } from '../common/enum/course.enum';
+
+/**
+ * This route is for non admin user only
+ */
+@Controller({
+  path: 'courses',
+  version: '1',
+})
 @Crud({
   model: {
     type: CourseEntity,
@@ -46,14 +52,29 @@ import { ChapterPayload } from './payload/chapter.payload';
       purchases: {
         eager: false,
       },
+      instructor: {
+        eager: false,
+      },
     },
+    /**
+     * Only published courses are shown to general users
+     */
+    filter: [{ field: 'status', operator: '$eq', value: CourseEnum.PUBLISHED }],
+  },
+  routes: {
+    /**
+     * Disable CUD features for general users
+     */
+    exclude: [
+      'deleteOneBase',
+      'updateOneBase',
+      'replaceOneBase',
+      'createManyBase',
+      'createOneBase',
+    ],
   },
 })
-@Controller({
-  path: 'course',
-  version: '1',
-})
-@ApiTags('Course')
+@ApiTags('Courses')
 @ApiBearerAuth()
 export class CourseController implements CrudController<CourseEntity> {
   constructor(public service: CourseService) {}
@@ -98,41 +119,6 @@ export class CourseController implements CrudController<CourseEntity> {
     return this.service.userPurchase(id, userId);
   }
 
-  @Roles(AppRoles.ADMINS)
-  @ApiOperation({ summary: 'Create new Chapter' })
-  @ApiForbiddenResponse({
-    status: 403,
-    description: 'Forbidden',
-    type: ForbiddenDto,
-  })
-  @Post(':id/new-chapter')
-  async newChapter(@Body() payload: ChapterPayload) {
-    return this.service.newChapter(payload);
-  }
-
-  // @ApiBearerAuth()
-  // @Public()
-  // @Get(':id/chapters')
-  // @ApiOperation({ summary: 'Retrieve all chapter' })
-  // @ApiForbiddenResponse({
-  //   status: 403,
-  //   description: 'Forbidden',
-  //   type: ForbiddenDto,
-  // })
-  // @ApiQuery({ name: 'page', required: true, example: '1' })
-  // @ApiQuery({ name: 'limit', required: true, example: '10' })
-  // async getChapters(
-  //   @Param('id', new ParseUUIDPipe()) id: string,
-  //   @Query('page', ParseIntPipe) page = 1,
-  //   @Query('limit', ParseIntPipe) limit = 10,
-  // ) {
-  //   limit = limit > 100 ? 100 : limit;
-  //   return this.service.getChapters(id, {
-  //     page,
-  //     limit,
-  //     paginationType: PaginationTypeEnum.TAKE_AND_SKIP,
-  //   });
-  // }
   get base(): CrudController<CourseEntity> {
     return this;
   }

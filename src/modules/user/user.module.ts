@@ -4,7 +4,7 @@ import { UserEntity } from './entity/user.entity';
 import { UserController } from './user.controller';
 import { PassportModule } from '@nestjs/passport';
 import { UsersService } from './user.service';
-import { PurchaseEntity } from '../course/entity/purchase.entity';
+import { PurchaseEntity } from '../purchase/entity/purchase.entity';
 
 @Module({
   imports: [

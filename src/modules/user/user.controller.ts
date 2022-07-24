@@ -4,7 +4,7 @@ import { UsersService } from './user.service';
 import { UserEntity } from './entity/user.entity';
 import { Roles } from '../common/decorator/roles.decorator';
 import { AppRoles } from '../common/enum/roles.enum';
-import { Crud, CrudController } from '@nestjsx/crud';
+import { Crud, CrudAuth, CrudController } from '@nestjsx/crud';
 
 @Crud({
   model: {
@@ -20,10 +20,10 @@ import { Crud, CrudController } from '@nestjsx/crud';
   },
 })
 @Controller({
-  path: 'user',
+  path: 'users',
   version: '1',
 })
-@ApiTags('User')
+@ApiTags('Users')
 @Roles(AppRoles.ADMINS)
 @ApiBearerAuth()
 export class UserController implements CrudController<UserEntity> {
