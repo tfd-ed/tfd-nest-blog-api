@@ -1,4 +1,11 @@
-import { Entity, Column, OneToMany, ManyToOne, JoinColumn } from 'typeorm';
+import {
+  Entity,
+  Column,
+  OneToMany,
+  ManyToOne,
+  JoinColumn,
+  Index,
+} from 'typeorm';
 import { PasswordTransformer } from '../password.transformer';
 import { AppRoles } from '../../common/enum/roles.enum';
 import { CommonEntity } from '../../common/entity/common.entity';
@@ -51,7 +58,8 @@ export class UserEntity extends CommonEntity {
   /**
    * User Profile
    */
-  @ManyToOne(() => FileEntity, { nullable: true })
+  @Index('user-tb-index')
+  @ManyToOne(() => FileEntity)
   @JoinColumn({ name: 'profileId' })
   @Type((t) => FileEntity)
   profile: string;
@@ -61,12 +69,6 @@ export class UserEntity extends CommonEntity {
    */
   @OneToMany(() => PurchaseEntity, (purchase) => purchase.byUser)
   purchases: string[];
-
-  /**
-   * Purchase List
-   */
-  @OneToMany(() => CourseEntity, (course) => course.instructor)
-  instructedCourses: string[];
 
   @Column({
     type: 'simple-array',

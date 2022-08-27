@@ -69,7 +69,7 @@ export class FileService {
       this.configService.get('AWS_PUBLIC_BUCKET_NAME') +
       '/' +
       uploadParam.Key;
-    const imageId = await this.fileRepository.save(
+    const uploadedImage = await this.fileRepository.save(
       this.fileRepository.create({
         name: image.name,
         path: path,
@@ -82,15 +82,13 @@ export class FileService {
      * Update Image URL
      */
     this.fileRepository
-      .update(imageId.id, {
-        url: this.configService.get('APP_URL') + `/v1/files/${imageId.id}`,
+      .update(uploadedImage.id, {
+        url:
+          this.configService.get('APP_URL') + `/v1/files/${uploadedImage.id}`,
       })
       .then((r) => {
-        this.logger.log('Image: ' + imageId.id + ' saved');
+        this.logger.log('Image: ' + uploadedImage.id + ' saved');
       });
-    return {
-      id: imageId.id,
-      message: 'Image was uploaded',
-    };
+    return uploadedImage;
   }
 }

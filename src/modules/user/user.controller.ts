@@ -15,6 +15,9 @@ import { Crud, CrudAuth, CrudController } from '@nestjsx/crud';
       purchases: {
         eager: false,
       },
+      profile: {
+        eager: false,
+      },
     },
     exclude: ['password'],
   },

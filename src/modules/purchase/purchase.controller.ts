@@ -35,12 +35,12 @@ import { UserEntity } from '../user/entity/user.entity';
 })
 @ApiTags('Purchases')
 @ApiBearerAuth()
-@CrudAuth({
-  property: 'user',
-  filter: (user: UserEntity) => {
-    console.log('Third Layer');
-  },
-})
+// @CrudAuth({
+//   property: 'user',
+//   filter: (user: UserEntity) => {
+//     console.log('Third Layer');
+//   },
+// })
 @Roles(AppRoles.ADMINS)
 export class PurchaseController implements CrudController<PurchaseEntity> {
   constructor(public service: PurchaseService) {}
