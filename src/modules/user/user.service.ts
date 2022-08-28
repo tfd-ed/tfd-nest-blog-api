@@ -1,9 +1,7 @@
 import {
   BadRequestException,
-  Body,
   Injectable,
   NotAcceptableException,
-  Param,
   UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -15,19 +13,25 @@ import {
   paginate,
   Pagination,
 } from 'nestjs-typeorm-paginate';
-import { UUIDType } from '../common/validator/FindOneUUID.validator';
 import { ResetPayload } from '../auth/payloads/reset.payload';
 import { UpdatePayload } from './payloads/update.payload';
 import { RegisterPayload } from '../auth/payloads/register.payload';
+import { PurchaseEntity } from '../purchase/entity/purchase.entity';
+import { PurchaseEnum } from '../common/enum/purchase.enum';
+import { TypeOrmCrudService } from '@nestjsx/crud-typeorm';
 
 @Injectable()
-export class UsersService {
+export class UsersService extends TypeOrmCrudService<UserEntity> {
   constructor(
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
-  ) {}
+    @InjectRepository(PurchaseEntity)
+    private readonly purchaseRepository: Repository<PurchaseEntity>,
+  ) {
+    super(userRepository);
+  }
 
-  async get(@Param() id: UUIDType) {
+  async get(id: string) {
     return this.userRepository.findOne(id);
   }
 
@@ -35,10 +39,11 @@ export class UsersService {
     return await this.userRepository.findOne({ username: username });
   }
 
-  async update(
-    @Param() id: UUIDType,
-    @Body() updatePayload: UpdatePayload,
-  ): Promise<any> {
+  async getByEmail(email: string) {
+    return await this.userRepository.findOne({ email: email });
+  }
+
+  async update(id: string, updatePayload: UpdatePayload): Promise<any> {
     const admin = await this.userRepository.findOne(id);
     const updated = Object.assign(admin, updatePayload);
     delete updated.password;
@@ -53,6 +58,21 @@ export class UsersService {
     const queryBuilder = await this.userRepository.createQueryBuilder('a');
     queryBuilder.orderBy('a.updatedDate', 'DESC');
     return paginate<UserEntity>(queryBuilder, options);
+  }
+
+  async getCourse(
+    id: string,
+    options: IPaginationOptions,
+  ): Promise<Pagination<PurchaseEntity>> {
+    const queryBuilder = this.purchaseRepository.createQueryBuilder('purchase');
+    queryBuilder.andWhere('purchase.byUserId =:id', {
+      id: id,
+    });
+    queryBuilder.andWhere('purchase.status =:status', {
+      status: PurchaseEnum.VERIFIED,
+    });
+    queryBuilder.leftJoinAndSelect('purchase.courseId', 'purchasedCourses');
+    return paginate<PurchaseEntity>(queryBuilder, options);
   }
 
   async changPassword(payload: ResetPayload): Promise<any> {
@@ -79,7 +99,7 @@ export class UsersService {
     return await this.userRepository.save(this.userRepository.create(payload));
   }
 
-  async delete(@Param() id: UUIDType): Promise<any> {
+  async delete(id: string): Promise<any> {
     const user = await this.userRepository.findOne(id);
     const deleted = await this.userRepository.delete(id);
     if (deleted.affected === 1) {

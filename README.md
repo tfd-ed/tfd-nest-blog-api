@@ -77,21 +77,21 @@ Once you managed to run the docker container, the following service will be avai
 ## Migration Guide
 New migration with typeorm-cli:
 ```bash
-$ docker exec -it tfd-nest yarn migration:create -n {CreateTable}
+$ docker exec -it tfd-api-server yarn migration:create -n {CreateTable}
 ```
 Migration file will be inside `src/migrations`.
 Note that you will have to write migration code inside up and down method on your own.
 To generate migration for new database or from the changes in database schema(entities) use:
 ```bash
-$ docker exec -it tfd-nest yarn migration:generate -n {GenerateTable}
+$ docker exec -it tfd-api-server yarn migration:generate -n {GenerateTable}
 ```
 #### Run Migrations
 ```bash
-$ docker exec -it tfd-nest yarn migration:run
+$ docker exec -it tfd-api-server yarn migration:run
 ```
 #### Revert Migrations
 ```bash
-$ docker exec -it tfd-nest yarn migration:revert
+$ docker exec -it tfd-api-server yarn migration:revert
 ```
 
 ## Generate Fixture
@@ -101,7 +101,7 @@ visit [RobinCK/typeorm-fixtures](https://github.com/RobinCK/typeorm-fixtures) fo
 #### Generate Sample Data 
 Make sure the docker container is running
 ```bash
-$ docker exec -it tfd-nest yarn fixture:generate
+$ docker exec -it tfd-api-server yarn fixture:generate
 ```
 ## Donation
 

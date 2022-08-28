@@ -1,24 +1,23 @@
 import {
   Entity,
   Column,
-  PrimaryGeneratedColumn,
-  CreateDateColumn,
-  UpdateDateColumn,
-  DeleteDateColumn,
+  OneToMany,
+  ManyToOne,
+  JoinColumn,
+  Index,
 } from 'typeorm';
 import { PasswordTransformer } from '../password.transformer';
 import { AppRoles } from '../../common/enum/roles.enum';
+import { CommonEntity } from '../../common/entity/common.entity';
+import { PurchaseEntity } from '../../purchase/entity/purchase.entity';
+import { UserStatus } from '../../common/enum/userStatus.enum';
+import { FileEntity } from '../../file/entity/file.entity';
+import { Type } from 'class-transformer';
 
 @Entity({
   name: 'users',
 })
-export class UserEntity {
-  /**
-   * UUID column
-   */
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
-
+export class UserEntity extends CommonEntity {
   /**
    * Unique username column
    */
@@ -26,16 +25,49 @@ export class UserEntity {
   username: string;
 
   /**
-   * Name column
+   * FirstName column
    */
-  @Column({ type: 'text' })
-  name: string;
+  @Column({ length: 255 })
+  firstname: string;
+
+  /**
+   * LastName column
+   */
+  @Column({ length: 255 })
+  lastname: string;
 
   /**
    * Email colum
    */
   @Column({ type: 'text', unique: true })
   email: string;
+
+  /**
+   * DoB colum
+   */
+  @Column({ type: 'date', nullable: true })
+  dateOfBirth: string;
+
+  /**
+   * User status
+   */
+  @Column({ type: 'enum', enum: UserStatus, default: UserStatus.UNCONFIRMED })
+  status: string;
+
+  /**
+   * User Profile
+   */
+  @Index('user-tb-index')
+  @ManyToOne(() => FileEntity)
+  @JoinColumn({ name: 'profileId' })
+  @Type((t) => FileEntity)
+  profile: string;
+
+  /**
+   * Purchase List
+   */
+  @OneToMany(() => PurchaseEntity, (purchase) => purchase.byUser)
+  purchases: string[];
 
   @Column({
     type: 'simple-array',
@@ -45,29 +77,14 @@ export class UserEntity {
   roles: AppRoles[];
 
   /**
-   * created date column
-   */
-  @CreateDateColumn()
-  createdDate: Date;
-
-  /**
-   * updated date column
-   */
-  @UpdateDateColumn()
-  updatedDate: Date;
-
-  /**
-   * delete date column
-   */
-  @DeleteDateColumn()
-  deletedDate: Date;
-
-  /**
    * Password column
    */
   @Column({
     name: 'password',
     length: 255,
+    /**
+     * Only use during fixture generation, should disable transformer when is not used
+     */
     transformer: new PasswordTransformer(),
   })
   password: string;

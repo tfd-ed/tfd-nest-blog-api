@@ -1,0 +1,10 @@
+entity: ChapterEntity
+items:
+  chapter{1..500}:
+    name: '{{name.jobType}} and {{name.jobTitle}}'
+    chapterNumber: '{{datatype.number(20)}}'
+    course: '@course*'
+    description: '{{lorem.paragraph}}'
+    vimeoId: '721860999'
+    duration: '{{datatype.number(15)}}'
+

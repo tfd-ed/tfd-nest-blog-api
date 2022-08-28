@@ -1,0 +1,11 @@
+entity: CourseEntity
+items:
+  course{1..50}:
+    title: 'How to be {{name.jobTitle}}'
+    price: '{{commerce.price}}'
+    description: '{{lorem.paragraphs(5)}}'
+    shortDescription: '{{lorem.paragraphs(3)}}'
+    thumbnail: '@file*'
+    instructor: '@instructor*'
+    category: '@category*'
+    paymentLink: 'https://link.payway.com.kh/TFDbyK.KHEANG/ABAPAY062A10061378461106135871120844605589'

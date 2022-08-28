@@ -1,0 +1,11 @@
+{
+  "email_already_conformed": "This email is already confirmed!",
+  "user_already_existed": "User with this email already existed!",
+  "token_expired": "Confirmation token expired!",
+  "invalid_token": "Invalid confirmation token!",
+  "invalid_credential": "Invalid login credential!",
+  "user_not_exist": "User with this email doesn't exist!",
+  "token_not_exist": "Reset Token Doesn't Exist",
+  "token_already_used": "Token already used!",
+  "mismatched_email": "Mismatched Email!"
+}

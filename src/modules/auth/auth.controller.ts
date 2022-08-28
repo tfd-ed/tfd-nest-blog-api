@@ -1,13 +1,16 @@
 import { Controller, Body, Post, Get, Request } from '@nestjs/common';
 import { ApiResponse, ApiTags, ApiBearerAuth } from '@nestjs/swagger';
-import { UsersService } from '../user';
 import { Public } from '../common/decorator/public.decorator';
 import { AuthService } from './auth.service';
 import { LoginPayload } from './payloads/login.payload';
 import { ResetPayload } from './payloads/reset.payload';
-import { RegisterPayload } from './payloads/register.payload';
+import { UsersService } from '../user/user.service';
+import { I18n, I18nContext } from 'nestjs-i18n';
 
-@Controller('api/v1/auth')
+@Controller({
+  path: 'auth',
+  version: '1',
+})
 @ApiTags('Authentication')
 export class AuthController {
   /**
@@ -22,7 +25,8 @@ export class AuthController {
 
   /**
    * Login User
-   * @param payload username, password
+   * @param payload email, password
+   * @param i18n
    * @return {token} including expire time, jwt token and user info
    */
   @Public()
@@ -30,8 +34,30 @@ export class AuthController {
   @ApiResponse({ status: 201, description: 'Successful Login' })
   @ApiResponse({ status: 400, description: 'Bad Request' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
-  async login(@Body() payload: LoginPayload): Promise<any> {
-    const user = await this.authService.validateUser(payload);
+  async login(
+    @Body() payload: LoginPayload,
+    @I18n() i18n: I18nContext,
+  ): Promise<any> {
+    const user = await this.authService.validateUser(payload, i18n);
+    return await this.authService.createToken(user);
+  }
+
+  /**
+   * Login Admin User
+   * @param payload email, password
+   * @param i18n
+   * @return {token} including expire time, jwt token and user info
+   */
+  @Public()
+  @Post('admin-login')
+  @ApiResponse({ status: 201, description: 'Successful Login' })
+  @ApiResponse({ status: 400, description: 'Bad Request' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  async adminLogin(
+    @Body() payload: LoginPayload,
+    @I18n() i18n: I18nContext,
+  ): Promise<any> {
+    const user = await this.authService.validateAdmin(payload, i18n);
     return await this.authService.createToken(user);
   }
 
@@ -49,18 +75,18 @@ export class AuthController {
     return user.toJSON();
   }
 
-  /**
-   * Register user
-   * @param payload register payload
-   */
-  @ApiBearerAuth()
-  @Post('register')
-  @ApiResponse({ status: 201, description: 'Successful Registration' })
-  @ApiResponse({ status: 400, description: 'Bad Request' })
-  @ApiResponse({ status: 401, description: 'Unauthorized' })
-  async register(@Body() payload: RegisterPayload): Promise<any> {
-    return await this.userService.create(payload);
-  }
+  // /**
+  //  * Register user
+  //  * @param payload register payload
+  //  */
+  // @ApiBearerAuth()
+  // @Post('register')
+  // @ApiResponse({ status: 201, description: 'Successful Registration' })
+  // @ApiResponse({ status: 400, description: 'Bad Request' })
+  // @ApiResponse({ status: 401, description: 'Unauthorized' })
+  // async register(@Body() payload: RegisterPayload): Promise<any> {
+  //   return await this.userService.create(payload);
+  // }
 
   /**
    * Get request's user info
