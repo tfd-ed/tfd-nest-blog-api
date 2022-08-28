@@ -11,7 +11,6 @@ import { AppRoles } from '../../common/enum/roles.enum';
 import { CommonEntity } from '../../common/entity/common.entity';
 import { PurchaseEntity } from '../../purchase/entity/purchase.entity';
 import { UserStatus } from '../../common/enum/userStatus.enum';
-import { CourseEntity } from '../../course/entity/course.entity';
 import { FileEntity } from '../../file/entity/file.entity';
 import { Type } from 'class-transformer';
 
@@ -83,6 +82,9 @@ export class UserEntity extends CommonEntity {
   @Column({
     name: 'password',
     length: 255,
+    /**
+     * Only use during fixture generation, should disable transformer when is not used
+     */
     transformer: new PasswordTransformer(),
   })
   password: string;

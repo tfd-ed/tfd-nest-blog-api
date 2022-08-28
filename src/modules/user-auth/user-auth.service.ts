@@ -16,6 +16,7 @@ import { I18nContext } from 'nestjs-i18n';
 import { UserEntity } from '../user/entity/user.entity';
 import { ResetPayload } from './payloads/reset.payload';
 import { ForgotEntity } from './entity/forgot.entity';
+import { Hash } from '../../utils/Hash';
 
 @Injectable()
 export class UserAuthService {
@@ -42,6 +43,7 @@ export class UserAuthService {
     if (users.length) {
       throw new BadRequestException(i18n.t('error.user_already_existed'));
     }
+    // const hashedPassword = Hash.make(payload.password);
     const final = await this.userRepository.save(
       this.userRepository.create({
         ...payload,
@@ -52,6 +54,7 @@ export class UserAuthService {
           '-' +
           Date.now(),
         status: UserStatus.UNCONFIRMED,
+        // password: hashedPassword,
       }),
     );
     this.eventEmitter.emit('user.registered', {
