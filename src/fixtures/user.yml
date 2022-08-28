@@ -2,16 +2,21 @@ entity: UserEntity
 items:
   user1:
     username: user
-    name: '{{name.firstName}} {{name.lastName}}'
-    password: admin
+    firstname: '{{name.firstName}}'
+    lastname: '{{name.lastName}}'
+    password: adminpassword
+    status: ACTIVE
     roles:
       - ADMIN
-    email: '{{internet.email}}'
-  user2:
-    username: user2
-    name: '{{name.firstName}} {{name.lastName}}'
-    password: admin2
+    email: 'admin@tfdevs.com'
+  user{2..100}:
+    username: '{{internet.userName}}-{{random.alphaNumeric(5)}}'
+    firstname: '{{name.firstName}}'
+    lastname: '{{name.lastName}}'
+    password: userpassword
+    status: ACTIVE
     roles:
       - DEFAULT
     email: '{{internet.email}}'
+    profile: '@file*'
 

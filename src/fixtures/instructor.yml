@@ -1,0 +1,6 @@
+entity: InstructorEntity
+items:
+  instructor{1..10}:
+    biography: '{{lorem.paragraphs(5)}}'
+    profile: '@file*'
+    name: '{{name.firstName}}'

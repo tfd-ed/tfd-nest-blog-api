@@ -1,0 +1,8 @@
+entity: FileEntity
+items:
+  file{1..50}:
+    name: '{{system.fileName}}'
+    path: 'https://loremflickr.com/640/480/abstract?{{datatype.float}}'
+    mimeType: 'image/png'
+    size: '{{finance.amount}}'
+    url: 'https://loremflickr.com/640/480/abstract?{{datatype.float}}'

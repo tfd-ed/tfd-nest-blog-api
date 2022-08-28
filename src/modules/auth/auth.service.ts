@@ -1,9 +1,12 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Hash } from '../../utils/Hash';
-import { UserEntity, UsersService } from '../user';
 import { LoginPayload } from './payloads/login.payload';
 import { ConfigService } from '@nestjs/config';
+import { UsersService } from '../user/user.service';
+import { UserEntity } from '../user/entity/user.entity';
+import { I18nContext } from 'nestjs-i18n';
+import { AppRoles } from '../common/enum/roles.enum';
 
 @Injectable()
 export class AuthService {
@@ -21,10 +24,27 @@ export class AuthService {
     };
   }
 
-  async validateUser(payload: LoginPayload): Promise<UserEntity> {
-    const user = await this.userService.getByUsername(payload.username);
+  async validateUser(
+    payload: LoginPayload,
+    i18n: I18nContext,
+  ): Promise<UserEntity> {
+    const user = await this.userService.getByEmail(payload.email);
     if (!user || !Hash.compare(payload.password, user.password)) {
-      throw new UnauthorizedException('Username or Password is not correct!');
+      throw new UnauthorizedException(i18n.t('error.invalid_credential'));
+    }
+    return user;
+  }
+
+  async validateAdmin(
+    payload: LoginPayload,
+    i18n: I18nContext,
+  ): Promise<UserEntity> {
+    const user = await this.userService.getByEmail(payload.email);
+    if (!user.roles.includes(AppRoles.ADMINS)) {
+      throw new UnauthorizedException('Only admin user allowed!');
+    }
+    if (!user || !Hash.compare(payload.password, user.password)) {
+      throw new UnauthorizedException(i18n.t('error.invalid_credential'));
     }
     return user;
   }

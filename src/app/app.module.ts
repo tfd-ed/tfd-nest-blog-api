@@ -1,90 +1,92 @@
 import { CacheModule, Module } from '@nestjs/common';
-import { TypeOrmModule, TypeOrmModuleAsyncOptions } from '@nestjs/typeorm';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { TimeoutInterceptor } from '../modules/common/interceptor/timeout.interceptor';
-import * as redisStore from 'cache-manager-redis-store';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtAuthGuard } from '../modules/auth/jwt-guard';
 import { CommonModule } from '../modules/common/common.module';
 import { AuthModule } from '../modules/auth/auth.module';
-import { UserModule } from '../modules/user';
 import { LoggingInterceptor } from '../modules/common/interceptor/logging.interceptor';
 import { RolesGuard } from '../modules/common/guard/roles.guard';
+import { EventEmitterModule } from '@nestjs/event-emitter';
+import { BullModule } from '@nestjs/bull';
+import { ThrottlerModule } from '@nestjs/throttler';
+import { AcceptLanguageResolver, I18nModule, QueryResolver } from 'nestjs-i18n';
+import { MailmanModule } from '@squareboat/nest-mailman';
+import {
+  bullConfig,
+  mailMainConfig,
+  redisConfig,
+  throttlerConfig,
+  typeormConfig,
+} from '../modules/common/config';
+import { join } from 'path';
+import { FileModule } from '../modules/file/file.module';
+import { CourseModule } from '../modules/course/course.module';
+import { UserAuthModule } from '../modules/user-auth/user-auth.module';
+import { PurchaseModule } from '../modules/purchase/purchase.module';
+import { UserModule } from '../modules/user/user.module';
+import { CategoryModule } from '../modules/category/category.module';
+import { ChapterModule } from '../modules/chapter/chapter.module';
+import { InstructorModule } from '../modules/instructor/instructor.module';
+import { CourseManagementModule } from '../modules/course-management/course-management.module';
+
 @Module({
   imports: [
+    EventEmitterModule.forRoot(),
     ConfigModule.forRoot({
-      ignoreEnvFile: process.env.NODE_ENV === 'production',
+      ignoreEnvFile:
+        process.env.NODE_ENV === 'beta' || process.env.NODE_ENV === 'staging',
+    }),
+    BullModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: bullConfig,
+      inject: [ConfigService],
     }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory: (configService: ConfigService) => {
-        if (process.env.NODE_ENV === 'development') {
-          return {
-            type: configService.get<string>('DB_TYPE'),
-            host: configService.get<string>('DB_HOST'),
-            port: configService.get<string>('DB_PORT'),
-            username: configService.get<string>('DB_USERNAME'),
-            password: configService.get<string>('DB_PASSWORD'),
-            database: configService.get<string>('DB_DATABASE'),
-            entities: [__dirname + './../**/**.entity{.ts,.js}'],
-            subscribers: [__dirname + './../**/**/*.subscriber.{ts,js}'],
-            synchronize: configService.get<string>('DB_SYNC'),
-            retryAttempts: 20,
-          } as TypeOrmModuleAsyncOptions;
-        }
-        if (process.env.NODE_ENV === 'production') {
-          /**
-           * Use database url in production instead
-           */
-          return {
-            type: configService.get<string>('DB_TYPE'),
-            url: configService.get<string>('DATABASE_URL'),
-            entities: [__dirname + './../**/**.entity{.ts,.js}'],
-            subscribers: [__dirname + './../**/**/*.subscriber.{ts,js}'],
-            synchronize: configService.get('DB_SYNC'),
-            ssl: true,
-            retryAttempts: 20,
-            extra: {
-              ssl: {
-                rejectUnauthorized: false,
-              },
-            },
-          } as TypeOrmModuleAsyncOptions;
-        }
-      },
+      useFactory: typeormConfig,
     }),
     CacheModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory: async (configService: ConfigService) => {
-        if (process.env.NODE_ENV === 'development') {
-          return {
-            ttl: configService.get<string>('CACHE_TTL'), // seconds
-            max: configService.get<string>('CACHE_MAX'), // maximum number of items in cache
-            store: redisStore,
-            host: configService.get<string>('CACHE_HOST'),
-            port: configService.get<string>('CACHE_PORT'),
-          };
-        }
-        if (process.env.NODE_ENV === 'production') {
-          /**
-           * Use redis url in production instead
-           */
-          return {
-            ttl: configService.get<string>('CACHE_TTL'), // seconds
-            max: configService.get<string>('CACHE_MAX'), // maximum number of items in cache
-            store: redisStore,
-            url: configService.get<string>('REDIS_URL'),
-          };
-        }
+      useFactory: redisConfig,
+    }),
+    ThrottlerModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: throttlerConfig,
+    }),
+    MailmanModule.registerAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: mailMainConfig,
+    }),
+    I18nModule.forRoot({
+      fallbackLanguage: 'kh',
+      loaderOptions: {
+        path: join(__dirname, './../i18n/'),
+        watch: true,
       },
+      resolvers: [
+        { use: QueryResolver, options: ['lang'] },
+        AcceptLanguageResolver,
+      ],
     }),
     AuthModule,
     UserModule,
+    FileModule,
+    CourseModule,
+    ChapterModule,
+    PurchaseModule,
+    UserAuthModule,
+    CategoryModule,
     CommonModule,
+    InstructorModule,
+    CourseManagementModule,
   ],
   controllers: [AppController],
   providers: [
@@ -101,10 +103,10 @@ import { RolesGuard } from '../modules/common/guard/roles.guard';
       provide: APP_INTERCEPTOR,
       useClass: TimeoutInterceptor,
     },
-    {
-      provide: APP_INTERCEPTOR,
-      useClass: LoggingInterceptor,
-    },
+    // {
+    //   provide: APP_INTERCEPTOR,
+    //   useClass: LoggingInterceptor,
+    // },
   ],
 })
 export class AppModule {}

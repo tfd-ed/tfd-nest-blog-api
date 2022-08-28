@@ -13,6 +13,10 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     super();
   }
   canActivate(context: ExecutionContext) {
+    /**
+     * Try to activate first
+     */
+    // console.log('First Layer');
     const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
       context.getHandler(),
       context.getClass(),
@@ -27,6 +31,8 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     if (err || !user) {
       throw err || new UnauthorizedException();
     }
+    // console.log('From handle user: ');
+    // console.log(user);
     return user;
   }
 }

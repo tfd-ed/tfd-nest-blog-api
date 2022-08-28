@@ -1,0 +1,14 @@
+entity: PurchaseEntity
+items:
+  purchase{1..150}:
+    byUser: '@user*'
+    course: '@course*'
+    status: VERIFIED
+    price: '{{commerce.price}}'
+    transaction: '{{finance.routingNumber}}'
+  purchase{151..300}:
+    byUser: '@user*'
+    course: '@course*'
+    status: SUBMITTED
+    price: '{{commerce.price}}'
+    transaction: '{{finance.routingNumber}}'
