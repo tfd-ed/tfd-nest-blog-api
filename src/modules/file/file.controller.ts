@@ -16,6 +16,8 @@ import { FileService } from './file.service';
 import { ApiFile } from '../common/file/ApiFile';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { fileFilterUtils } from '../common/filter/FileFilter.utils';
+import { Roles } from '../common/decorator/roles.decorator';
+import { AppRoles } from '../common/enum/roles.enum';
 
 @Controller({
   path: 'files',
@@ -28,6 +30,7 @@ export class FileController {
   /**
    * General API for uploading file to AWS Bucket
    */
+  @Roles(AppRoles.DEFAULT)
   @Post()
   @ApiOperation({ summary: 'Upload an image' })
   @ApiResponse({ status: 201, description: 'Successful Upload' })

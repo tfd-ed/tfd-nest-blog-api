@@ -9,11 +9,13 @@
   "tfd_right": "Teaching For Development, All Rights Reserved.",
   "you_are_receiving_this_email": "You are receiving this email because you registered in TFD platform. If you did not register, and you believe someone may use this email without your consent, please just ignore it.",
   "email": "Email",
-  "confirmation_link": "Please click on the link to confirm: ",
+  "confirmation_link": "Confirm Email",
+  "click_to_reset_password": "Reset Password",
   "we_received_request_to_reset_password": "We received your request to reset your password. If you didn't perform such action and believed that someone might do it on your behalf, please ignore this email.",
   "privacy": "Privacy",
   "tos": "Terms of service",
   "welcome_to_tfdevs": "Welcome to TFDevs!",
   "total": "total",
-  "payment_method": "Payment method"
+  "payment_method": "Payment method",
+  "start_learning": "Start Learning"
 }

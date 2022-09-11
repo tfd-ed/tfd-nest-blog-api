@@ -8,7 +8,6 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtAuthGuard } from '../modules/auth/jwt-guard';
 import { CommonModule } from '../modules/common/common.module';
 import { AuthModule } from '../modules/auth/auth.module';
-import { LoggingInterceptor } from '../modules/common/interceptor/logging.interceptor';
 import { RolesGuard } from '../modules/common/guard/roles.guard';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { BullModule } from '@nestjs/bull';
@@ -32,6 +31,7 @@ import { CategoryModule } from '../modules/category/category.module';
 import { ChapterModule } from '../modules/chapter/chapter.module';
 import { InstructorModule } from '../modules/instructor/instructor.module';
 import { CourseManagementModule } from '../modules/course-management/course-management.module';
+import { UserOwnManagementModule } from '../modules/user-own-management/user-own-management.module';
 
 @Module({
   imports: [
@@ -87,6 +87,7 @@ import { CourseManagementModule } from '../modules/course-management/course-mana
     CommonModule,
     InstructorModule,
     CourseManagementModule,
+    UserOwnManagementModule,
   ],
   controllers: [AppController],
   providers: [
@@ -103,10 +104,6 @@ import { CourseManagementModule } from '../modules/course-management/course-mana
       provide: APP_INTERCEPTOR,
       useClass: TimeoutInterceptor,
     },
-    // {
-    //   provide: APP_INTERCEPTOR,
-    //   useClass: LoggingInterceptor,
-    // },
   ],
 })
 export class AppModule {}
