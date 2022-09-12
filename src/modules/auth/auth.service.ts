@@ -1,4 +1,8 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Hash } from '../../utils/Hash';
 import { LoginPayload } from './payloads/login.payload';
@@ -40,6 +44,9 @@ export class AuthService {
     i18n: I18nContext,
   ): Promise<UserEntity> {
     const user = await this.userService.getByEmail(payload.email);
+    if (!user) {
+      throw new NotFoundException('User Not Found!');
+    }
     if (!user.roles.includes(AppRoles.ADMINS)) {
       throw new UnauthorizedException('Only admin user allowed!');
     }
