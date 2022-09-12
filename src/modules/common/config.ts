@@ -73,7 +73,6 @@ export async function typeormConfig(configService: ConfigService) {
       entities: [__dirname + './../**/**.entity{.ts,.js}'],
       subscribers: [__dirname + './../**/**/*.subscriber.{ts,js}'],
       migrations: [join(__dirname, './../../migrations/{.ts,*.js}')],
-      maxQueryExecutionTime: 1000,
       synchronize: false,
       /**
        * Migration is automatically performed on prod server
