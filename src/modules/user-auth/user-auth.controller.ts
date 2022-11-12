@@ -1,12 +1,5 @@
 import { ApiForbiddenResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
-import {
-  Body,
-  Controller,
-  Get,
-  Param,
-  ParseUUIDPipe,
-  Post,
-} from '@nestjs/common';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { RegisterPayload } from './payloads/register.payload';
 import { Public } from '../common/decorator/public.decorator';
 import { ForbiddenDto } from '../common/schema/forbidden.dto';

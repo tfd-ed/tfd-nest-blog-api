@@ -16,7 +16,6 @@ import { I18nContext } from 'nestjs-i18n';
 import { UserEntity } from '../user/entity/user.entity';
 import { ResetPayload } from './payloads/reset.payload';
 import { ForgotEntity } from './entity/forgot.entity';
-import { Hash } from '../../utils/Hash';
 
 @Injectable()
 export class UserAuthService {

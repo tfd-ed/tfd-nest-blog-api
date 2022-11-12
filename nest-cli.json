@@ -1,4 +1,25 @@
 {
   "collection": "@nestjs/schematics",
-  "sourceRoot": "src"
+  "sourceRoot": "src",
+  "compilerOptions": {
+    "assets": [
+      {
+        "include": "templates/**/*",
+        "watchAssets": true
+      },
+      {
+        "include": "i18n/**/*",
+        "watchAssets": true
+      },
+      {
+        "include": "fixtures/**/*",
+        "watchAssets": true
+      },
+      {
+        "include":  "sql/**/*",
+        "watchAssets": true
+      }
+
+    ]
+  }
 }
