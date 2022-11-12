@@ -38,7 +38,9 @@ async function bootstrap() {
     type: VersioningType.URI,
     prefix: 'v',
   });
-  setupSwagger(app);
+  if (configService.get('APP_ENV') == 'dev') {
+    setupSwagger(app);
+  }
   // Enable Cors for development
   /**
    * Enable Cors for development

@@ -2,7 +2,6 @@ import { Controller } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Crud, CrudAuth, CrudController } from '@nestjsx/crud';
 import { UserEntity } from '../user/entity/user.entity';
-import { UserStatus } from '../common/enum/userStatus.enum';
 import { UserOwnManagementService } from './user-own-management.service';
 import { Roles } from '../common/decorator/roles.decorator';
 import { AppRoles } from '../common/enum/roles.enum';
@@ -25,10 +24,6 @@ import { AppRoles } from '../common/enum/roles.enum';
       },
     },
     exclude: ['password'],
-    /**
-     * Only published courses are shown to general users
-     */
-    filter: [{ field: 'status', operator: '$eq', value: UserStatus.ACTIVE }],
   },
   routes: {
     /**
