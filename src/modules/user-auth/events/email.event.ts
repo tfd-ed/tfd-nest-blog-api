@@ -56,7 +56,7 @@ export default class EmailEvent {
         // instruction: this.translateService.t('event.email', {
         //   lang: payload.lang,
         // }),
-        confirmation_link: this.translateService.t('event.confirmation_link', {
+        confirm_email: this.translateService.t('event.confirmation_link', {
           lang: payload.lang,
         }),
         you_are_receiving_this_email: this.translateService.t(
@@ -81,7 +81,7 @@ export default class EmailEvent {
     Mailman.init()
       .to(payload.email)
       .from('"TFD" <info@tfdevs.com>')
-      .replyTo('no-reply@tfdevs.com')
+      .replyTo('no-reply@info.com')
       .send(mail)
       .then(() => {
         this.logger.log('Email to: ' + payload.email + ' sent!');
@@ -134,9 +134,12 @@ export default class EmailEvent {
         // instruction: this.translateService.t('event.email', {
         //   lang: payload.lang,
         // }),
-        confirmation_link: this.translateService.t('event.confirmation_link', {
-          lang: payload.lang,
-        }),
+        confirm_email: this.translateService.t(
+          'event.click_to_reset_password',
+          {
+            lang: payload.lang,
+          },
+        ),
         you_are_receiving_this_email: this.translateService.t(
           'event.you_are_receiving_this_email',
           {

@@ -53,7 +53,7 @@ export class CourseEntity extends CommonEntity {
   description: string;
 
   /**
-   * Instructor colum
+   * Instructor column
    */
   @Index('course-instructor-index')
   @Type(() => InstructorEntity)
@@ -62,13 +62,21 @@ export class CourseEntity extends CommonEntity {
   instructor: string;
 
   /**
-   * Price Colum
+   * Price Column
    */
   @IsOptional({ groups: [UPDATE] })
   @IsNotEmpty({ groups: [CREATE] })
   @IsNumber({ maxDecimalPlaces: 99999, allowInfinity: false, allowNaN: false })
   @Column({ type: 'float' })
   price: number;
+
+  /**
+   * Promotional Column
+   */
+  @IsOptional({ groups: [UPDATE] })
+  @IsNotEmpty({ groups: [CREATE] })
+  @Column({ type: 'text', nullable: true })
+  promotionalVimeoLink: string;
 
   /**
    * Thumbnail Colum

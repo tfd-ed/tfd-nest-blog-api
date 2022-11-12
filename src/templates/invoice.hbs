@@ -5,7 +5,7 @@
     <mj-body background-color="#F4F4F4">
         <mj-section background-color="#000000" background-repeat="no-repeat" text-align="center" vertical-align="top" padding="0 0 0 0">
             <mj-column>
-                <mj-image align="center" border="none" padding-bottom="0px" padding-left="0px" padding-right="0px" padding="0px 25px" src="https://i.imgur.com/ubnHyzL.png" target="_blank" title="" width="780px"></mj-image>
+                <mj-image align="center" border="none" padding-bottom="0px" padding-left="0px" padding-right="0px" padding="0px 25px" src="https://i.imgur.com/hiBz7Kb.png" target="_blank" title="" width="780px"></mj-image>
             </mj-column>
         </mj-section>
         <mj-section background-color="#FFFFFF" background-repeat="repeat" padding-bottom="0px" padding-top="0">
@@ -33,17 +33,17 @@
                         <th>${{price}}</th>
                     </tr>
                 </mj-table>
-                <mj-button background-color="#e74c3c" color="#FFFFFF" padding="60px 0 30px 0" href="https://tfdevs.com/course" font-weight="bold" font-size="16px">{{start_learning}}</mj-button>
+                <mj-button background-color="#e74c3c" color="#FFFFFF" padding="60px 0 30px 0" href="{{link}}" font-weight="bold" font-size="16px">{{start_learning}}</mj-button>
                 <mj-divider border-color="#2c3e50" border-width="2px" border-style="solid" padding-left="20px" padding-right="20px" padding-bottom="0px" padding-top="0"></mj-divider>
                 <mj-text color="black" font-family="Kantumruy, Source Sans Pro, sans-serif" font-size="14px" align="center" line-height="12px" align="align">
                     {{payment_method}}
                 </mj-text>
                 <mj-image align="center" padding="10px 25px" src="https://i.imgur.com/MGe6N9C.png" width="60px"></mj-image>
-                <mj-text color="#2c3e50" font-family="Kantumruy, Source Sans Pro, sans-serif" font-size="16px" align="center" line-height="16px">
-                    $ {{price}}
+                <mj-text color="#2c3e50" font-family="Kantumruy, Source Sans Pro, sans-serif" font-size="24px" align="center" line-height="16px">
+                    <b>$ {{price}}</b>
                 </mj-text>
                 <mj-text color="#2c3e50" font-family="Kantumruy, Source Sans Pro, sans-serif" font-size="16px" align="center" line-height="16px">
-                    $ {{date_of_purchase}}
+                    <i>{{date_of_purchase}}</i>
                 </mj-text>
             </mj-column>
         </mj-section>
