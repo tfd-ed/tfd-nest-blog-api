@@ -68,7 +68,8 @@ Migration file will be inside `src/migrations`.
 Note that you will have to write migration code inside up and down method on your own.  
 To generate migration for new database or from the changes in database schema(entities) use:
 ```bash  
-$ docker exec -it tfd-api-server yarn migration:generate -n {GenerateTable}```  
+$ docker exec -it tfd-api-server yarn migration:generate -n {GenerateTable}
+```  
 #### Run Migrations  
 ```bash  
 $ docker exec -it tfd-api-server yarn migration:run

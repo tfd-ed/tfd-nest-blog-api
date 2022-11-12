@@ -63,7 +63,7 @@ import { CourseEnum } from '../common/enum/course.enum';
   },
   routes: {
     /**
-     * Disable CUD features for general users
+     * Disable CRUD features for general users
      */
     exclude: [
       'deleteOneBase',

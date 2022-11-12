@@ -1,18 +1,16 @@
-import {
-  Crud,
-  CrudAuth,
-  CrudController,
-  CrudRequest,
-  Override,
-  ParsedRequest,
-} from '@nestjsx/crud';
+import { Crud, CrudController } from '@nestjsx/crud';
 import { PurchaseEntity } from './entity/purchase.entity';
 import { PurchaseService } from './purchase.service';
-import { Controller } from '@nestjs/common';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { Controller, Param, ParseUUIDPipe, Patch } from '@nestjs/common';
+import {
+  ApiBearerAuth,
+  ApiForbiddenResponse,
+  ApiOperation,
+  ApiTags,
+} from '@nestjs/swagger';
 import { Roles } from '../common/decorator/roles.decorator';
 import { AppRoles } from '../common/enum/roles.enum';
-import { UserEntity } from '../user/entity/user.entity';
+import { ForbiddenDto } from '../common/schema/forbidden.dto';
 
 @Crud({
   model: {
@@ -35,25 +33,21 @@ import { UserEntity } from '../user/entity/user.entity';
 })
 @ApiTags('Purchases')
 @ApiBearerAuth()
-// @CrudAuth({
-//   property: 'user',
-//   filter: (user: UserEntity) => {
-//     console.log('Third Layer');
-//   },
-// })
 @Roles(AppRoles.ADMINS)
 export class PurchaseController implements CrudController<PurchaseEntity> {
   constructor(public service: PurchaseService) {}
-  // get base(): CrudController<PurchaseEntity> {
-  //   return this;
-  // }
-  //
-  // /**
-  //  * Override for public request
-  //  * @param req
-  //  */
-  // @Override('getManyBase')
-  // getMany(@ParsedRequest() req: CrudRequest) {
-  //   return this.base.getManyBase(req);
-  // }
+  /**
+   * Approve a purchase and inform buyer via email and web shocked
+   * @param id
+   */
+  @Patch(':id/approve')
+  @ApiOperation({ summary: 'Admin approves a purchase' })
+  @ApiForbiddenResponse({
+    status: 403,
+    description: 'Forbidden',
+    type: ForbiddenDto,
+  })
+  async approvePurchase(@Param('id', new ParseUUIDPipe()) id: string) {
+    return this.service.approvePurchase(id);
+  }
 }

@@ -1,13 +1,14 @@
 entity: UserEntity
 items:
   user1:
-    username: user
+    username: admin
     firstname: '{{name.firstName}}'
     lastname: '{{name.lastName}}'
     password: adminpassword
     status: ACTIVE
     roles:
       - ADMIN
+      - DEFAULT
     email: 'admin@tfdevs.com'
   user{2..100}:
     username: '{{internet.userName}}-{{random.alphaNumeric(5)}}'
