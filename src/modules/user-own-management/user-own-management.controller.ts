@@ -1,6 +1,14 @@
-import { Controller } from '@nestjs/common';
+import { BadRequestException, Controller } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { Crud, CrudAuth, CrudController } from '@nestjsx/crud';
+import {
+  Crud,
+  CrudAuth,
+  CrudController,
+  CrudRequest,
+  Override,
+  ParsedBody,
+  ParsedRequest,
+} from '@nestjsx/crud';
 import { UserEntity } from '../user/entity/user.entity';
 import { UserOwnManagementService } from './user-own-management.service';
 import { Roles } from '../common/decorator/roles.decorator';
@@ -49,4 +57,26 @@ import { AppRoles } from '../common/enum/roles.enum';
 @ApiBearerAuth()
 export class UserOwnManagementController implements CrudController<UserEntity> {
   constructor(public service: UserOwnManagementService) {}
+
+  get base(): CrudController<UserEntity> {
+    return this;
+  }
+
+  /**
+   * In case user update username which may be duplicated with other username
+   * Throw bad request exception
+   * @param req
+   * @param dto
+   */
+  @Override('updateOneBase')
+  async updateUser(
+    @ParsedRequest() req: CrudRequest,
+    @ParsedBody() dto: UserEntity,
+  ) {
+    try {
+      await this.base.updateOneBase(req, dto);
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
+  }
 }
