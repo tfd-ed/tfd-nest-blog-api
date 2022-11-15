@@ -131,7 +131,7 @@ export async function throttlerConfig(configService: ConfigService) {
   return {
     ttl: configService.get('THROTTLE_TTL'),
     limit: configService.get('THROTTLE_LIMIT'),
-    storage: new ThrottlerStorageRedisService(redisObj),
+    storage: new ThrottlerStorageRedisService(configService.get('REDIS_URL')),
   };
 }
 export async function mailMainConfig(configService: ConfigService) {
