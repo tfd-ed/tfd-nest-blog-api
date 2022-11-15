@@ -83,8 +83,8 @@ export async function typeormConfig(configService: ConfigService) {
     return {
       type: configService.get<string>('DB_TYPE'),
       url: configService.get<string>('DATABASE_URL'),
-      username: configService.get<string>('DB_USERNAME'),
-      password: configService.get<string>('DB_PASSWORD'),
+      // username: configService.get<string>('DB_USERNAME'),
+      // password: configService.get<string>('DB_PASSWORD'),
       entities: [__dirname + './../**/**.entity{.ts,.js}'],
       subscribers: [__dirname + './../**/**/*.subscriber.{ts,js}'],
       migrations: [join(__dirname, './../../migrations/{.ts,*.js}')],
@@ -109,6 +109,7 @@ export async function throttlerConfig(configService: ConfigService) {
   let redisObj;
   const db_host_port = configService.get('REDIS_URL').toString().split('@')[1];
   const db_host = db_host_port.split(':')[0];
+  const db_port = db_host_port.split(':')[1];
   if (env === 'dev') {
     redisObj = {
       host: configService.get('CACHE_HOST'),
@@ -116,11 +117,11 @@ export async function throttlerConfig(configService: ConfigService) {
     };
   } else {
     redisObj = {
-      // host: configService.get('CACHE_HOST'),
-      // port: configService.get('CACHE_PORT'),
-      // username: configService.get('CACHE_USER'),
-      // password: configService.get('CACHE_PASSWORD'),
-      url: configService.get('REDIS_URL'),
+      host: db_host,
+      port: db_port,
+      username: configService.get('CACHE_USER'),
+      password: configService.get('CACHE_PASSWORD'),
+      // url: configService.get('REDIS_URL'),
       tls: {
         servername: db_host,
         rejectUnauthorized: false,
