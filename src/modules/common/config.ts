@@ -39,6 +39,8 @@ export async function redisConfig(configService: ConfigService) {
       .toString()
       .split('@')[1];
     const db_host = db_host_port.split(':')[0];
+    console.log(db_host_port);
+    console.log(db_host);
     return {
       ttl: configService.get('CACHE_TTL'), // seconds
       max: configService.get('CACHE_MAX'), // maximum number of items in cache
