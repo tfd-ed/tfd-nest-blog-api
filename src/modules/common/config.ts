@@ -39,8 +39,6 @@ export async function redisConfig(configService: ConfigService) {
       .toString()
       .split('@')[1];
     const db_host = db_host_port.split(':')[0];
-    console.log(db_host_port);
-    console.log(db_host);
     return {
       ttl: configService.get('CACHE_TTL'), // seconds
       max: configService.get('CACHE_MAX'), // maximum number of items in cache
@@ -107,7 +105,15 @@ export async function typeormConfig(configService: ConfigService) {
 export async function throttlerConfig(configService: ConfigService) {
   const env = configService.get<string>('APP_ENV');
   let redisObj;
+  /**
+   * REDIS_URL is periodically rotated
+   */
   const db_host_port = configService.get('REDIS_URL').toString().split('@')[1];
+  const db_password_head = configService
+    .get('REDIS_URL')
+    .toString()
+    .split('@')[0];
+  const db_password = db_password_head.split(':')[1];
   const db_host = db_host_port.split(':')[0];
   const db_port = db_host_port.split(':')[1];
   if (env === 'dev') {
@@ -119,8 +125,7 @@ export async function throttlerConfig(configService: ConfigService) {
     redisObj = {
       host: db_host,
       port: db_port,
-      username: configService.get('CACHE_USER'),
-      password: configService.get('CACHE_PASSWORD'),
+      password: db_password,
       // url: configService.get('REDIS_URL'),
       tls: {
         servername: db_host,
@@ -131,7 +136,7 @@ export async function throttlerConfig(configService: ConfigService) {
   return {
     ttl: configService.get('THROTTLE_TTL'),
     limit: configService.get('THROTTLE_LIMIT'),
-    storage: new ThrottlerStorageRedisService(configService.get('REDIS_URL')),
+    storage: new ThrottlerStorageRedisService(redisObj),
   };
 }
 export async function mailMainConfig(configService: ConfigService) {
