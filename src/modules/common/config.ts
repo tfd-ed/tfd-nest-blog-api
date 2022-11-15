@@ -108,14 +108,19 @@ export async function throttlerConfig(configService: ConfigService) {
   /**
    * REDIS_URL is periodically rotated
    */
-  const db_host_port = configService.get('REDIS_URL').toString().split('@')[1];
-  const db_password_head = configService
+  const cache_host_port = configService
+    .get('REDIS_URL')
+    .toString()
+    .split('@')[1];
+  const cache_password_head = configService
     .get('REDIS_URL')
     .toString()
     .split('@')[0];
-  const db_password = db_password_head.split(':')[1];
-  const db_host = db_host_port.split(':')[0];
-  const db_port = db_host_port.split(':')[1];
+  console.log(cache_password_head);
+  const cache_password = cache_password_head.split(':')[1];
+  console.log(cache_password);
+  const cache_host = cache_host_port.split(':')[0];
+  const cache_port = cache_host_port.split(':')[1];
   if (env === 'dev') {
     redisObj = {
       host: configService.get('CACHE_HOST'),
@@ -123,13 +128,13 @@ export async function throttlerConfig(configService: ConfigService) {
     };
   } else {
     redisObj = {
-      host: db_host,
-      port: db_port,
+      host: cache_host,
+      port: cache_port,
       username: configService.get('CACHE_USER'),
-      password: db_password,
+      password: cache_password,
       // url: configService.get('REDIS_URL'),
       tls: {
-        servername: db_host,
+        servername: cache_host,
         rejectUnauthorized: false,
       },
     };
