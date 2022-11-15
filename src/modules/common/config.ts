@@ -125,8 +125,9 @@ export async function throttlerConfig(configService: ConfigService) {
     redisObj = {
       host: db_host,
       port: db_port,
-      user: configService.get('CACHE_USER'),
+      username: configService.get('CACHE_USER'),
       password: db_password,
+      // url: configService.get('REDIS_URL'),
       tls: {
         servername: db_host,
         rejectUnauthorized: false,
