@@ -83,8 +83,8 @@ export async function typeormConfig(configService: ConfigService) {
     return {
       type: configService.get<string>('DB_TYPE'),
       url: configService.get<string>('DATABASE_URL'),
-      // username: configService.get<string>('DB_USERNAME'),
-      // password: configService.get<string>('DB_PASSWORD'),
+      username: configService.get<string>('DB_USERNAME'),
+      password: configService.get<string>('DB_PASSWORD'),
       entities: [__dirname + './../**/**.entity{.ts,.js}'],
       subscribers: [__dirname + './../**/**/*.subscriber.{ts,js}'],
       migrations: [join(__dirname, './../../migrations/{.ts,*.js}')],
