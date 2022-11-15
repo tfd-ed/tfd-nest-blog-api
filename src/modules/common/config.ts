@@ -116,9 +116,7 @@ export async function throttlerConfig(configService: ConfigService) {
     .get('REDIS_URL')
     .toString()
     .split('@')[0];
-  console.log(cache_password_head);
-  const cache_password = cache_password_head.split(':')[1];
-  console.log(cache_password);
+  const cache_password = cache_password_head.split(':')[2];
   const cache_host = cache_host_port.split(':')[0];
   const cache_port = cache_host_port.split(':')[1];
   if (env === 'dev') {
@@ -130,7 +128,7 @@ export async function throttlerConfig(configService: ConfigService) {
     redisObj = {
       host: cache_host,
       port: cache_port,
-      username: configService.get('CACHE_USER'),
+      // username: configService.get('CACHE_USER'),
       password: cache_password,
       // url: configService.get('REDIS_URL'),
       tls: {
