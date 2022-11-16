@@ -105,26 +105,26 @@ export async function typeormConfig(configService: ConfigService) {
 export async function throttlerConfig(configService: ConfigService) {
   const env = configService.get<string>('APP_ENV');
   let redisObj;
-  /**
-   * REDIS_URL is periodically rotated
-   */
-  const cache_host_port = configService
-    .get('REDIS_URL')
-    .toString()
-    .split('@')[1];
-  const cache_password_head = configService
-    .get('REDIS_URL')
-    .toString()
-    .split('@')[0];
-  const cache_password = cache_password_head.split(':')[2];
-  const cache_host = cache_host_port.split(':')[0];
-  const cache_port = cache_host_port.split(':')[1];
   if (env === 'dev') {
     redisObj = {
       host: configService.get('CACHE_HOST'),
       port: configService.get('CACHE_PORT'),
     };
   } else {
+    /**
+     * REDIS_URL is periodically rotated
+     */
+    const cache_host_port = configService
+      .get('REDIS_URL')
+      .toString()
+      .split('@')[1];
+    const cache_password_head = configService
+      .get('REDIS_URL')
+      .toString()
+      .split('@')[0];
+    const cache_password = cache_password_head.split(':')[2];
+    const cache_host = cache_host_port.split(':')[0];
+    const cache_port = cache_host_port.split(':')[1];
     redisObj = {
       host: cache_host,
       port: cache_port,
@@ -167,9 +167,12 @@ export async function bullConfig(configService: ConfigService) {
       // },
     };
   }
-  const db_host_port = configService.get('REDIS_URL').toString().split('@')[1];
-  const db_host = db_host_port.split(':')[0];
   if (env === 'prod') {
+    const db_host_port = configService
+      .get('REDIS_URL')
+      .toString()
+      .split('@')[1];
+    const db_host = db_host_port.split(':')[0];
     return {
       redis: {
         url: configService.get('REDIS_URL'),
