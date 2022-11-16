@@ -29,13 +29,23 @@ export async function redisConfig(configService: ConfigService) {
     } as CacheModuleOptions;
   }
   if (env === 'prod') {
+    /**
+     * Prevent Application crashes as cloud service provider
+     * usually rotates credential for security reason
+     * REDIS_URL is rotated overtime
+     */
+    const db_host_port = configService
+      .get('REDIS_URL')
+      .toString()
+      .split('@')[1];
+    const db_host = db_host_port.split(':')[0];
     return {
       ttl: configService.get('CACHE_TTL'), // seconds
       max: configService.get('CACHE_MAX'), // maximum number of items in cache
       store: redisStore,
       url: configService.get('REDIS_URL'),
       tls: {
-        servername: configService.get('CACHE_HOST'),
+        servername: db_host,
         rejectUnauthorized: false,
       },
     };
@@ -53,7 +63,7 @@ export async function typeormConfig(configService: ConfigService) {
       database: configService.get<string>('DB_DATABASE'),
       maxQueryExecutionTime: 1000,
       // logging: true,
-      synchronize: false,
+      synchronize: true,
       migrationsRun: false,
       dropSchema: false,
       entities: [join(__dirname, './../**/**.entity{.ts,.js}')],
@@ -65,11 +75,14 @@ export async function typeormConfig(configService: ConfigService) {
     } as TypeOrmModuleAsyncOptions;
   }
   if (env === 'prod') {
+    /**
+     * DB_USERNAME and DB_PASSWORD are not needed when the whole DB URL is provided
+     */
     return {
       type: configService.get<string>('DB_TYPE'),
       url: configService.get<string>('DATABASE_URL'),
-      username: configService.get<string>('DB_USERNAME'),
-      password: configService.get<string>('DB_PASSWORD'),
+      // username: configService.get<string>('DB_USERNAME'),
+      // password: configService.get<string>('DB_PASSWORD'),
       entities: [__dirname + './../**/**.entity{.ts,.js}'],
       subscribers: [__dirname + './../**/**/*.subscriber.{ts,js}'],
       migrations: [join(__dirname, './../../migrations/{.ts,*.js}')],
@@ -98,13 +111,28 @@ export async function throttlerConfig(configService: ConfigService) {
       port: configService.get('CACHE_PORT'),
     };
   } else {
+    /**
+     * REDIS_URL is periodically rotated
+     */
+    const cache_host_port = configService
+      .get('REDIS_URL')
+      .toString()
+      .split('@')[1];
+    const cache_password_head = configService
+      .get('REDIS_URL')
+      .toString()
+      .split('@')[0];
+    const cache_password = cache_password_head.split(':')[2];
+    const cache_host = cache_host_port.split(':')[0];
+    const cache_port = cache_host_port.split(':')[1];
     redisObj = {
-      host: configService.get('CACHE_HOST'),
-      port: configService.get('CACHE_PORT'),
-      username: configService.get('CACHE_USER'),
-      password: configService.get('CACHE_PASSWORD'),
+      host: cache_host,
+      port: cache_port,
+      // username: configService.get('CACHE_USER'),
+      password: cache_password,
+      // url: configService.get('REDIS_URL'),
       tls: {
-        servername: configService.get('CACHE_HOST'),
+        servername: cache_host,
         rejectUnauthorized: false,
       },
     };
@@ -140,13 +168,18 @@ export async function bullConfig(configService: ConfigService) {
     };
   }
   if (env === 'prod') {
+    const db_host_port = configService
+      .get('REDIS_URL')
+      .toString()
+      .split('@')[1];
+    const db_host = db_host_port.split(':')[0];
     return {
       redis: {
         url: configService.get('REDIS_URL'),
         tls: {
           maxRetriesPerRequest: 100,
           enableReadyCheck: false,
-          servername: configService.get('CACHE_HOST'),
+          servername: db_host,
           rejectUnauthorized: false,
         },
       },
