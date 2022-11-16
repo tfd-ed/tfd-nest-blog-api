@@ -6,6 +6,7 @@ import { CourseService } from './course.service';
 import { CourseController } from './course.controller';
 import { PurchaseEntity } from '../purchase/entity/purchase.entity';
 import { ChapterEntity } from '../chapter/entity/chapter.entity';
+import { ConfigService } from '@nestjs/config';
 
 @Module({
   imports: [
@@ -14,6 +15,6 @@ import { ChapterEntity } from '../chapter/entity/chapter.entity';
   ],
   exports: [CourseService],
   controllers: [CourseController],
-  providers: [CourseService],
+  providers: [CourseService, ConfigService],
 })
 export class CourseModule {}

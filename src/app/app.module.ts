@@ -32,6 +32,7 @@ import { ChapterModule } from '../modules/chapter/chapter.module';
 import { InstructorModule } from '../modules/instructor/instructor.module';
 import { CourseManagementModule } from '../modules/course-management/course-management.module';
 import { UserOwnManagementModule } from '../modules/user-own-management/user-own-management.module';
+import { TelegrafModule } from 'nestjs-telegraf';
 
 @Module({
   imports: [
@@ -75,6 +76,19 @@ import { UserOwnManagementModule } from '../modules/user-own-management/user-own
         { use: QueryResolver, options: ['lang'] },
         AcceptLanguageResolver,
       ],
+    }),
+    TelegrafModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: async (configService: ConfigService) => ({
+        token: configService.get<string>('TELEGRAM_BOT_TOKEN'),
+        launchOptions: {
+          webhook: {
+            domain: 'tfdevs.com',
+            hookPath: '/hooks',
+          },
+        },
+      }),
+      inject: [ConfigService],
     }),
     AuthModule,
     UserModule,

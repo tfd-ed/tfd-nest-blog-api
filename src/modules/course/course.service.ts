@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { TypeOrmCrudService } from '@nestjsx/crud-typeorm';
 import { CourseEntity } from './entity/course.entity';
 import { Repository } from 'typeorm';
@@ -12,6 +12,9 @@ import {
 } from 'nestjs-typeorm-paginate';
 import { ChapterEntity } from '../chapter/entity/chapter.entity';
 import { ChapterPayload } from './payload/chapter.payload';
+import { InjectBot } from 'nestjs-telegraf';
+import { Context, Telegraf } from 'telegraf';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class CourseService extends TypeOrmCrudService<CourseEntity> {
@@ -22,16 +25,35 @@ export class CourseService extends TypeOrmCrudService<CourseEntity> {
     private readonly chaptersRepository: Repository<ChapterEntity>,
     @InjectRepository(PurchaseEntity)
     private readonly purchaseRepository: Repository<PurchaseEntity>,
+    private readonly configService: ConfigService,
+    @InjectBot() private bot: Telegraf<Context>,
   ) {
     super(courseRepository);
   }
+  private readonly logger = new Logger(CourseService.name);
 
   async purchase(id: string, payload: PurchasePayload) {
     try {
+      /**
+       * Inform Admin Group About Course Purchase
+       */
+      this.bot.telegram
+        .sendMessage(
+          this.configService.get('PRIVATE_GROUP_CHAT_ID'),
+          `Hi there! There is a purchase with translation ID: ${
+            payload.transaction
+          } valued: $${payload.price}. Please go to ${this.configService.get(
+            'ADMIN_URL',
+          )} to manage!`,
+        )
+        .then(() => {
+          this.logger.log('Telegram message sent!');
+        });
       return await this.purchaseRepository.save(
         this.purchaseRepository.create(payload),
       );
     } catch (error) {
+      this.logger.log(error);
       throw new HttpException(
         'Something went wrong',
         HttpStatus.INTERNAL_SERVER_ERROR,
@@ -63,6 +85,7 @@ export class CourseService extends TypeOrmCrudService<CourseEntity> {
         this.chaptersRepository.create(payload),
       );
     } catch (error) {
+      this.logger.log(error);
       throw new HttpException(
         'Something went wrong',
         HttpStatus.INTERNAL_SERVER_ERROR,
