@@ -28,7 +28,7 @@ import { UserAuthModule } from '../modules/user-auth/user-auth.module';
 import { PurchaseModule } from '../modules/purchase/purchase.module';
 import { UserModule } from '../modules/user/user.module';
 import { CategoryModule } from '../modules/category/category.module';
-import { ChapterModule } from '../modules/chapter/chapter.module';
+import { ChapterManagementModule } from '../modules/chapter-management/chapter-management.module';
 import { InstructorModule } from '../modules/instructor/instructor.module';
 import { CourseManagementModule } from '../modules/course-management/course-management.module';
 import { UserOwnManagementModule } from '../modules/user-own-management/user-own-management.module';
@@ -94,7 +94,7 @@ import { TelegrafModule } from 'nestjs-telegraf';
     UserModule,
     FileModule,
     CourseModule,
-    ChapterModule,
+    ChapterManagementModule,
     PurchaseModule,
     UserAuthModule,
     CategoryModule,

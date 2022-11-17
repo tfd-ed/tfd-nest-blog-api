@@ -10,11 +10,11 @@ import {
   paginate,
   Pagination,
 } from 'nestjs-typeorm-paginate';
-import { ChapterEntity } from '../chapter/entity/chapter.entity';
 import { ChapterPayload } from './payload/chapter.payload';
 import { InjectBot } from 'nestjs-telegraf';
 import { Context, Telegraf } from 'telegraf';
 import { ConfigService } from '@nestjs/config';
+import { ChapterEntity } from '../chapter-management/entity/chapter.entity';
 
 @Injectable()
 export class CourseService extends TypeOrmCrudService<CourseEntity> {

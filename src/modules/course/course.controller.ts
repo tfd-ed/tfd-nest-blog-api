@@ -38,6 +38,13 @@ import { CourseEnum } from '../common/enum/course.enum';
   model: {
     type: CourseEntity,
   },
+  params: {
+    titleURL: {
+      field: 'titleURL',
+      type: 'string',
+      primary: true,
+    },
+  },
   query: {
     join: {
       category: {
