@@ -38,7 +38,6 @@ export class CourseEntity extends CommonEntity {
    * Unique URL display title column
    */
   @IsOptional({ groups: [UPDATE] })
-  @IsNotEmpty({ groups: [CREATE] })
   @IsString({ always: true })
   @Column({ length: 255, unique: true, nullable: true })
   titleURL: string;
