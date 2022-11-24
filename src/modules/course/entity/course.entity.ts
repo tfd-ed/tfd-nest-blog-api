@@ -19,6 +19,7 @@ import { Type } from 'class-transformer';
 import { InstructorEntity } from '../../instructor/entity/instructor.entity';
 import { CourseEnum } from '../../common/enum/course.enum';
 import { ChapterEntity } from '../../chapter-management/entity/chapter.entity';
+import { CourseTypeEnum } from '../../common/enum/course-type.enum';
 const { CREATE, UPDATE } = CrudValidationGroups;
 
 @Entity({
@@ -136,4 +137,10 @@ export class CourseEntity extends CommonEntity {
    */
   @Column({ type: 'enum', enum: CourseEnum, default: CourseEnum.DRAFTED })
   status: string;
+
+  /**
+   * Course Type Enum
+   */
+  @Column({ type: 'enum', enum: CourseTypeEnum, default: CourseTypeEnum.FREE })
+  type: string;
 }

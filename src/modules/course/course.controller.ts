@@ -26,6 +26,8 @@ import { PurchasePayload } from './payload/purchase.payload';
 import { Public } from '../common/decorator/public.decorator';
 
 import { CourseEnum } from '../common/enum/course.enum';
+import { CourseTypeEnum } from '../common/enum/course-type.enum';
+import { PurchaseService } from '../purchase/purchase.service';
 
 /**
  * This route is for non admin user only
@@ -103,7 +105,7 @@ export class CourseController implements CrudController<CourseEntity> {
     @Param('id', new ParseUUIDPipe()) id: string,
     @Body() payload: PurchasePayload,
   ) {
-    return this.service.purchase(id, payload);
+    return await this.service.purchase(id, payload);
   }
 
   /**

@@ -15,6 +15,10 @@ import { InjectBot } from 'nestjs-telegraf';
 import { Context, Telegraf } from 'telegraf';
 import { ConfigService } from '@nestjs/config';
 import { ChapterEntity } from '../chapter-management/entity/chapter.entity';
+import { CourseTypeEnum } from '../common/enum/course-type.enum';
+import { PurchaseEnum } from '../common/enum/purchase.enum';
+import { EventEmitter2 } from '@nestjs/event-emitter';
+import { UserEntity } from '../user/entity/user.entity';
 
 @Injectable()
 export class CourseService extends TypeOrmCrudService<CourseEntity> {
@@ -25,33 +29,71 @@ export class CourseService extends TypeOrmCrudService<CourseEntity> {
     private readonly chaptersRepository: Repository<ChapterEntity>,
     @InjectRepository(PurchaseEntity)
     private readonly purchaseRepository: Repository<PurchaseEntity>,
+    @InjectRepository(UserEntity)
+    private readonly userRepository: Repository<UserEntity>,
     private readonly configService: ConfigService,
     @InjectBot() private bot: Telegraf<Context>,
+    private eventEmitter: EventEmitter2,
   ) {
     super(courseRepository);
   }
   private readonly logger = new Logger(CourseService.name);
 
   async purchase(id: string, payload: PurchasePayload) {
+    const course = await this.courseRepository.findOne(payload.course);
+    const byUser = await this.userRepository.findOne(payload.byUser);
+    let purchase;
     try {
-      /**
-       * Inform Admin Group About Course Purchase
-       */
-      this.bot.telegram
-        .sendMessage(
-          this.configService.get('PRIVATE_GROUP_CHAT_ID'),
-          `Hi there! There is a purchase with translation ID: ${
-            payload.transaction
-          } valued: $${payload.price}. Please go to ${this.configService.get(
-            'ADMIN_URL',
-          )} to manage!`,
-        )
-        .then(() => {
-          this.logger.log('Telegram message sent!');
+      if (course.type === CourseTypeEnum.PAID) {
+        /**
+         * Inform Admin Group About Course Purchase
+         */
+        this.bot.telegram
+          .sendMessage(
+            this.configService.get('PRIVATE_GROUP_CHAT_ID'),
+            `Hi there! There is a purchase on course: ${
+              course.title
+            } with translation ID: ${payload.transaction} valued: $${
+              payload.price
+            }. Please go to ${this.configService.get('ADMIN_URL')} to manage!`,
+          )
+          .then(() => {
+            this.logger.log('Telegram message sent!');
+          });
+        purchase = await this.purchaseRepository.save(
+          this.purchaseRepository.create(payload),
+        );
+        return {
+          type: CourseTypeEnum.PAID,
+          id: purchase.id,
+        };
+      } else {
+        /**
+         * Free Course
+         * Automatically Approved Purchased
+         */
+        purchase = await this.purchaseRepository.save(
+          this.purchaseRepository.create({
+            ...payload,
+            status: PurchaseEnum.VERIFIED,
+          }),
+        );
+        const course_url =
+          this.configService.get('FRONTEND_URL') + '/course/' + course.titleURL;
+
+        this.eventEmitter.emit('admin.approved', {
+          fullName: byUser.firstname + ' ' + byUser.lastname,
+          link: course_url,
+          email: byUser.email,
+          price: purchase.price,
+          courseTitle: course.title,
+          timestamp: purchase.createdDate,
         });
-      return await this.purchaseRepository.save(
-        this.purchaseRepository.create(payload),
-      );
+        return {
+          type: CourseTypeEnum.FREE,
+          id: purchase.id,
+        };
+      }
     } catch (error) {
       this.logger.log(error);
       throw new HttpException(
