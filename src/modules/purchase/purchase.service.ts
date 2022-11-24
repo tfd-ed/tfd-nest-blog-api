@@ -40,7 +40,7 @@ export class PurchaseService extends TypeOrmCrudService<PurchaseEntity> {
     const courseF: CourseEntity = <CourseEntity>course;
 
     const course_url =
-      this.configService.get('FRONTEND_URL') + '/course/' + courseF.id;
+      this.configService.get('FRONTEND_URL') + '/course/' + courseF.titleURL;
 
     this.eventEmitter.emit('admin.approved', {
       fullName: byUser.firstname + ' ' + byUser.lastname,

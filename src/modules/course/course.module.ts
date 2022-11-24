@@ -7,15 +7,21 @@ import { CourseController } from './course.controller';
 import { PurchaseEntity } from '../purchase/entity/purchase.entity';
 import { ConfigService } from '@nestjs/config';
 import { ChapterEntity } from '../chapter-management/entity/chapter.entity';
-import { PurchaseService } from '../purchase/purchase.service';
+import PurchaseEvent from '../purchase/events/purchase.event';
+import { UserEntity } from '../user/entity/user.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([CourseEntity, ChapterEntity, PurchaseEntity]),
+    TypeOrmModule.forFeature([
+      CourseEntity,
+      ChapterEntity,
+      PurchaseEntity,
+      UserEntity,
+    ]),
     PassportModule.register({ defaultStrategy: 'local' }),
   ],
   exports: [CourseService],
   controllers: [CourseController],
-  providers: [CourseService, ConfigService, PurchaseService],
+  providers: [CourseService, ConfigService, PurchaseEvent],
 })
 export class CourseModule {}

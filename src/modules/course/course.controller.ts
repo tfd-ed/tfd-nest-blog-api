@@ -86,10 +86,7 @@ import { PurchaseService } from '../purchase/purchase.service';
 @ApiTags('Courses')
 @ApiBearerAuth()
 export class CourseController implements CrudController<CourseEntity> {
-  constructor(
-    public service: CourseService,
-    public purchaseService: PurchaseService,
-  ) {}
+  constructor(public service: CourseService) {}
 
   /**
    * User purchase a course
@@ -108,13 +105,7 @@ export class CourseController implements CrudController<CourseEntity> {
     @Param('id', new ParseUUIDPipe()) id: string,
     @Body() payload: PurchasePayload,
   ) {
-    const message = await this.service.purchase(id, payload);
-    if (message == CourseTypeEnum.FREE) {
-      return await this.purchaseService.approvePurchase(id);
-    }
-    return {
-      message: 'Course purchase completed!',
-    };
+    return await this.service.purchase(id, payload);
   }
 
   /**
