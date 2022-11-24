@@ -26,6 +26,8 @@ import { PurchasePayload } from './payload/purchase.payload';
 import { Public } from '../common/decorator/public.decorator';
 
 import { CourseEnum } from '../common/enum/course.enum';
+import { CourseTypeEnum } from '../common/enum/course-type.enum';
+import { PurchaseService } from '../purchase/purchase.service';
 
 /**
  * This route is for non admin user only
@@ -84,7 +86,10 @@ import { CourseEnum } from '../common/enum/course.enum';
 @ApiTags('Courses')
 @ApiBearerAuth()
 export class CourseController implements CrudController<CourseEntity> {
-  constructor(public service: CourseService) {}
+  constructor(
+    public service: CourseService,
+    public purchaseService: PurchaseService,
+  ) {}
 
   /**
    * User purchase a course
@@ -103,7 +108,13 @@ export class CourseController implements CrudController<CourseEntity> {
     @Param('id', new ParseUUIDPipe()) id: string,
     @Body() payload: PurchasePayload,
   ) {
-    return this.service.purchase(id, payload);
+    const message = await this.service.purchase(id, payload);
+    if (message == CourseTypeEnum.FREE) {
+      return await this.purchaseService.approvePurchase(id);
+    }
+    return {
+      message: 'Course purchase completed!',
+    };
   }
 
   /**
