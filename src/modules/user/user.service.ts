@@ -40,7 +40,14 @@ export class UsersService extends TypeOrmCrudService<UserEntity> {
   }
 
   async getByEmail(email: string) {
-    return await this.userRepository.findOne({ email: email });
+    /**
+     * Case Insensitive
+     */
+    return await this.userRepository
+      .createQueryBuilder('user')
+      .where('LOWER(user.email) = LOWER(:email)', { email })
+      .getOne();
+    // return await this.userRepository.findOne({ email: email });
   }
 
   async update(id: string, updatePayload: UpdatePayload): Promise<any> {
