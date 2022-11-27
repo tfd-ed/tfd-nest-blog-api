@@ -45,10 +45,16 @@ export class CourseService extends TypeOrmCrudService<CourseEntity> {
         /**
          * Inform Admin Group About Course Purchase
          */
-        this.eventEmitter.emit('bots.approve', payload);
+        const purchase = await this.purchaseRepository.save(
+          this.purchaseRepository.create({
+            ...payload,
+            status: PurchaseEnum.SUBMITTED,
+          }),
+        );
+        // this.eventEmitter.emit('bots.approve', payload);
         return {
           type: CourseTypeEnum.PAID,
-          id: course.id,
+          id: purchase.id,
         };
       } else {
         /**

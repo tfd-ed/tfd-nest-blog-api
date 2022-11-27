@@ -34,6 +34,7 @@ import { CourseManagementModule } from '../modules/course-management/course-mana
 import { UserOwnManagementModule } from '../modules/user-own-management/user-own-management.module';
 import { TelegrafModule } from 'nestjs-telegraf';
 import { BotModule } from '../modules/course/bots/bot.module';
+import { sessionMiddleware } from '../modules/common/middleware/session.middleware';
 
 @Module({
   imports: [
@@ -82,12 +83,6 @@ import { BotModule } from '../modules/course/bots/bot.module';
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
         token: configService.get<string>('TELEGRAM_BOT_TOKEN'),
-        // launchOptions: {
-        //   webhook: {
-        //     domain: 'tfdevs.com',
-        //     hookPath: '/hooks',
-        //   },
-        // },
         include: [BotModule],
       }),
       inject: [ConfigService],

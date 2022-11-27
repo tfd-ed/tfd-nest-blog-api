@@ -4,15 +4,18 @@ import { TelegrafContextInterface } from '../../common/context/telegraf-context.
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { AbaTransferEntity } from '../../purchase/entity/aba-transfer.entity';
-import { Logger, NotAcceptableException } from '@nestjs/common';
+import { Logger, NotAcceptableException, UseFilters } from '@nestjs/common';
+import { TelegrafFilter } from '../../common/filter/telegraf.filter';
 
 @Update()
+@UseFilters(TelegrafFilter)
 export class CourseBot {
   constructor(
     @InjectRepository(AbaTransferEntity)
     private readonly abaTransfer: Repository<AbaTransferEntity>,
   ) {}
-  private readonly logger = new Logger(AbaTransferEntity.name);
+  private readonly logger = new Logger(CourseBot.name);
+
   @Public()
   @On('text')
   async hears(@Ctx() ctx: TelegrafContextInterface) {
@@ -24,7 +27,7 @@ export class CourseBot {
         try {
           await this.abaTransfer.save(
             this.abaTransfer.create({
-              price: price,
+              price: parseFloat(price),
               transaction: transaction,
             }),
           );
