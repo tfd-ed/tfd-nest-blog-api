@@ -82,12 +82,12 @@ import { BotModule } from '../modules/course/bots/bot.module';
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
         token: configService.get<string>('TELEGRAM_BOT_TOKEN'),
-        launchOptions: {
-          webhook: {
-            domain: 'tfdevs.com',
-            hookPath: '/hooks',
-          },
-        },
+        // launchOptions: {
+        //   webhook: {
+        //     domain: 'tfdevs.com',
+        //     hookPath: '/hooks',
+        //   },
+        // },
         include: [BotModule],
       }),
       inject: [ConfigService],
