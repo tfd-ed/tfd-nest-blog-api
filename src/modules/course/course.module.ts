@@ -9,6 +9,8 @@ import { ConfigService } from '@nestjs/config';
 import { ChapterEntity } from '../chapter-management/entity/chapter.entity';
 import PurchaseEvent from '../purchase/events/purchase.event';
 import { UserEntity } from '../user/entity/user.entity';
+import BotApproveEvent from './event/BotApprove.event';
+import { AbaTransferEntity } from '../purchase/entity/aba-transfer.entity';
 
 @Module({
   imports: [
@@ -17,11 +19,12 @@ import { UserEntity } from '../user/entity/user.entity';
       ChapterEntity,
       PurchaseEntity,
       UserEntity,
+      AbaTransferEntity,
     ]),
     PassportModule.register({ defaultStrategy: 'local' }),
   ],
   exports: [CourseService],
   controllers: [CourseController],
-  providers: [CourseService, ConfigService, PurchaseEvent],
+  providers: [CourseService, ConfigService, PurchaseEvent, BotApproveEvent],
 })
 export class CourseModule {}

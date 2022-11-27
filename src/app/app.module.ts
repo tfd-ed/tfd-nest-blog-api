@@ -33,6 +33,7 @@ import { InstructorModule } from '../modules/instructor/instructor.module';
 import { CourseManagementModule } from '../modules/course-management/course-management.module';
 import { UserOwnManagementModule } from '../modules/user-own-management/user-own-management.module';
 import { TelegrafModule } from 'nestjs-telegraf';
+import { BotModule } from '../modules/course/bots/bot.module';
 
 @Module({
   imports: [
@@ -87,9 +88,11 @@ import { TelegrafModule } from 'nestjs-telegraf';
             hookPath: '/hooks',
           },
         },
+        include: [BotModule],
       }),
       inject: [ConfigService],
     }),
+    BotModule,
     AuthModule,
     UserModule,
     FileModule,

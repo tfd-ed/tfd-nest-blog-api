@@ -60,9 +60,7 @@ export class CourseService extends TypeOrmCrudService<CourseEntity> {
           .then(() => {
             this.logger.log('Telegram message sent!');
           });
-        purchase = await this.purchaseRepository.save(
-          this.purchaseRepository.create(payload),
-        );
+        this.eventEmitter.emit('bots.approve', payload);
         return {
           type: CourseTypeEnum.PAID,
           id: purchase.id,
