@@ -16,6 +16,7 @@ export class CourseBot {
   @Public()
   @On('text')
   async hears(@Ctx() ctx: TelegrafContextInterface) {
+    this.logger.log('Bot message received by ' + ctx.message.from.username);
     if (ctx.message.from.username === 'PayWayByABA_bot') {
       if (ctx.message.text.includes('USD')) {
         const price = ctx.message.text.split('USD')[0].trim();
