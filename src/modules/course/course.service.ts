@@ -17,6 +17,8 @@ import { CourseTypeEnum } from '../common/enum/course-type.enum';
 import { PurchaseEnum } from '../common/enum/purchase.enum';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { UserEntity } from '../user/entity/user.entity';
+import { InjectBot } from 'nestjs-telegraf';
+import { Context, Telegraf } from 'telegraf';
 
 @Injectable()
 export class CourseService extends TypeOrmCrudService<CourseEntity> {
@@ -30,6 +32,7 @@ export class CourseService extends TypeOrmCrudService<CourseEntity> {
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
     private readonly configService: ConfigService,
+    @InjectBot() private bot: Telegraf<Context>,
     private eventEmitter: EventEmitter2,
   ) {
     super(courseRepository);
@@ -51,6 +54,19 @@ export class CourseService extends TypeOrmCrudService<CourseEntity> {
             status: PurchaseEnum.SUBMITTED,
           }),
         );
+        this.bot.telegram
+          .sendMessage(
+            this.configService.get('PRIVATE_GROUP_CHAT_ID'),
+            `Hi there! There is a purchase on course: ${
+              course.title
+            } with translation ID: ${payload.transaction} valued: $${
+              payload.price
+            }. Please go to ${this.configService.get('ADMIN_URL')} to manage!`,
+          )
+          .then(() => {
+            this.logger.log('Telegram message sent!');
+          });
+
         // this.eventEmitter.emit('bots.approve', payload);
         return {
           type: CourseTypeEnum.PAID,
