@@ -46,6 +46,6 @@ export class PurchaseEntity extends CommonEntity {
   /**
    * transaction ID in ABA for reference
    */
-  @Column({ type: 'text', nullable: true })
+  @Column({ type: 'text', nullable: true, unique: true })
   transaction: string;
 }

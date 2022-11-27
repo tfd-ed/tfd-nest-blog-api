@@ -11,8 +11,6 @@ import {
   Pagination,
 } from 'nestjs-typeorm-paginate';
 import { ChapterPayload } from './payload/chapter.payload';
-import { InjectBot } from 'nestjs-telegraf';
-import { Context, Telegraf } from 'telegraf';
 import { ConfigService } from '@nestjs/config';
 import { ChapterEntity } from '../chapter-management/entity/chapter.entity';
 import { CourseTypeEnum } from '../common/enum/course-type.enum';
@@ -32,7 +30,6 @@ export class CourseService extends TypeOrmCrudService<CourseEntity> {
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
     private readonly configService: ConfigService,
-    @InjectBot() private bot: Telegraf<Context>,
     private eventEmitter: EventEmitter2,
   ) {
     super(courseRepository);
@@ -48,24 +45,10 @@ export class CourseService extends TypeOrmCrudService<CourseEntity> {
         /**
          * Inform Admin Group About Course Purchase
          */
-        this.bot.telegram
-          .sendMessage(
-            this.configService.get('PRIVATE_GROUP_CHAT_ID'),
-            `Hi there! There is a purchase on course: ${
-              course.title
-            } with translation ID: ${payload.transaction} valued: $${
-              payload.price
-            }. Please go to ${this.configService.get('ADMIN_URL')} to manage!`,
-          )
-          .then(() => {
-            this.logger.log('Telegram message sent!');
-          });
-        purchase = await this.purchaseRepository.save(
-          this.purchaseRepository.create(payload),
-        );
+        this.eventEmitter.emit('bots.approve', payload);
         return {
           type: CourseTypeEnum.PAID,
-          id: purchase.id,
+          id: course.id,
         };
       } else {
         /**

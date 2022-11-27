@@ -76,8 +76,8 @@ async function bootstrap() {
   /**
    * Telegram Bot Config
    */
-  const bot = app.get(getBotToken());
-  app.use(bot.webhookCallback('/hooks'));
+  // const bot = app.get(getBotToken());
+  // app.use(bot.webhookCallback('/hooks'));
 
   useContainer(app.select(AppModule), { fallbackOnErrors: true });
   // Listen to port given by environment on production server (Heroku, DigitalOcean App,..), otherwise 3000

@@ -63,7 +63,7 @@ export async function typeormConfig(configService: ConfigService) {
       database: configService.get<string>('DB_DATABASE'),
       maxQueryExecutionTime: 1000,
       // logging: true,
-      synchronize: true,
+      synchronize: false,
       migrationsRun: false,
       dropSchema: false,
       entities: [join(__dirname, './../**/**.entity{.ts,.js}')],
