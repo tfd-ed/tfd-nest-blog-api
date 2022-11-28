@@ -1,10 +1,4 @@
-import {
-  HttpException,
-  HttpStatus,
-  Injectable,
-  Logger,
-  NotFoundException,
-} from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { TypeOrmCrudService } from '@nestjsx/crud-typeorm';
 import { CourseEntity } from './entity/course.entity';
 import { Repository } from 'typeorm';
@@ -126,14 +120,13 @@ export class CourseService extends TypeOrmCrudService<CourseEntity> {
   }
 
   async userPurchase(id: string, userId: string) {
-    const purchase = await this.purchaseRepository.findOne({
+    // if (!purchase) {
+    //   throw new NotFoundException();
+    // }
+    return await this.purchaseRepository.findOne({
       course: id,
       byUser: userId,
     });
-    if (!purchase) {
-      throw new NotFoundException();
-    }
-    return purchase;
   }
 
   async newChapter(payload: ChapterPayload) {
