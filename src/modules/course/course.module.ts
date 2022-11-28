@@ -25,6 +25,6 @@ import { AbaTransferEntity } from '../purchase/entity/aba-transfer.entity';
   ],
   exports: [CourseService],
   controllers: [CourseController],
-  providers: [CourseService, ConfigService, PurchaseEvent, BotApproveEvent],
+  providers: [CourseService, ConfigService, BotApproveEvent],
 })
 export class CourseModule {}

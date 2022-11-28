@@ -32,7 +32,7 @@ export default class BotApproveEvent {
     private readonly userRepository: Repository<UserEntity>,
     @InjectRepository(CourseEntity)
     private readonly courseRepository: Repository<CourseEntity>,
-    private eventEmitter: EventEmitter2,
+    // private eventEmitter: EventEmitter2,
     @InjectBot() private bot: Telegraf<Context>,
   ) {}
 
@@ -74,15 +74,15 @@ export default class BotApproveEvent {
       /**
        * Inform User
        */
-      this.eventEmitter.emit('admin.approved', {
-        fullName: byUser.firstname + ' ' + byUser.lastname,
-        link: course_url,
-        email: byUser.email,
-        price: payload.price,
-        courseTitle: course.title,
-        transaction: payload.transaction,
-        timestamp: Date.now(),
-      });
+      // this.eventEmitter.emit('admin.approved', {
+      //   fullName: byUser.firstname + ' ' + byUser.lastname,
+      //   link: course_url,
+      //   email: byUser.email,
+      //   price: payload.price,
+      //   courseTitle: course.title,
+      //   transaction: payload.transaction,
+      //   timestamp: Date.now(),
+      // });
       /**
        * Inform InTelegram
        */

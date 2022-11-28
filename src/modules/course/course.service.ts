@@ -1,4 +1,10 @@
-import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  Logger,
+  NotFoundException,
+} from '@nestjs/common';
 import { TypeOrmCrudService } from '@nestjsx/crud-typeorm';
 import { CourseEntity } from './entity/course.entity';
 import { Repository } from 'typeorm';
@@ -83,17 +89,17 @@ export class CourseService extends TypeOrmCrudService<CourseEntity> {
             status: PurchaseEnum.VERIFIED,
           }),
         );
-        const course_url =
-          this.configService.get('FRONTEND_URL') + '/course/' + course.titleURL;
-
-        this.eventEmitter.emit('admin.approved', {
-          fullName: byUser.firstname + ' ' + byUser.lastname,
-          link: course_url,
-          email: byUser.email,
-          price: purchase.price,
-          courseTitle: course.title,
-          timestamp: purchase.createdDate,
-        });
+        // const course_url =
+        //   this.configService.get('FRONTEND_URL') + '/course/' + course.titleURL;
+        //
+        // this.eventEmitter.emit('admin.approved', {
+        //   fullName: byUser.firstname + ' ' + byUser.lastname,
+        //   link: course_url,
+        //   email: byUser.email,
+        //   price: purchase.price,
+        //   courseTitle: course.title,
+        //   timestamp: purchase.createdDate,
+        // });
         return {
           type: CourseTypeEnum.FREE,
           id: purchase.id,
@@ -120,10 +126,14 @@ export class CourseService extends TypeOrmCrudService<CourseEntity> {
   }
 
   async userPurchase(id: string, userId: string) {
-    return await this.purchaseRepository.findOne({
+    const purchase = await this.purchaseRepository.findOne({
       course: id,
       byUser: userId,
     });
+    if (!purchase) {
+      throw new NotFoundException();
+    }
+    return purchase;
   }
 
   async newChapter(payload: ChapterPayload) {
