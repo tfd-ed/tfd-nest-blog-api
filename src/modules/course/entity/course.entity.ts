@@ -127,6 +127,15 @@ export class CourseEntity extends CommonEntity {
   paymentLink: string;
 
   /**
+   * Link to Bakong
+   */
+  @IsOptional({ groups: [UPDATE] })
+  @IsNotEmpty({ groups: [CREATE] })
+  @IsString({ always: true })
+  @Column({ type: 'text', nullable: true })
+  bkPaymentLink: string;
+
+  /**
    * Course duration in second
    */
   @Column({ type: 'int', nullable: true })
