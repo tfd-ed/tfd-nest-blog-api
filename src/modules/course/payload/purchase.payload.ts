@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsUUID, IsPositive } from 'class-validator';
+import { IsNotEmpty, IsUUID, IsPositive, IsNumber } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class PurchasePayload {
@@ -17,7 +17,7 @@ export class PurchasePayload {
   @ApiProperty({
     required: true,
   })
-  @IsPositive()
+  @IsNumber()
   price: number;
 
   @ApiProperty({

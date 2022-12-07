@@ -35,11 +35,16 @@ export class UserAuthService {
    * @param i18n
    */
   async register(payload: RegisterPayload, i18n: I18nContext) {
-    const users = await this.userRepository.find({
-      // Apply or where condition
-      where: [{ email: payload.email }],
-    });
-    if (users.length) {
+    // const users = await this.userRepository.find({
+    //   // Apply or where condition
+    //   where: [{ email: payload.email }],
+    // });
+    const email = payload.email;
+    const user = await this.userRepository
+      .createQueryBuilder('user')
+      .where('LOWER(user.email) = LOWER(:email)', { email })
+      .getOne();
+    if (user) {
       throw new BadRequestException(i18n.t('error.user_already_existed'));
     }
     // const hashedPassword = Hash.make(payload.password);

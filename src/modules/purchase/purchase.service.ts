@@ -20,6 +20,17 @@ export class PurchaseService extends TypeOrmCrudService<PurchaseEntity> {
     super(purchaseRepository);
   }
   async approvePurchase(purchaseId: string) {
+    const purchase = await this.purchaseRepository.findOne(
+      { id: purchaseId },
+      { relations: ['byUser', 'course'] },
+    );
+    if (purchase.status === PurchaseEnum.VERIFIED) {
+      return {
+        message: 'already verified!',
+        id: purchaseId,
+      };
+    }
+
     await this.purchaseRepository.update(
       {
         id: purchaseId,
@@ -27,10 +38,6 @@ export class PurchaseService extends TypeOrmCrudService<PurchaseEntity> {
       {
         status: PurchaseEnum.VERIFIED,
       },
-    );
-    const purchase = await this.purchaseRepository.findOne(
-      { id: purchaseId },
-      { relations: ['byUser', 'course'] },
     );
 
     const user: unknown = <unknown>purchase.byUser;
@@ -40,7 +47,7 @@ export class PurchaseService extends TypeOrmCrudService<PurchaseEntity> {
     const courseF: CourseEntity = <CourseEntity>course;
 
     const course_url =
-      this.configService.get('FRONTEND_URL') + '/course/' + courseF.id;
+      this.configService.get('FRONTEND_URL') + '/course/' + courseF.titleURL;
 
     this.eventEmitter.emit('admin.approved', {
       fullName: byUser.firstname + ' ' + byUser.lastname,

@@ -10,10 +10,10 @@ import {
   paginate,
   Pagination,
 } from 'nestjs-typeorm-paginate';
-import { ChapterEntity } from '../chapter/entity/chapter.entity';
 import { PurchasePayload } from '../course/payload/purchase.payload';
 import { ChapterPayload } from '../course/payload/chapter.payload';
 import { CourseEntity } from '../course/entity/course.entity';
+import { ChapterEntity } from '../chapter-management/entity/chapter.entity';
 
 @Injectable()
 export class CourseManagementService extends TypeOrmCrudService<CourseEntity> {

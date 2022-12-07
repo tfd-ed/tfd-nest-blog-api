@@ -11,6 +11,7 @@ import { UsersService } from '../user/user.service';
 import { UserEntity } from '../user/entity/user.entity';
 import { I18nContext } from 'nestjs-i18n';
 import { AppRoles } from '../common/enum/roles.enum';
+import { UserStatus } from '../common/enum/userStatus.enum';
 
 @Injectable()
 export class AuthService {
@@ -35,6 +36,9 @@ export class AuthService {
     const user = await this.userService.getByEmail(payload.email);
     if (!user || !Hash.compare(payload.password, user.password)) {
       throw new UnauthorizedException(i18n.t('error.invalid_credential'));
+    }
+    if (user.status === UserStatus.UNCONFIRMED) {
+      throw new UnauthorizedException(i18n.t('error.unconfirmed'));
     }
     return user;
   }

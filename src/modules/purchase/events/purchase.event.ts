@@ -22,7 +22,7 @@ export default class PurchaseEvent {
     const mail = new MailMessage();
     mail
       .subject(
-        this.translateService.t('event.welcome_to_tfdevs', {
+        this.translateService.t('event.thanks_for_purchase', {
           lang: payload.lang,
         }),
       )

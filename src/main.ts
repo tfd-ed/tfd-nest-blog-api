@@ -30,6 +30,7 @@ import { AppModule } from './app/app.module';
 import { ConfigService } from '@nestjs/config';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import * as helmet from 'helmet';
+// import { getBotToken } from 'nestjs-telegraf';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
@@ -70,6 +71,13 @@ async function bootstrap() {
   app.use(helmet());
   // Global Pipe to intercept request and format data accordingly
   app.useGlobalPipes(new ValidationPipe({ transform: true }));
+
+  /**
+   * Telegram Bot Config
+   */
+  // const bot = app.get(getBotToken());
+  // app.use(bot.webhookCallback('/hooks'));
+
   useContainer(app.select(AppModule), { fallbackOnErrors: true });
   // Listen to port given by environment on production server (Heroku, DigitalOcean App,..), otherwise 3000
   // Specify '0.0.0.0' in the listen() to accept connections on other hosts.

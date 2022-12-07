@@ -28,10 +28,13 @@ import { UserAuthModule } from '../modules/user-auth/user-auth.module';
 import { PurchaseModule } from '../modules/purchase/purchase.module';
 import { UserModule } from '../modules/user/user.module';
 import { CategoryModule } from '../modules/category/category.module';
-import { ChapterModule } from '../modules/chapter/chapter.module';
+import { ChapterManagementModule } from '../modules/chapter-management/chapter-management.module';
 import { InstructorModule } from '../modules/instructor/instructor.module';
 import { CourseManagementModule } from '../modules/course-management/course-management.module';
 import { UserOwnManagementModule } from '../modules/user-own-management/user-own-management.module';
+import { TelegrafModule } from 'nestjs-telegraf';
+import { BotModule } from '../modules/course/bots/bot.module';
+import { sessionMiddleware } from '../modules/common/middleware/session.middleware';
 
 @Module({
   imports: [
@@ -76,11 +79,20 @@ import { UserOwnManagementModule } from '../modules/user-own-management/user-own
         AcceptLanguageResolver,
       ],
     }),
+    TelegrafModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: async (configService: ConfigService) => ({
+        token: configService.get<string>('TELEGRAM_BOT_TOKEN'),
+        include: [BotModule],
+      }),
+      inject: [ConfigService],
+    }),
+    BotModule,
     AuthModule,
     UserModule,
     FileModule,
     CourseModule,
-    ChapterModule,
+    ChapterManagementModule,
     PurchaseModule,
     UserAuthModule,
     CategoryModule,

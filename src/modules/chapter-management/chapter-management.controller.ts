@@ -1,16 +1,10 @@
-import {
-  Crud,
-  CrudController,
-  CrudRequest,
-  Override,
-  ParsedRequest,
-} from '@nestjsx/crud';
+import { Crud, CrudController } from '@nestjsx/crud';
 import { Controller } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Roles } from '../common/decorator/roles.decorator';
 import { AppRoles } from '../common/enum/roles.enum';
 import { ChapterEntity } from './entity/chapter.entity';
-import { ChapterService } from './chapter.service';
+import { ChapterManagementService } from './chapter-management.service';
 
 @Crud({
   model: {
@@ -18,14 +12,16 @@ import { ChapterService } from './chapter.service';
   },
 })
 @Controller({
-  path: 'chapters',
+  path: 'chapters-management',
   version: '1',
 })
-@ApiTags('Chapters')
+@ApiTags('Chapters Management')
 @ApiBearerAuth()
 @Roles(AppRoles.ADMINS)
-export class ChapterController implements CrudController<ChapterEntity> {
-  constructor(public service: ChapterService) {}
+export class ChapterManagementController
+  implements CrudController<ChapterEntity>
+{
+  constructor(public service: ChapterManagementService) {}
   // get base(): CrudController<PurchaseEntity> {
   //   return this;
   // }
