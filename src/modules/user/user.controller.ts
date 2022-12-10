@@ -21,7 +21,7 @@ import { RolesGuard } from '../common/guard/roles.guard';
         eager: false,
       },
     },
-    exclude: ['password'],
+    exclude: ['password', 'refreshToken'],
   },
   routes: {
     exclude: ['deleteOneBase'],
