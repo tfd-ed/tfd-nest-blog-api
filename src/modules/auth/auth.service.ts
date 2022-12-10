@@ -17,12 +17,12 @@ import { UserEntity } from '../user/entity/user.entity';
 import { I18nContext } from 'nestjs-i18n';
 import { AppRoles } from '../common/enum/roles.enum';
 import { UserStatus } from '../common/enum/userStatus.enum';
-import { RegisterPayload } from '../user-auth/payloads/register.payload';
-import { ResetPayload } from '../user-auth/payloads/reset.payload';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { ForgotEntity } from '../user-auth/entity/forgot.entity';
 import { EventEmitter2 } from '@nestjs/event-emitter';
+import { ForgotEntity } from './entity/forgot.entity';
+import { RegisterPayload } from './payloads/register.payload';
+import { ResetPayload } from './payloads/reset.payload';
 
 @Injectable()
 export class AuthService {

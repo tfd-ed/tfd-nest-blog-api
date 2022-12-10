@@ -21,13 +21,12 @@ import { ResetPayload } from './payloads/reset.payload';
 import { UsersService } from '../user/user.service';
 import { I18n, I18nContext } from 'nestjs-i18n';
 import { ForbiddenDto } from '../common/schema/forbidden.dto';
-import { RegisterPayload } from '../user-auth/payloads/register.payload';
-import { ConfirmEmail } from '../user-auth/payloads/confirmEmail.payload';
-import { ForgotPayload } from '../user-auth/payloads/forgot.payload';
-// import { Request } from 'express';
 import { RefreshTokenGuard } from '../common/guard/refresh-guard';
 import RequestWithUser from '../common/interface/request-with-user.interface';
 import { JwtAuthGuard } from '../common/guard/jwt-guard';
+import { RegisterPayload } from './payloads/register.payload';
+import { ConfirmEmail } from './payloads/confirmEmail.payload';
+import { ForgotPayload } from './payloads/forgot.payload';
 
 @Controller({
   path: 'auth',
