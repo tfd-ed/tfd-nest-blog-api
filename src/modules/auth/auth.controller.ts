@@ -33,6 +33,9 @@ import { ForgotPayload } from './payloads/forgot.payload';
   version: '1',
 })
 @ApiTags('Authentication')
+// @SerializeOptions({
+//   strategy: 'excludeAll',
+// })
 export class AuthController {
   /**
    * Constructor
@@ -102,10 +105,7 @@ export class AuthController {
   @ApiBearerAuth()
   @UseGuards(RefreshTokenGuard)
   @Get('refresh')
-  @ApiResponse({ status: 201, description: 'Successful Request' })
-  @ApiResponse({ status: 400, description: 'Bad Request' })
-  @ApiResponse({ status: 401, description: 'Unauthorized' })
-  refreshTokens(@Req() req: RequestWithUser) {
+  async refreshTokens(@Req() req: RequestWithUser) {
     const userId = req.user['id'];
     const refreshToken = req.user['refreshToken'];
     return this.authService.refreshTokens(userId, refreshToken);
