@@ -9,6 +9,7 @@ import {
   Controller,
   Post,
   UploadedFile,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { ForbiddenDto } from '../common/schema/forbidden.dto';
@@ -18,6 +19,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { fileFilterUtils } from '../common/filter/FileFilter.utils';
 import { Roles } from '../common/decorator/roles.decorator';
 import { AppRoles } from '../common/enum/roles.enum';
+import { JwtAuthGuard } from '../common/guard/jwt-guard';
 
 @Controller({
   path: 'files',
@@ -30,7 +32,8 @@ export class FileController {
   /**
    * General API for uploading file to AWS Bucket
    */
-  @Roles(AppRoles.DEFAULT)
+  // @Roles(AppRoles.DEFAULT)
+  @UseGuards(JwtAuthGuard)
   @Post()
   @ApiOperation({ summary: 'Upload an image' })
   @ApiResponse({ status: 201, description: 'Successful Upload' })

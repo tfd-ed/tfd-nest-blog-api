@@ -11,7 +11,7 @@ import PurchaseEvent from './events/purchase.event';
 @Module({
   imports: [
     TypeOrmModule.forFeature([PurchaseEntity, CourseEntity]),
-    PassportModule.register({ defaultStrategy: 'local' }),
+    // PassportModule.register({ defaultStrategy: 'local' }),
   ],
   exports: [PurchaseService],
   controllers: [PurchaseController],

@@ -8,7 +8,7 @@ import { CategoryController } from './category.controller';
 @Module({
   imports: [
     TypeOrmModule.forFeature([CategoryEntity]),
-    PassportModule.register({ defaultStrategy: 'local' }),
+    // PassportModule.register({ defaultStrategy: 'local' }),
   ],
   exports: [CategoryService],
   controllers: [CategoryController],

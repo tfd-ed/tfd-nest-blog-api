@@ -1,19 +1,12 @@
-import { Controller } from '@nestjs/common';
-import {
-  ApiBearerAuth,
-  ApiForbiddenResponse,
-  ApiOperation,
-  ApiTags,
-} from '@nestjs/swagger';
+import { Controller, UseGuards } from '@nestjs/common';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Crud, CrudController } from '@nestjsx/crud';
 import { Roles } from '../common/decorator/roles.decorator';
 import { AppRoles } from '../common/enum/roles.enum';
 import { CourseEntity } from '../course/entity/course.entity';
 import { CourseManagementService } from './course-management.service';
-import { Public } from '../common/decorator/public.decorator';
-import { ForbiddenDto } from '../common/schema/forbidden.dto';
-import { RegisterPayload } from '../user-auth/payloads/register.payload';
-import { I18n, I18nContext } from 'nestjs-i18n';
+import { JwtAuthGuard } from '../common/guard/jwt-guard';
+import { RolesGuard } from '../common/guard/roles.guard';
 
 /**
  * This route is for admin user only
@@ -47,6 +40,7 @@ import { I18n, I18nContext } from 'nestjs-i18n';
   },
 })
 @Roles(AppRoles.ADMINS)
+@UseGuards(JwtAuthGuard, RolesGuard)
 @ApiTags('Courses Management')
 @ApiBearerAuth()
 export class CourseManagementController

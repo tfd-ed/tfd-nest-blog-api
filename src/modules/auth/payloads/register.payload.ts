@@ -1,38 +1,28 @@
 import { ApiProperty } from '@nestjs/swagger';
-import {
-  IsAlphanumeric,
-  IsEmail,
-  IsNotEmpty,
-  Matches,
-  MinLength,
-} from 'class-validator';
+import { IsEmail, IsNotEmpty, MinLength } from 'class-validator';
 import { SameAs } from '../../common/validator/same-as.validator';
-import { Unique } from '../../common/validator/unique.validator';
-import { UserEntity } from '../../user/entity/user.entity';
 
 export class RegisterPayload {
   @ApiProperty({
     required: true,
+    example: 'KimAng',
   })
-  @IsAlphanumeric()
   @IsNotEmpty()
-  @Unique([UserEntity])
-  username: string;
+  firstname: string;
 
   @ApiProperty({
     required: true,
+    example: 'Kheang',
+  })
+  @IsNotEmpty()
+  lastname: string;
+
+  @ApiProperty({
+    required: true,
+    example: 'kimangkheang@gmail.com',
   })
   @IsEmail()
-  @IsNotEmpty()
-  @Unique([UserEntity])
   email: string;
-
-  @ApiProperty({
-    required: true,
-  })
-  @Matches(/^[a-zA-Z ]+$/)
-  @IsNotEmpty()
-  name: string;
 
   @ApiProperty({
     required: true,
