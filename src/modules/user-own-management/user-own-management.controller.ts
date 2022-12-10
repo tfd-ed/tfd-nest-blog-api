@@ -1,4 +1,4 @@
-import { BadRequestException, Controller } from '@nestjs/common';
+import { BadRequestException, Controller, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import {
   Crud,
@@ -13,6 +13,7 @@ import { UserEntity } from '../user/entity/user.entity';
 import { UserOwnManagementService } from './user-own-management.service';
 import { Roles } from '../common/decorator/roles.decorator';
 import { AppRoles } from '../common/enum/roles.enum';
+import { JwtAuthGuard } from '../common/guard/jwt-guard';
 
 /**
  * This route is for non admin user only
@@ -55,6 +56,7 @@ import { AppRoles } from '../common/enum/roles.enum';
 @ApiTags('User Own Management')
 @Roles(AppRoles.DEFAULT)
 @ApiBearerAuth()
+@UseGuards(JwtAuthGuard)
 export class UserOwnManagementController implements CrudController<UserEntity> {
   constructor(public service: UserOwnManagementService) {}
 

@@ -90,10 +90,18 @@ export class UserEntity extends CommonEntity {
   password: string;
 
   /**
+   * Refresh Token
+   */
+  @Column({
+    nullable: true,
+  })
+  refreshToken?: string;
+
+  /**
    * Omit password from query selection
    */
   toJSON() {
-    const { password, ...self } = this;
+    const { password, refreshToken, ...self } = this;
     return self;
   }
 }

@@ -5,6 +5,7 @@ import {
   Param,
   ParseUUIDPipe,
   Post,
+  UseGuards,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -26,8 +27,7 @@ import { PurchasePayload } from './payload/purchase.payload';
 import { Public } from '../common/decorator/public.decorator';
 
 import { CourseEnum } from '../common/enum/course.enum';
-import { CourseTypeEnum } from '../common/enum/course-type.enum';
-import { PurchaseService } from '../purchase/purchase.service';
+import { JwtAuthGuard } from '../common/guard/jwt-guard';
 
 /**
  * This route is for non admin user only
@@ -93,7 +93,7 @@ export class CourseController implements CrudController<CourseEntity> {
    * @param id
    * @param payload
    */
-  // @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
   @Post(':id/purchase')
   @ApiOperation({ summary: 'User purchase a course' })
   @ApiForbiddenResponse({
@@ -113,7 +113,7 @@ export class CourseController implements CrudController<CourseEntity> {
    * @param id
    * @param userId
    */
-  // @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
   @Get(':id/user-purchase/:userId')
   @ApiOperation({ summary: 'User purchase a course' })
   @ApiForbiddenResponse({

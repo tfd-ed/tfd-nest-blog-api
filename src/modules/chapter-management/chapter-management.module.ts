@@ -8,7 +8,7 @@ import { ChapterEntity } from './entity/chapter.entity';
 @Module({
   imports: [
     TypeOrmModule.forFeature([ChapterEntity]),
-    PassportModule.register({ defaultStrategy: 'local' }),
+    // PassportModule.register({ defaultStrategy: 'local' }),
   ],
   exports: [ChapterManagementService],
   controllers: [ChapterManagementController],

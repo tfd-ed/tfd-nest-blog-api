@@ -1,4 +1,4 @@
-import { Controller } from '@nestjs/common';
+import { Controller, UseGuards } from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiForbiddenResponse,
@@ -14,6 +14,7 @@ import { Public } from '../common/decorator/public.decorator';
 import { ForbiddenDto } from '../common/schema/forbidden.dto';
 import { RegisterPayload } from '../user-auth/payloads/register.payload';
 import { I18n, I18nContext } from 'nestjs-i18n';
+import { JwtAuthGuard } from '../common/guard/jwt-guard';
 
 /**
  * This route is for admin user only
@@ -49,6 +50,7 @@ import { I18n, I18nContext } from 'nestjs-i18n';
 @Roles(AppRoles.ADMINS)
 @ApiTags('Courses Management')
 @ApiBearerAuth()
+@UseGuards(JwtAuthGuard)
 export class CourseManagementController
   implements CrudController<CourseEntity>
 {

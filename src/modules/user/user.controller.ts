@@ -1,10 +1,11 @@
-import { Controller } from '@nestjs/common';
+import { Controller, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { UsersService } from './user.service';
 import { UserEntity } from './entity/user.entity';
 import { Roles } from '../common/decorator/roles.decorator';
 import { AppRoles } from '../common/enum/roles.enum';
 import { Crud, CrudController } from '@nestjsx/crud';
+import { JwtAuthGuard } from '../common/guard/jwt-guard';
 
 @Crud({
   model: {
@@ -32,6 +33,7 @@ import { Crud, CrudController } from '@nestjsx/crud';
 @ApiTags('Users')
 @Roles(AppRoles.ADMINS)
 @ApiBearerAuth()
+@UseGuards(JwtAuthGuard)
 export class UserController implements CrudController<UserEntity> {
   /**
    * User controller constructor

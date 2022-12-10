@@ -9,7 +9,7 @@ import { FileService } from './file.service';
 @Module({
   imports: [
     TypeOrmModule.forFeature([FileEntity]),
-    PassportModule.register({ defaultStrategy: 'local' }),
+    // PassportModule.register({ defaultStrategy: 'local' }),
   ],
   exports: [FileService],
   controllers: [FileController],

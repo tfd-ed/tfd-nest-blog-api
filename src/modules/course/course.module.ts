@@ -21,7 +21,7 @@ import { AbaTransferEntity } from '../purchase/entity/aba-transfer.entity';
       UserEntity,
       AbaTransferEntity,
     ]),
-    PassportModule.register({ defaultStrategy: 'local' }),
+    // PassportModule.register({ defaultStrategy: 'local' }),
   ],
   exports: [CourseService],
   controllers: [CourseController],

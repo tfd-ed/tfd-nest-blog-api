@@ -1,7 +1,13 @@
 import { Crud, CrudController } from '@nestjsx/crud';
 import { PurchaseEntity } from './entity/purchase.entity';
 import { PurchaseService } from './purchase.service';
-import { Controller, Param, ParseUUIDPipe, Patch } from '@nestjs/common';
+import {
+  Controller,
+  Param,
+  ParseUUIDPipe,
+  Patch,
+  UseGuards,
+} from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiForbiddenResponse,
@@ -11,6 +17,7 @@ import {
 import { Roles } from '../common/decorator/roles.decorator';
 import { AppRoles } from '../common/enum/roles.enum';
 import { ForbiddenDto } from '../common/schema/forbidden.dto';
+import { JwtAuthGuard } from '../common/guard/jwt-guard';
 
 @Crud({
   model: {
@@ -34,6 +41,7 @@ import { ForbiddenDto } from '../common/schema/forbidden.dto';
 @ApiTags('Purchases')
 @ApiBearerAuth()
 @Roles(AppRoles.ADMINS)
+@UseGuards(JwtAuthGuard)
 export class PurchaseController implements CrudController<PurchaseEntity> {
   constructor(public service: PurchaseService) {}
   /**
