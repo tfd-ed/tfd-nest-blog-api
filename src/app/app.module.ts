@@ -103,10 +103,10 @@ import { JwtAuthGuard } from '../modules/common/guard/jwt-guard';
   controllers: [AppController],
   providers: [
     AppService,
-    {
-      provide: APP_GUARD,
-      useClass: JwtAuthGuard,
-    },
+    // {
+    //   provide: APP_GUARD,
+    //   useClass: JwtAuthGuard,
+    // },
     // {
     //   provide: APP_GUARD,
     //   useClass: RolesGuard,
