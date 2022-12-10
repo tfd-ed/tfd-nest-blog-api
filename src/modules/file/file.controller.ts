@@ -32,7 +32,7 @@ export class FileController {
   /**
    * General API for uploading file to AWS Bucket
    */
-  @Roles(AppRoles.DEFAULT)
+  // @Roles(AppRoles.DEFAULT)
   @UseGuards(JwtAuthGuard)
   @Post()
   @ApiOperation({ summary: 'Upload an image' })

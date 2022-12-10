@@ -6,6 +6,7 @@ import { AppRoles } from '../common/enum/roles.enum';
 import { CourseEntity } from '../course/entity/course.entity';
 import { CourseManagementService } from './course-management.service';
 import { JwtAuthGuard } from '../common/guard/jwt-guard';
+import { RolesGuard } from '../common/guard/roles.guard';
 
 /**
  * This route is for admin user only
@@ -39,9 +40,9 @@ import { JwtAuthGuard } from '../common/guard/jwt-guard';
   },
 })
 @Roles(AppRoles.ADMINS)
+@UseGuards(JwtAuthGuard, RolesGuard)
 @ApiTags('Courses Management')
 @ApiBearerAuth()
-@UseGuards(JwtAuthGuard)
 export class CourseManagementController
   implements CrudController<CourseEntity>
 {

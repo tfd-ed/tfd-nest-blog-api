@@ -6,6 +6,7 @@ import { AppRoles } from '../common/enum/roles.enum';
 import { ChapterEntity } from './entity/chapter.entity';
 import { ChapterManagementService } from './chapter-management.service';
 import { JwtAuthGuard } from '../common/guard/jwt-guard';
+import { RolesGuard } from '../common/guard/roles.guard';
 
 @Crud({
   model: {
@@ -18,8 +19,8 @@ import { JwtAuthGuard } from '../common/guard/jwt-guard';
 })
 @ApiTags('Chapters Management')
 @ApiBearerAuth()
-@UseGuards(JwtAuthGuard)
 @Roles(AppRoles.ADMINS)
+@UseGuards(JwtAuthGuard, RolesGuard)
 export class ChapterManagementController
   implements CrudController<ChapterEntity>
 {

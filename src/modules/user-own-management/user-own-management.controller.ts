@@ -14,6 +14,7 @@ import { UserOwnManagementService } from './user-own-management.service';
 import { Roles } from '../common/decorator/roles.decorator';
 import { AppRoles } from '../common/enum/roles.enum';
 import { JwtAuthGuard } from '../common/guard/jwt-guard';
+import { RolesGuard } from '../common/guard/roles.guard';
 
 /**
  * This route is for non admin user only
@@ -56,7 +57,7 @@ import { JwtAuthGuard } from '../common/guard/jwt-guard';
 @ApiTags('User Own Management')
 @Roles(AppRoles.DEFAULT)
 @ApiBearerAuth()
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, RolesGuard)
 export class UserOwnManagementController implements CrudController<UserEntity> {
   constructor(public service: UserOwnManagementService) {}
 

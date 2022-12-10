@@ -33,7 +33,7 @@ import { CourseManagementModule } from '../modules/course-management/course-mana
 import { UserOwnManagementModule } from '../modules/user-own-management/user-own-management.module';
 import { TelegrafModule } from 'nestjs-telegraf';
 import { BotModule } from '../modules/course/bots/bot.module';
-import { JwtAuthGuard } from '../modules/common/guard/jwt-guard';
+// import { JwtAuthGuard } from '../modules/common/guard/jwt-guard';
 
 @Module({
   imports: [

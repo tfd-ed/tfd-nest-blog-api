@@ -18,6 +18,7 @@ import { Roles } from '../common/decorator/roles.decorator';
 import { AppRoles } from '../common/enum/roles.enum';
 import { ForbiddenDto } from '../common/schema/forbidden.dto';
 import { JwtAuthGuard } from '../common/guard/jwt-guard';
+import { RolesGuard } from '../common/guard/roles.guard';
 
 @Crud({
   model: {
@@ -41,7 +42,7 @@ import { JwtAuthGuard } from '../common/guard/jwt-guard';
 @ApiTags('Purchases')
 @ApiBearerAuth()
 @Roles(AppRoles.ADMINS)
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, RolesGuard)
 export class PurchaseController implements CrudController<PurchaseEntity> {
   constructor(public service: PurchaseService) {}
   /**

@@ -28,7 +28,7 @@ import { JwtAuthGuard } from '../common/guard/jwt-guard';
   version: '1',
 })
 @ApiTags('Instructors')
-@Roles(AppRoles.ADMINS)
+// @Roles(AppRoles.ADMINS)
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard)
 export class InstructorController implements CrudController<InstructorEntity> {
