@@ -60,9 +60,9 @@ export class AuthService {
     if (!user || !Hash.compare(payload.password, user.password)) {
       throw new UnauthorizedException(i18n.t('error.invalid_credential'));
     }
-    if (user.status === UserStatus.UNCONFIRMED) {
-      throw new UnauthorizedException(i18n.t('error.unconfirmed'));
-    }
+    // if (user.status === UserStatus.UNCONFIRMED) {
+    //   throw new UnauthorizedException(i18n.t('error.unconfirmed'));
+    // }
     return user;
   }
 
@@ -123,7 +123,7 @@ export class AuthService {
       email: final.email,
       lang: i18n.lang,
     });
-    return final;
+    return tokens;
   }
 
   async logout(userId: string) {
