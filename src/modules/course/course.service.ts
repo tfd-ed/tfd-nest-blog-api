@@ -33,15 +33,15 @@ export class CourseService extends TypeOrmCrudService<CourseEntity> {
     private readonly userRepository: Repository<UserEntity>,
     private readonly configService: ConfigService,
     @InjectBot() private bot: Telegraf<Context>,
-    private eventEmitter: EventEmitter2,
   ) {
     super(courseRepository);
   }
+
   private readonly logger = new Logger(CourseService.name);
 
   async purchase(id: string, payload: PurchasePayload) {
     const course = await this.courseRepository.findOne(payload.course);
-    const byUser = await this.userRepository.findOne(payload.byUser);
+    // const byUser = await this.userRepository.findOne(payload.byUser);
     let purchase;
     try {
       if (course.type === CourseTypeEnum.PAID) {
@@ -54,6 +54,7 @@ export class CourseService extends TypeOrmCrudService<CourseEntity> {
             status: PurchaseEnum.SUBMITTED,
           }),
         );
+
         this.bot.telegram
           .sendMessage(
             this.configService.get('PRIVATE_GROUP_CHAT_ID'),

@@ -93,7 +93,6 @@ import { BotModule } from '../modules/course/bots/bot.module';
     CourseModule,
     ChapterManagementModule,
     PurchaseModule,
-    // UserAuthModule,
     CategoryModule,
     CommonModule,
     InstructorModule,
