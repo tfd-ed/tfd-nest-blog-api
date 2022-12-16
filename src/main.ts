@@ -35,6 +35,7 @@ import { ConfigService } from '@nestjs/config';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import * as helmet from 'helmet';
 import * as cookieParser from 'cookie-parser';
+import * as bodyParser from 'body-parser';
 // import { getBotToken } from 'nestjs-telegraf';
 
 async function bootstrap() {
@@ -75,6 +76,7 @@ async function bootstrap() {
   }
   app.use(helmet());
   // Global Pipe to intercept request and format data accordingly
+  app.use(bodyParser.json());
   app.useGlobalPipes(new ValidationPipe({ transform: true }));
   app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
   app.use(cookieParser());

@@ -15,10 +15,7 @@ import { AcceptLanguageResolver, I18nModule, QueryResolver } from 'nestjs-i18n';
 import { MailmanModule } from '@squareboat/nest-mailman';
 import {
   bullConfig,
-  chunkingOptions,
   mailMainConfig,
-  pusherConfig,
-  PusherConfig,
   redisConfig,
   throttlerConfig,
   typeormConfig,
@@ -36,7 +33,6 @@ import { CourseManagementModule } from '../modules/course-management/course-mana
 import { UserOwnManagementModule } from '../modules/user-own-management/user-own-management.module';
 import { TelegrafModule } from 'nestjs-telegraf';
 import { BotModule } from '../modules/course/bots/bot.module';
-import { PusherModule } from 'nestjs-pusher';
 // import { JwtAuthGuard } from '../modules/common/guard/jwt-guard';
 
 @Module({
@@ -90,7 +86,6 @@ import { PusherModule } from 'nestjs-pusher';
       }),
       inject: [ConfigService],
     }),
-    // PusherModule.forRootAsync({}),
     BotModule,
     AuthModule,
     UserModule,
@@ -98,7 +93,6 @@ import { PusherModule } from 'nestjs-pusher';
     CourseModule,
     ChapterManagementModule,
     PurchaseModule,
-    // UserAuthModule,
     CategoryModule,
     CommonModule,
     InstructorModule,

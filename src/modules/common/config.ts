@@ -17,31 +17,6 @@ import { join } from 'path';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const appRoot = require('app-root-path');
 
-export const PusherConfig = {
-  key: 'YOUR_KEY',
-  appId: 'ID',
-  secret: 'YOUR_SECRET',
-};
-
-export const chunkingOptions = {
-  limit: 4000, //4mb
-  enabled: true,
-};
-
-export async function pusherConfig(configService: ConfigService) {
-  return {
-    pusherConfig: {
-      key: configService.get<string>('PUSHER_KEY'),
-      appId: configService.get<string>('PUSHER_APP_ID'),
-      secret: configService.get<string>('PUSHER_SECRET'),
-    },
-    chunkingOptions: {
-      limit: 4000, //4mb
-      enabled: true,
-    },
-  };
-}
-
 export async function redisConfig(configService: ConfigService) {
   const env = configService.get<string>('APP_ENV');
   if (env === 'dev') {

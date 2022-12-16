@@ -7,7 +7,7 @@ import { I18nService } from 'nestjs-i18n';
 const moment = require('moment');
 
 @Injectable()
-export default class PurchaseEvent {
+export class PurchaseEvent {
   private readonly logger = new Logger(PurchaseEvent.name);
   constructor(
     private readonly configService: ConfigService,
