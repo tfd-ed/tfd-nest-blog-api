@@ -8,7 +8,7 @@ import { UserOwnManagementController } from './user-own-management.controller';
 @Module({
   imports: [
     TypeOrmModule.forFeature([UserEntity]),
-    PassportModule.register({ defaultStrategy: 'local' }),
+    // PassportModule.register({ defaultStrategy: 'local' }),
   ],
   exports: [UserOwnManagementService],
   controllers: [UserOwnManagementController],

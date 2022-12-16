@@ -5,7 +5,6 @@ import { AppService } from './app.service';
 import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { TimeoutInterceptor } from '../modules/common/interceptor/timeout.interceptor';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { JwtAuthGuard } from '../modules/auth/jwt-guard';
 import { CommonModule } from '../modules/common/common.module';
 import { AuthModule } from '../modules/auth/auth.module';
 import { RolesGuard } from '../modules/common/guard/roles.guard';
@@ -24,7 +23,7 @@ import {
 import { join } from 'path';
 import { FileModule } from '../modules/file/file.module';
 import { CourseModule } from '../modules/course/course.module';
-import { UserAuthModule } from '../modules/user-auth/user-auth.module';
+// import { UserAuthModule } from '../modules/user-auth/user-auth.module';
 import { PurchaseModule } from '../modules/purchase/purchase.module';
 import { UserModule } from '../modules/user/user.module';
 import { CategoryModule } from '../modules/category/category.module';
@@ -34,7 +33,7 @@ import { CourseManagementModule } from '../modules/course-management/course-mana
 import { UserOwnManagementModule } from '../modules/user-own-management/user-own-management.module';
 import { TelegrafModule } from 'nestjs-telegraf';
 import { BotModule } from '../modules/course/bots/bot.module';
-import { sessionMiddleware } from '../modules/common/middleware/session.middleware';
+// import { JwtAuthGuard } from '../modules/common/guard/jwt-guard';
 
 @Module({
   imports: [
@@ -94,7 +93,6 @@ import { sessionMiddleware } from '../modules/common/middleware/session.middlewa
     CourseModule,
     ChapterManagementModule,
     PurchaseModule,
-    UserAuthModule,
     CategoryModule,
     CommonModule,
     InstructorModule,
@@ -104,14 +102,14 @@ import { sessionMiddleware } from '../modules/common/middleware/session.middlewa
   controllers: [AppController],
   providers: [
     AppService,
-    {
-      provide: APP_GUARD,
-      useClass: JwtAuthGuard,
-    },
-    {
-      provide: APP_GUARD,
-      useClass: RolesGuard,
-    },
+    // {
+    //   provide: APP_GUARD,
+    //   useClass: JwtAuthGuard,
+    // },
+    // {
+    //   provide: APP_GUARD,
+    //   useClass: RolesGuard,
+    // },
     {
       provide: APP_INTERCEPTOR,
       useClass: TimeoutInterceptor,

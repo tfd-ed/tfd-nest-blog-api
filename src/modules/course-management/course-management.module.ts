@@ -11,7 +11,7 @@ import { ChapterEntity } from '../chapter-management/entity/chapter.entity';
 @Module({
   imports: [
     TypeOrmModule.forFeature([CourseEntity, ChapterEntity, PurchaseEntity]),
-    PassportModule.register({ defaultStrategy: 'local' }),
+    // PassportModule.register({ defaultStrategy: 'local' }),
   ],
   exports: [CourseManagementService],
   controllers: [CourseManagementController],

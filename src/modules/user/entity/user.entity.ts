@@ -12,7 +12,7 @@ import { CommonEntity } from '../../common/entity/common.entity';
 import { PurchaseEntity } from '../../purchase/entity/purchase.entity';
 import { UserStatus } from '../../common/enum/userStatus.enum';
 import { FileEntity } from '../../file/entity/file.entity';
-import { Type } from 'class-transformer';
+import { Exclude, Type } from 'class-transformer';
 
 @Entity({
   name: 'users',
@@ -87,13 +87,23 @@ export class UserEntity extends CommonEntity {
      */
     transformer: new PasswordTransformer(),
   })
+  @Exclude()
   password: string;
+
+  /**
+   * Refresh Token
+   */
+  @Column({
+    nullable: true,
+  })
+  @Exclude()
+  public refreshToken?: string;
 
   /**
    * Omit password from query selection
    */
-  toJSON() {
-    const { password, ...self } = this;
-    return self;
-  }
+  // toJSON() {
+  //   const { password, ...self } = this;
+  //   return self;
+  // }
 }

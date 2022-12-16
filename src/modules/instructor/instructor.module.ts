@@ -10,7 +10,7 @@ import { InstructorController } from './instructor.controller';
 @Module({
   imports: [
     TypeOrmModule.forFeature([InstructorEntity]),
-    PassportModule.register({ defaultStrategy: 'jwt' }),
+    // PassportModule.register({ defaultStrategy: 'jwt' }),
   ],
   exports: [InstructorService],
   controllers: [InstructorController],
