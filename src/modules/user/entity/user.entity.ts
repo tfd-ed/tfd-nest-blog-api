@@ -87,7 +87,10 @@ export class UserEntity extends CommonEntity {
      */
     transformer: new PasswordTransformer(),
   })
-  @Exclude()
+  // @Exclude({
+  //   toPlainOnly: false,
+  //   toClassOnly: false,
+  // })
   password: string;
 
   /**
@@ -96,14 +99,14 @@ export class UserEntity extends CommonEntity {
   @Column({
     nullable: true,
   })
-  @Exclude()
+  // @Exclude()
   public refreshToken?: string;
 
   /**
    * Omit password from query selection
    */
-  // toJSON() {
-  //   const { password, ...self } = this;
-  //   return self;
-  // }
+  toJSON() {
+    const { password, refreshToken, ...self } = this;
+    return self;
+  }
 }
