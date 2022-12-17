@@ -79,17 +79,19 @@ export class PurchaseService
       this.configService.get('FRONTEND_URL') + '/course/' + courseF.titleURL;
 
     /**
-     * Send email only if user's email is confirmed
+     * Send email only if user's email is confirmed and in production environment
      */
-    if (byUser.status === UserStatus.ACTIVE) {
-      this.eventEmitter.emit('admin.approved', {
-        fullName: byUser.firstname + ' ' + byUser.lastname,
-        link: course_url,
-        email: byUser.email,
-        price: purchase.price,
-        courseTitle: courseF.title,
-        timestamp: purchase.createdDate,
-      });
+    if (this.configService.get('APP_ENV') === 'prod') {
+      if (byUser.status === UserStatus.ACTIVE) {
+        this.eventEmitter.emit('admin.approved', {
+          fullName: byUser.firstname + ' ' + byUser.lastname,
+          link: course_url,
+          email: byUser.email,
+          price: purchase.price,
+          courseTitle: courseF.title,
+          timestamp: purchase.createdDate,
+        });
+      }
     }
 
     try {
