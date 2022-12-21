@@ -1,5 +1,7 @@
 import {
   Body,
+  CacheKey,
+  CacheTTL,
   Controller,
   Get,
   Param,
@@ -28,6 +30,7 @@ import { Public } from '../common/decorator/public.decorator';
 
 import { CourseEnum } from '../common/enum/course.enum';
 import { JwtAuthGuard } from '../common/guard/jwt-guard';
+import { NoCache } from '../common/decorator/no-cache.decorator';
 
 /**
  * This route is for non admin user only
@@ -113,6 +116,7 @@ export class CourseController implements CrudController<CourseEntity> {
    * @param id
    * @param userId
    */
+  // @NoCache()
   @UseGuards(JwtAuthGuard)
   @Get(':id/user-purchase/:userId')
   @ApiOperation({ summary: 'User purchase a course' })
@@ -121,6 +125,8 @@ export class CourseController implements CrudController<CourseEntity> {
     description: 'Forbidden',
     type: ForbiddenDto,
   })
+  // @CacheKey(':userId/fetch_user_purchase')
+  // @CacheTTL(30)
   async pastPurchase(
     @Param('id', new ParseUUIDPipe()) id: string,
     @Param('userId', new ParseUUIDPipe()) userId: string,

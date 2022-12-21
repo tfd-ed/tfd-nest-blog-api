@@ -26,6 +26,7 @@ export async function redisConfig(configService: ConfigService) {
       store: redisStore,
       host: configService.get('CACHE_HOST'),
       port: configService.get('CACHE_PORT'),
+      // isGlobal: true,
     } as CacheModuleOptions;
   }
   if (env === 'prod') {
@@ -48,7 +49,8 @@ export async function redisConfig(configService: ConfigService) {
         servername: db_host,
         rejectUnauthorized: false,
       },
-    };
+      // isGlobal: true,
+    } as CacheModuleOptions;
   }
 }
 export async function typeormConfig(configService: ConfigService) {

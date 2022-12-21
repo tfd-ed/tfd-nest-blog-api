@@ -15,6 +15,7 @@ import { Roles } from '../common/decorator/roles.decorator';
 import { AppRoles } from '../common/enum/roles.enum';
 import { JwtAuthGuard } from '../common/guard/jwt-guard';
 import { RolesGuard } from '../common/guard/roles.guard';
+import { NoCache } from '../common/decorator/no-cache.decorator';
 
 /**
  * This route is for non admin user only
@@ -65,6 +66,12 @@ export class UserOwnManagementController implements CrudController<UserEntity> {
     return this;
   }
 
+  @NoCache()
+  @Override('getOneBase')
+  getOne(@ParsedRequest() req: CrudRequest) {
+    return this.base.getOneBase(req);
+  }
+
   /**
    * In case user update username which may be duplicated with other username
    * Throw bad request exception
@@ -78,6 +85,7 @@ export class UserOwnManagementController implements CrudController<UserEntity> {
   ) {
     try {
       await this.base.updateOneBase(req, dto);
+      // await this.cacheManager.del();
     } catch (error) {
       throw new BadRequestException(error);
     }

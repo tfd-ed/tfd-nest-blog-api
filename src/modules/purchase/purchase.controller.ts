@@ -1,4 +1,10 @@
-import { Crud, CrudController } from '@nestjsx/crud';
+import {
+  Crud,
+  CrudController,
+  CrudRequest,
+  Override,
+  ParsedRequest,
+} from '@nestjsx/crud';
 import { PurchaseEntity } from './entity/purchase.entity';
 import { PurchaseService } from './purchase.service';
 import {
@@ -19,6 +25,7 @@ import { AppRoles } from '../common/enum/roles.enum';
 import { ForbiddenDto } from '../common/schema/forbidden.dto';
 import { JwtAuthGuard } from '../common/guard/jwt-guard';
 import { RolesGuard } from '../common/guard/roles.guard';
+import { NoCache } from '../common/decorator/no-cache.decorator';
 
 @Crud({
   model: {
@@ -58,5 +65,15 @@ export class PurchaseController implements CrudController<PurchaseEntity> {
   })
   async approvePurchase(@Param('id', new ParseUUIDPipe()) id: string) {
     return this.service.approvePurchase(id);
+  }
+
+  get base(): CrudController<PurchaseEntity> {
+    return this;
+  }
+
+  @NoCache()
+  @Override('getManyBase')
+  getMany(@ParsedRequest() req: CrudRequest) {
+    return this.base.getManyBase(req);
   }
 }

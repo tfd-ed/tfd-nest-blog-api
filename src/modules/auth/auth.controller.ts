@@ -27,6 +27,7 @@ import { JwtAuthGuard } from '../common/guard/jwt-guard';
 import { RegisterPayload } from './payloads/register.payload';
 import { ConfirmEmail } from './payloads/confirmEmail.payload';
 import { ForgotPayload } from './payloads/forgot.payload';
+import { NoCache } from '../common/decorator/no-cache.decorator';
 
 @Controller({
   path: 'auth',
@@ -87,13 +88,14 @@ export class AuthController {
   ): Promise<any> {
     const user = await this.authService.validateAdmin(payload, i18n);
     const tokens = await this.authService.getTokens(user.id);
-    this.authService.updateRefreshToken(user.id, tokens.refreshToken);
+    await this.authService.updateRefreshToken(user.id, tokens.refreshToken);
     return tokens;
     // return await this.authService.createToken(user);
   }
 
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
+  @NoCache()
   @Get('logout')
   @ApiResponse({ status: 201, description: 'Successful Request' })
   @ApiResponse({ status: 400, description: 'Bad Request' })
@@ -104,6 +106,7 @@ export class AuthController {
 
   @ApiBearerAuth()
   @UseGuards(RefreshTokenGuard)
+  @NoCache()
   @Get('refresh')
   async refreshTokens(@Req() req: RequestWithUser) {
     const userId = req.user['id'];
@@ -131,6 +134,7 @@ export class AuthController {
    */
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
+  @NoCache()
   @Get('me')
   @ApiResponse({ status: 200, description: 'Successful Response' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
@@ -209,6 +213,7 @@ export class AuthController {
   }
 
   @Public()
+  @NoCache()
   @Get('/reset-token/:token')
   @ApiOperation({ summary: 'Verify if reset token is valid' })
   @ApiForbiddenResponse({
