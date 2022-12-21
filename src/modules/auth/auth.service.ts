@@ -184,7 +184,7 @@ export class AuthService {
 
   async updateRefreshToken(userId: string, refreshToken: string) {
     const hashedRefreshToken = Hash.make(refreshToken);
-    this.userRepository.update(userId, {
+    await this.userRepository.update(userId, {
       refreshToken: hashedRefreshToken,
     });
   }

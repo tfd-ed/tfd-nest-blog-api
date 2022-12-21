@@ -66,7 +66,7 @@ export class AuthController {
 
     // return await this.authService.createToken(user);
     const tokens = await this.authService.getTokens(user.id);
-    this.authService.updateRefreshToken(user.id, tokens.refreshToken);
+    await this.authService.updateRefreshToken(user.id, tokens.refreshToken);
     return tokens;
   }
 
