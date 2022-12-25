@@ -8,5 +8,6 @@
   "token_not_exist": "Reset Token Doesn't Exist",
   "token_already_used": "Token already used!",
   "mismatched_email": "Mismatched Email!",
+  "no_user": "No user with this email!",
   "unconfirmed": "User didn't confirm the email yet!"
 }
