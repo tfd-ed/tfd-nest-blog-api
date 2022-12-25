@@ -117,11 +117,11 @@ export async function throttlerConfig(configService: ConfigService) {
      * REDIS_URL is periodically rotated
      */
     const cache_host_port = configService
-      .get('REDIS_URL')
+      .get('REDIS_TLS_URL')
       .toString()
       .split('@')[1];
     const cache_password_head = configService
-      .get('REDIS_URL')
+      .get('REDIS_TLS_URL')
       .toString()
       .split('@')[0];
     const cache_password = cache_password_head.split(':')[2];
@@ -171,13 +171,13 @@ export async function bullConfig(configService: ConfigService) {
   }
   if (env === 'prod') {
     const db_host_port = configService
-      .get('REDIS_URL')
+      .get('REDIS_TLS_URL')
       .toString()
       .split('@')[1];
     const db_host = db_host_port.split(':')[0];
     return {
       redis: {
-        url: configService.get('REDIS_URL'),
+        url: configService.get('REDIS_TLS_URL'),
         tls: {
           maxRetriesPerRequest: 100,
           enableReadyCheck: false,
