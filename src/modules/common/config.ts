@@ -36,7 +36,7 @@ export async function redisConfig(configService: ConfigService) {
      * REDIS_URL is rotated overtime
      */
     const db_host_port = configService
-      .get('REDIS_URL')
+      .get('REDIS_TLS_URL')
       .toString()
       .split('@')[1];
     const db_host = db_host_port.split(':')[0];
@@ -44,7 +44,7 @@ export async function redisConfig(configService: ConfigService) {
       ttl: configService.get('CACHE_TTL'), // seconds
       max: configService.get('CACHE_MAX'), // maximum number of items in cache
       store: redisStore,
-      url: configService.get('REDIS_URL'),
+      url: configService.get('REDIS_TLS_URL'),
       tls: {
         servername: db_host,
         rejectUnauthorized: false,
