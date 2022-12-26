@@ -7,11 +7,18 @@ import { EventEmitter2 } from '@nestjs/event-emitter';
 import { UserEntity } from '../user/entity/user.entity';
 import { CourseEntity } from '../course/entity/course.entity';
 import { ConfigService } from '@nestjs/config';
-import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
+import {
+  CACHE_MANAGER,
+  Inject,
+  Injectable,
+  Logger,
+  OnModuleInit,
+} from '@nestjs/common';
 import { UserStatus } from '../common/enum/userStatus.enum';
 import { InjectBot } from 'nestjs-telegraf';
 import { Context, Telegraf } from 'telegraf';
 import { RuntimeException } from '@nestjs/core/errors/exceptions/runtime.exception';
+import { Cache } from 'cache-manager';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const Pusher = require('pusher');
 
@@ -28,6 +35,7 @@ export class PurchaseService
     private readonly configService: ConfigService,
     private eventEmitter: EventEmitter2,
     @InjectBot() private bot: Telegraf<Context>,
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {
     super(purchaseRepository);
   }
@@ -75,21 +83,30 @@ export class PurchaseService
     const course: unknown = <unknown>purchase.course;
     const courseF: CourseEntity = <CourseEntity>course;
 
+    /**
+     * Delete Cache
+     */
+    await this.cacheManager.del(
+      `/v1/courses/${courseF.id}/user-purchase/${byUser.id}`,
+    );
+
     const course_url =
       this.configService.get('FRONTEND_URL') + '/course/' + courseF.titleURL;
 
     /**
-     * Send email only if user's email is confirmed
+     * Send email only if user's email is confirmed and in production environment
      */
-    if (byUser.status === UserStatus.ACTIVE) {
-      this.eventEmitter.emit('admin.approved', {
-        fullName: byUser.firstname + ' ' + byUser.lastname,
-        link: course_url,
-        email: byUser.email,
-        price: purchase.price,
-        courseTitle: courseF.title,
-        timestamp: purchase.createdDate,
-      });
+    if (this.configService.get('APP_ENV') === 'prod') {
+      if (byUser.status === UserStatus.ACTIVE) {
+        this.eventEmitter.emit('admin.approved', {
+          fullName: byUser.firstname + ' ' + byUser.lastname,
+          link: course_url,
+          email: byUser.email,
+          price: purchase.price,
+          courseTitle: courseF.title,
+          timestamp: purchase.createdDate,
+        });
+      }
     }
 
     try {

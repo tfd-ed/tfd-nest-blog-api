@@ -1,4 +1,4 @@
-import { CacheModule, Module } from '@nestjs/common';
+import { CacheInterceptor, CacheModule, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -33,6 +33,8 @@ import { CourseManagementModule } from '../modules/course-management/course-mana
 import { UserOwnManagementModule } from '../modules/user-own-management/user-own-management.module';
 import { TelegrafModule } from 'nestjs-telegraf';
 import { BotModule } from '../modules/course/bots/bot.module';
+import { NoCacheInterceptor } from '../modules/common/interceptor/no-cache.interceptor';
+import { TransformInterceptor } from '../modules/common/interceptor/transform.interceptor';
 // import { JwtAuthGuard } from '../modules/common/guard/jwt-guard';
 
 @Module({
@@ -56,6 +58,7 @@ import { BotModule } from '../modules/course/bots/bot.module';
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: redisConfig,
+      isGlobal: true,
     }),
     ThrottlerModule.forRootAsync({
       imports: [ConfigModule],
@@ -114,6 +117,14 @@ import { BotModule } from '../modules/course/bots/bot.module';
       provide: APP_INTERCEPTOR,
       useClass: TimeoutInterceptor,
     },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: NoCacheInterceptor,
+    },
+    // {
+    //   provide: APP_INTERCEPTOR,
+    //   useClass: TransformInterceptor,
+    // },
   ],
 })
 export class AppModule {}

@@ -26,6 +26,7 @@ export async function redisConfig(configService: ConfigService) {
       store: redisStore,
       host: configService.get('CACHE_HOST'),
       port: configService.get('CACHE_PORT'),
+      // isGlobal: true,
     } as CacheModuleOptions;
   }
   if (env === 'prod') {
@@ -35,7 +36,7 @@ export async function redisConfig(configService: ConfigService) {
      * REDIS_URL is rotated overtime
      */
     const db_host_port = configService
-      .get('REDIS_URL')
+      .get('REDIS_TLS_URL')
       .toString()
       .split('@')[1];
     const db_host = db_host_port.split(':')[0];
@@ -43,12 +44,13 @@ export async function redisConfig(configService: ConfigService) {
       ttl: configService.get('CACHE_TTL'), // seconds
       max: configService.get('CACHE_MAX'), // maximum number of items in cache
       store: redisStore,
-      url: configService.get('REDIS_URL'),
+      url: configService.get('REDIS_TLS_URL'),
       tls: {
         servername: db_host,
         rejectUnauthorized: false,
       },
-    };
+      // isGlobal: true,
+    } as CacheModuleOptions;
   }
 }
 export async function typeormConfig(configService: ConfigService) {
@@ -115,11 +117,11 @@ export async function throttlerConfig(configService: ConfigService) {
      * REDIS_URL is periodically rotated
      */
     const cache_host_port = configService
-      .get('REDIS_URL')
+      .get('REDIS_TLS_URL')
       .toString()
       .split('@')[1];
     const cache_password_head = configService
-      .get('REDIS_URL')
+      .get('REDIS_TLS_URL')
       .toString()
       .split('@')[0];
     const cache_password = cache_password_head.split(':')[2];
@@ -169,13 +171,13 @@ export async function bullConfig(configService: ConfigService) {
   }
   if (env === 'prod') {
     const db_host_port = configService
-      .get('REDIS_URL')
+      .get('REDIS_TLS_URL')
       .toString()
       .split('@')[1];
     const db_host = db_host_port.split(':')[0];
     return {
       redis: {
-        url: configService.get('REDIS_URL'),
+        url: configService.get('REDIS_TLS_URL'),
         tls: {
           maxRetriesPerRequest: 100,
           enableReadyCheck: false,

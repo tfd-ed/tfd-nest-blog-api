@@ -56,8 +56,13 @@ export class AuthService {
     payload: LoginPayload,
     i18n: I18nContext,
   ): Promise<UserEntity> {
+    // console.log(payload.email);
     const user = await this.userService.getByEmail(payload.email);
-    if (!user || !Hash.compare(payload.password, user.password)) {
+    // console.log(user);
+    if (!user) {
+      throw new BadRequestException(i18n.t('error.no_user'));
+    }
+    if (!Hash.compare(payload.password, user.password)) {
       throw new UnauthorizedException(i18n.t('error.invalid_credential'));
     }
     // if (user.status === UserStatus.UNCONFIRMED) {
@@ -184,7 +189,7 @@ export class AuthService {
 
   async updateRefreshToken(userId: string, refreshToken: string) {
     const hashedRefreshToken = Hash.make(refreshToken);
-    this.userRepository.update(userId, {
+    await this.userRepository.update(userId, {
       refreshToken: hashedRefreshToken,
     });
   }

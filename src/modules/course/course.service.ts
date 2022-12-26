@@ -1,4 +1,11 @@
-import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
+import {
+  CACHE_MANAGER,
+  HttpException,
+  HttpStatus,
+  Inject,
+  Injectable,
+  Logger,
+} from '@nestjs/common';
 import { TypeOrmCrudService } from '@nestjsx/crud-typeorm';
 import { CourseEntity } from './entity/course.entity';
 import { Repository } from 'typeorm';
@@ -19,6 +26,7 @@ import { EventEmitter2 } from '@nestjs/event-emitter';
 import { UserEntity } from '../user/entity/user.entity';
 import { InjectBot } from 'nestjs-telegraf';
 import { Context, Telegraf } from 'telegraf';
+import { Cache } from 'cache-manager';
 
 @Injectable()
 export class CourseService extends TypeOrmCrudService<CourseEntity> {
@@ -33,6 +41,7 @@ export class CourseService extends TypeOrmCrudService<CourseEntity> {
     private readonly userRepository: Repository<UserEntity>,
     private readonly configService: ConfigService,
     @InjectBot() private bot: Telegraf<Context>,
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {
     super(courseRepository);
   }
@@ -67,7 +76,12 @@ export class CourseService extends TypeOrmCrudService<CourseEntity> {
           .then(() => {
             this.logger.log('Telegram message sent!');
           });
-
+        /**
+         * Delete Cache
+         */
+        await this.cacheManager.del(
+          `/v1/courses/${course.id}/user-purchase/${payload.byUser}`,
+        );
         // this.eventEmitter.emit('bots.approve', payload);
         return {
           type: CourseTypeEnum.PAID,
@@ -124,10 +138,15 @@ export class CourseService extends TypeOrmCrudService<CourseEntity> {
     // if (!purchase) {
     //   throw new NotFoundException();
     // }
-    return await this.purchaseRepository.findOne({
+    const purchase: PurchaseEntity = await this.purchaseRepository.findOne({
       course: id,
       byUser: userId,
     });
+    if (purchase !== undefined) {
+      return purchase;
+    } else {
+      return {};
+    }
   }
 
   async newChapter(payload: ChapterPayload) {

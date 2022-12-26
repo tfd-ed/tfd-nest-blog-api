@@ -8,7 +8,7 @@ import { CrudConfigService } from '@nestjsx/crud';
  */
 CrudConfigService.load({
   query: {
-    // limit: 10,
+    limit: 10,
     cache: 2000,
   },
   params: {
@@ -36,6 +36,7 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 import * as helmet from 'helmet';
 import * as cookieParser from 'cookie-parser';
 import * as bodyParser from 'body-parser';
+import { TrimStringsPipe } from './modules/common/transformer/trim-strings.pipe';
 // import { getBotToken } from 'nestjs-telegraf';
 
 async function bootstrap() {
@@ -78,7 +79,8 @@ async function bootstrap() {
   // Global Pipe to intercept request and format data accordingly
   app.use(bodyParser.json());
   app.useGlobalPipes(new ValidationPipe({ transform: true }));
-  app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
+  app.useGlobalPipes(new TrimStringsPipe(), new ValidationPipe());
+  // app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
   app.use(cookieParser());
 
   /**
