@@ -10,7 +10,7 @@ import { AuthModule } from '../modules/auth/auth.module';
 import { RolesGuard } from '../modules/common/guard/roles.guard';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { BullModule } from '@nestjs/bull';
-import { ThrottlerModule } from '@nestjs/throttler';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { AcceptLanguageResolver, I18nModule, QueryResolver } from 'nestjs-i18n';
 import { MailmanModule } from '@squareboat/nest-mailman';
 import {
@@ -121,6 +121,7 @@ import { TransformInterceptor } from '../modules/common/interceptor/transform.in
       provide: APP_INTERCEPTOR,
       useClass: NoCacheInterceptor,
     },
+    { provide: APP_GUARD, useClass: ThrottlerGuard },
     // {
     //   provide: APP_INTERCEPTOR,
     //   useClass: TransformInterceptor,
