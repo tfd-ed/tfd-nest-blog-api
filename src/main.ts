@@ -76,7 +76,7 @@ async function bootstrap() {
   app.use(bodyParser.json());
   app.useGlobalPipes(
     new ValidationPipe({ transform: true }),
-    // new TrimStringsPipe(),
+    new TrimStringsPipe(),
   );
 
   // app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
