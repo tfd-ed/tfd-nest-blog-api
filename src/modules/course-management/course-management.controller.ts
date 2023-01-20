@@ -14,10 +14,12 @@ import { CourseManagementService } from './course-management.service';
 import { JwtAuthGuard } from '../common/guard/jwt-guard';
 import { RolesGuard } from '../common/guard/roles.guard';
 import { NoCache } from '../common/decorator/no-cache.decorator';
+import { SkipThrottle } from '@nestjs/throttler';
 
 /**
  * This route is for admin user only
  */
+@SkipThrottle()
 @Controller({
   path: 'courses-management',
   version: '1',

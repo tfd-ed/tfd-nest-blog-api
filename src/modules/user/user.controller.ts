@@ -14,6 +14,7 @@ import {
 import { JwtAuthGuard } from '../common/guard/jwt-guard';
 import { RolesGuard } from '../common/guard/roles.guard';
 import { NoCache } from '../common/decorator/no-cache.decorator';
+import { SkipThrottle } from '@nestjs/throttler';
 
 @Crud({
   model: {
@@ -34,6 +35,7 @@ import { NoCache } from '../common/decorator/no-cache.decorator';
     exclude: ['deleteOneBase'],
   },
 })
+@SkipThrottle()
 @Controller({
   path: 'users',
   version: '1',
