@@ -25,11 +25,7 @@ CrudConfigService.load({
   },
 });
 import { useContainer } from 'class-validator';
-import {
-  ClassSerializerInterceptor,
-  ValidationPipe,
-  VersioningType,
-} from '@nestjs/common';
+import { ValidationPipe, VersioningType } from '@nestjs/common';
 import { AppModule } from './app/app.module';
 import { ConfigService } from '@nestjs/config';
 import { NestExpressApplication } from '@nestjs/platform-express';
@@ -78,8 +74,11 @@ async function bootstrap() {
   app.use(helmet());
   // Global Pipe to intercept request and format data accordingly
   app.use(bodyParser.json());
-  app.useGlobalPipes(new ValidationPipe({ transform: true }));
-  app.useGlobalPipes(new TrimStringsPipe(), new ValidationPipe());
+  app.useGlobalPipes(
+    new ValidationPipe({ transform: true }),
+    new TrimStringsPipe(),
+  );
+
   // app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
   app.use(cookieParser());
 

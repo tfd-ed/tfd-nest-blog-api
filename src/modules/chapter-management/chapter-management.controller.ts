@@ -7,12 +7,14 @@ import { ChapterEntity } from './entity/chapter.entity';
 import { ChapterManagementService } from './chapter-management.service';
 import { JwtAuthGuard } from '../common/guard/jwt-guard';
 import { RolesGuard } from '../common/guard/roles.guard';
+import { SkipThrottle } from '@nestjs/throttler';
 
 @Crud({
   model: {
     type: ChapterEntity,
   },
 })
+@SkipThrottle()
 @Controller({
   path: 'chapters-management',
   version: '1',
