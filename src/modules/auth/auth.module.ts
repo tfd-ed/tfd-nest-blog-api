@@ -11,6 +11,9 @@ import { UserEntity } from '../user/entity/user.entity';
 import { UserModule } from '../user/user.module';
 import EmailEvent from './events/email.event';
 import { ForgotEntity } from './entity/forgot.entity';
+import { GoogleStrategy } from '../common/strategy/google.strategy';
+import { FacebookStrategy } from '../common/strategy/facebook-strategy';
+import { GithubStrategy } from '../common/strategy/github.strategy';
 
 @Module({
   imports: [
@@ -37,7 +40,15 @@ import { ForgotEntity } from './entity/forgot.entity';
     // }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy, RefreshTokenStrategy, EmailEvent],
+  providers: [
+    AuthService,
+    JwtStrategy,
+    RefreshTokenStrategy,
+    GoogleStrategy,
+    FacebookStrategy,
+    GithubStrategy,
+    EmailEvent,
+  ],
   exports: [AuthService],
 })
 export class AuthModule {}

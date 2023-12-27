@@ -13,6 +13,9 @@ import {
 } from 'nestjs-typeorm-paginate';
 import { UpdatePayload } from './payloads/update.payload';
 import { TypeOrmCrudService } from '@nestjsx/crud-typeorm';
+import { UserStatus } from '../common/enum/user-status.enum';
+import { RegisterPayload } from '../auth/payloads/register.payload';
+import { UserTypeEnum } from '../common/enum/user-type.enum';
 
 @Injectable()
 export class UsersService extends TypeOrmCrudService<UserEntity> {
@@ -25,6 +28,25 @@ export class UsersService extends TypeOrmCrudService<UserEntity> {
 
   async get(id: string) {
     return this.userRepository.findOne(id);
+  }
+
+  async saveUser(
+    payload: RegisterPayload,
+    status: UserStatus = UserStatus.UNCONFIRMED,
+    type: UserTypeEnum,
+  ): Promise<UserEntity> {
+    return await this.userRepository.save(
+      this.userRepository.create({
+        ...payload,
+        username:
+          payload.firstname.replace(/\s/g, '').toLocaleLowerCase() +
+          '-' +
+          Date.now().toString(),
+        status: status,
+        registrationType: type,
+        // password: hashedPassword,
+      }),
+    );
   }
 
   async getByUsername(username: string) {
@@ -88,7 +110,7 @@ export class UsersService extends TypeOrmCrudService<UserEntity> {
   //   return user;
   // }
 
-  // async create(payload: RegisterPayload) {
+  // async create(payload: RegisterEmailPayload) {
   //   const user = await this.getByUsername(payload.username);
   //   if (user) {
   //     throw new NotAcceptableException(

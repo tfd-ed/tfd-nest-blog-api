@@ -16,13 +16,14 @@ import { UsersService } from '../user/user.service';
 import { UserEntity } from '../user/entity/user.entity';
 import { I18nContext } from 'nestjs-i18n';
 import { AppRoles } from '../common/enum/roles.enum';
-import { UserStatus } from '../common/enum/userStatus.enum';
+import { UserStatus } from '../common/enum/user-status.enum';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { ForgotEntity } from './entity/forgot.entity';
-import { RegisterPayload } from './payloads/register.payload';
+import { RegisterEmailPayload } from './payloads/register-email.payload';
 import { ResetPayload } from './payloads/reset.payload';
+import { UserTypeEnum } from '../common/enum/user-type.enum';
 
 @Injectable()
 export class AuthService {
@@ -88,7 +89,7 @@ export class AuthService {
     return user;
   }
 
-  async register(payload: RegisterPayload, i18n: I18nContext) {
+  async register(payload: RegisterEmailPayload, i18n: I18nContext) {
     // const users = await this.userRepository.find({
     //   // Apply or where condition
     //   where: [{ email: payload.email }],
@@ -102,18 +103,10 @@ export class AuthService {
       throw new BadRequestException(i18n.t('error.user_already_existed'));
     }
     // const hashedPassword = Hash.make(payload.password);
-    const final = await this.userRepository.save(
-      this.userRepository.create({
-        ...payload,
-        username:
-          payload.firstname.toLocaleLowerCase() +
-          '-' +
-          payload.lastname.toLocaleLowerCase() +
-          '-' +
-          Date.now(),
-        status: UserStatus.UNCONFIRMED,
-        // password: hashedPassword,
-      }),
+    const final = await this.userService.saveUser(
+      payload,
+      UserStatus.UNCONFIRMED,
+      UserTypeEnum.EMAIL,
     );
     /**
      * Create and Persist Refresh Token
@@ -217,10 +210,9 @@ export class AuthService {
         },
       ),
     ]);
-
     return {
-      accessToken,
-      refreshToken,
+      accessToken: accessToken,
+      refreshToken: refreshToken,
     };
   }
 

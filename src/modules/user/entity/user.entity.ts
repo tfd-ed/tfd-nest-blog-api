@@ -1,18 +1,19 @@
 import {
-  Entity,
   Column,
-  OneToMany,
-  ManyToOne,
-  JoinColumn,
+  Entity,
   Index,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
 } from 'typeorm';
-import { PasswordTransformer } from '../password.transformer';
 import { AppRoles } from '../../common/enum/roles.enum';
 import { CommonEntity } from '../../common/entity/common.entity';
 import { PurchaseEntity } from '../../purchase/entity/purchase.entity';
-import { UserStatus } from '../../common/enum/userStatus.enum';
+import { UserStatus } from '../../common/enum/user-status.enum';
 import { FileEntity } from '../../file/entity/file.entity';
-import { Exclude, Type } from 'class-transformer';
+import { Type } from 'class-transformer';
+import { UserTypeEnum } from '../../common/enum/user-type.enum';
+import { PasswordTransformer } from '../password.transformer';
 
 @Entity({
   name: 'users',
@@ -33,7 +34,7 @@ export class UserEntity extends CommonEntity {
   /**
    * LastName column
    */
-  @Column({ length: 255 })
+  @Column({ length: 255, nullable: true })
   lastname: string;
 
   /**
@@ -53,6 +54,12 @@ export class UserEntity extends CommonEntity {
    */
   @Column({ type: 'enum', enum: UserStatus, default: UserStatus.UNCONFIRMED })
   status: string;
+
+  /**
+   * User registration type: email, Facebook, Google, or GitHub
+   */
+  @Column({ type: 'enum', enum: UserTypeEnum, default: UserTypeEnum.EMAIL })
+  registrationType: string;
 
   /**
    * User Profile
@@ -82,6 +89,7 @@ export class UserEntity extends CommonEntity {
   @Column({
     name: 'password',
     length: 255,
+    nullable: true,
     /**
      * Only use during fixture generation, should disable transformer when is not used
      */

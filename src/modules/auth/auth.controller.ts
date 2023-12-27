@@ -1,18 +1,19 @@
 import {
-  Controller,
+  BadRequestException,
   Body,
-  Post,
+  Controller,
   Get,
   Param,
+  Post,
   Req,
   UseGuards,
 } from '@nestjs/common';
 import {
+  ApiBearerAuth,
+  ApiForbiddenResponse,
+  ApiOperation,
   ApiResponse,
   ApiTags,
-  ApiBearerAuth,
-  ApiOperation,
-  ApiForbiddenResponse,
 } from '@nestjs/swagger';
 import { Public } from '../common/decorator/public.decorator';
 import { AuthService } from './auth.service';
@@ -24,10 +25,16 @@ import { ForbiddenDto } from '../common/schema/forbidden.dto';
 import { RefreshTokenGuard } from '../common/guard/refresh-guard';
 import RequestWithUser from '../common/interface/request-with-user.interface';
 import { JwtAuthGuard } from '../common/guard/jwt-guard';
-import { RegisterPayload } from './payloads/register.payload';
+import { RegisterEmailPayload } from './payloads/register-email.payload';
 import { ConfirmEmail } from './payloads/confirmEmail.payload';
 import { ForgotPayload } from './payloads/forgot.payload';
 import { NoCache } from '../common/decorator/no-cache.decorator';
+import { GoogleOauthGuard } from '../common/guard/google-oauth-guard';
+import { RegisterPayload } from './payloads/register.payload';
+import { UserStatus } from '../common/enum/user-status.enum';
+import { UserTypeEnum } from '../common/enum/user-type.enum';
+import { FacebookGuard } from '../common/guard/facebook-guard';
+import { GithubGuard } from '../common/guard/github-guard';
 
 @Controller({
   path: 'auth',
@@ -143,6 +150,177 @@ export class AuthController {
   }
 
   /**
+   * For testing to see Google Auth consent only, will be removed in prod
+   */
+  @UseGuards(GoogleOauthGuard)
+  @NoCache()
+  @Get('google')
+  @ApiResponse({ status: 200, description: 'Successful Login' })
+  @ApiResponse({ status: 400, description: 'Bad Request' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  async google() {}
+
+  @UseGuards(GoogleOauthGuard)
+  @NoCache()
+  @Post('google/callback')
+  async googleAuthCallback(
+    @Req() req,
+    @I18n() i18n: I18nContext,
+  ): Promise<any> {
+    // const token = await this.authService.signIn(req.user);
+    let user = req.user;
+    /**
+     * Check if current user with email already existed in database
+     */
+    const exUser = await this.userService.getByEmail(user.email);
+    if (exUser) {
+      if (exUser.registrationType == UserTypeEnum.GOOGLE) {
+        const tokens = await this.authService.getTokens(exUser.id);
+        await this.authService.updateRefreshToken(
+          exUser.id,
+          tokens.refreshToken,
+        );
+        return tokens;
+      }
+      throw new BadRequestException(
+        i18n.t('error.user_already_existed') +
+          i18n.t('error.please_login_other_socials'),
+      );
+    }
+    const payload: RegisterPayload = {
+      email: user.email,
+      firstname: user.firstname,
+      lastname: user.lastname,
+    };
+
+    /**
+     * Persist user in database
+     */
+    user = await this.userService.saveUser(
+      payload,
+      UserStatus.ACTIVE,
+      UserTypeEnum.GOOGLE,
+    );
+
+    const tokens = await this.authService.getTokens(user.id);
+    await this.authService.updateRefreshToken(user.id, tokens.refreshToken);
+    return tokens;
+  }
+
+  @UseGuards(FacebookGuard)
+  @NoCache()
+  @Get('facebook')
+  @ApiResponse({ status: 200, description: 'Successful Login' })
+  @ApiResponse({ status: 400, description: 'Bad Request' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  async facebook() {}
+
+  @UseGuards(FacebookGuard)
+  @NoCache()
+  @Post('facebook/callback')
+  async facebookAuthCallback(
+    @Req() req,
+    @I18n() i18n: I18nContext,
+  ): Promise<any> {
+    // const token = await this.authService.signIn(req.user);
+    let user = req.user;
+    /**
+     * Check if current user with email already existed in database
+     */
+    const exUser = await this.userService.getByEmail(user.email);
+    if (exUser) {
+      if (exUser.registrationType == UserTypeEnum.FACEBOOK) {
+        const tokens = await this.authService.getTokens(exUser.id);
+        await this.authService.updateRefreshToken(
+          exUser.id,
+          tokens.refreshToken,
+        );
+        return tokens;
+      }
+      throw new BadRequestException(
+        i18n.t('error.user_already_existed') +
+          i18n.t('error.please_login_other_socials'),
+      );
+    }
+    const payload: RegisterPayload = {
+      email: user.email,
+      firstname: user.firstname,
+      lastname: user.lastname,
+    };
+
+    /**
+     * Persist user in database
+     */
+    user = await this.userService.saveUser(
+      payload,
+      UserStatus.ACTIVE,
+      UserTypeEnum.FACEBOOK,
+    );
+
+    const tokens = await this.authService.getTokens(user.id);
+    await this.authService.updateRefreshToken(user.id, tokens.refreshToken);
+    return tokens;
+  }
+
+  @UseGuards(GithubGuard)
+  @NoCache()
+  @Get('github')
+  @ApiResponse({ status: 200, description: 'Successful Login' })
+  @ApiResponse({ status: 400, description: 'Bad Request' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  async github() {}
+
+  @UseGuards(GithubGuard)
+  @NoCache()
+  @Get('github/callback')
+  async githubAuthCallback(
+    @Req() req,
+    @I18n() i18n: I18nContext,
+  ): Promise<any> {
+    // const token = await this.authService.signIn(req.user);
+    let user = req.user;
+    /**
+     * Check if current user with email already existed in database
+     */
+    const exUser = await this.userService.getByEmail(user.email);
+    if (exUser) {
+      if (exUser.registrationType == UserTypeEnum.GITHUB) {
+        const tokens = await this.authService.getTokens(exUser.id);
+        await this.authService.updateRefreshToken(
+          exUser.id,
+          tokens.refreshToken,
+        );
+        return tokens;
+      }
+      throw new BadRequestException(
+        i18n.t('error.user_already_existed') +
+          i18n.t('error.please_login_other_socials'),
+      );
+    }
+    const payload: RegisterPayload = {
+      email: user.email,
+      firstname: user.username,
+      lastname: ' ',
+    };
+
+    /**
+     * Persist user in database
+     */
+    user = await this.userService.saveUser(
+      payload,
+      UserStatus.ACTIVE,
+      UserTypeEnum.GITHUB,
+    );
+
+    const tokens = await this.authService.getTokens(user.id);
+    await this.authService.updateRefreshToken(user.id, tokens.refreshToken);
+    return tokens;
+  }
+
+  /**
    * User requests to register
    * @param payload
    * @param i18n
@@ -156,7 +334,7 @@ export class AuthController {
     type: ForbiddenDto,
   })
   async registerUser(
-    @Body() payload: RegisterPayload,
+    @Body() payload: RegisterEmailPayload,
     @I18n() i18n: I18nContext,
   ) {
     return this.authService.register(payload, i18n);

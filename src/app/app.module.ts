@@ -1,4 +1,4 @@
-import { CacheInterceptor, CacheModule, Module } from '@nestjs/common';
+import { CacheModule, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -7,11 +7,11 @@ import { TimeoutInterceptor } from '../modules/common/interceptor/timeout.interc
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { CommonModule } from '../modules/common/common.module';
 import { AuthModule } from '../modules/auth/auth.module';
-import { RolesGuard } from '../modules/common/guard/roles.guard';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { BullModule } from '@nestjs/bull';
-import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import { ThrottlerModule } from '@nestjs/throttler';
 import { AcceptLanguageResolver, I18nModule, QueryResolver } from 'nestjs-i18n';
+
 import { MailmanModule } from '@squareboat/nest-mailman';
 import {
   bullConfig,
@@ -34,8 +34,8 @@ import { UserOwnManagementModule } from '../modules/user-own-management/user-own
 import { TelegrafModule } from 'nestjs-telegraf';
 import { BotModule } from '../modules/course/bots/bot.module';
 import { NoCacheInterceptor } from '../modules/common/interceptor/no-cache.interceptor';
-import { TransformInterceptor } from '../modules/common/interceptor/transform.interceptor';
 import { ThrottlerBehindProxyGuard } from '../modules/common/guard/throttler-behind-proxy.guard';
+
 // import { JwtAuthGuard } from '../modules/common/guard/jwt-guard';
 
 @Module({

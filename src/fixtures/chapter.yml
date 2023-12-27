@@ -1,6 +1,6 @@
 entity: ChapterEntity
 items:
-  chapter{1..500}:
+  chapter{1..100}:
     name: '{{name.jobType}} and {{name.jobTitle}}'
     chapterNumber: '{{datatype.number(20)}}'
     course: '@course*'
