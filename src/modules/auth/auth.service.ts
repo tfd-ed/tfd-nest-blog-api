@@ -48,9 +48,7 @@ export class AuthService {
     payload: LoginPayload,
     i18n: I18nContext,
   ): Promise<UserEntity> {
-    // console.log(payload.email);
     const user = await this.userService.getByEmail(payload.email);
-    // console.log(user);
     if (!user) {
       throw new BadRequestException(i18n.t('error.no_user'));
     }
@@ -298,44 +296,36 @@ export class AuthService {
   async handleAuthCallback(
     req,
     provider: ProviderEnum,
-    usernameField = 'username', // Default usernameField to 'username'
+    usernameField = 'username',
   ) {
     const user = req.user;
-
-    // Check if current user with email already exists in the database
     const exUser = await this.userService.getByEmail(user.email);
 
     if (exUser) {
       const integration = await this.userService.getIntegrationById(exUser.id);
-      console.log(integration);
-      // Check if integration with the given provider already exists
       if (integration.some((obj) => obj.provider === provider)) {
         const tokens = await this.getTokens(exUser.id);
         await this.updateRefreshToken(exUser.id, tokens.refreshToken);
         return tokens;
       }
-
       throw new BadRequestException({
         user: exUser,
         integration: integration,
       });
     }
 
-    // Create payload for registering a new user
     const payload: AuthCallbackPayload = {
       email: user.email,
       firstname: user[usernameField], // Use the specified field for the firstname
       lastname: ' ',
     };
 
-    // Persist user in the database
     const newUser = await this.userService.saveUser(
       payload,
       UserStatus.ACTIVE,
       UserTypeEnum.SSO,
     );
 
-    // Save integration details
     await this.integrationRepository.save(
       this.integrationRepository.create({
         byUser: newUser.id,
@@ -344,7 +334,6 @@ export class AuthService {
       }),
     );
 
-    // Get tokens and update refresh token
     const tokens = await this.getTokens(newUser.id);
     await this.updateRefreshToken(newUser.id, tokens.refreshToken);
     return tokens;
