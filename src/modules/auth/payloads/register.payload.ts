@@ -18,8 +18,7 @@ export class RegisterPayload {
 
   @ApiProperty({
     required: true,
-    example: 'kimangkheang@gmail.com',
   })
   @IsEmail()
-  public email: string;
+  email: string;
 }
