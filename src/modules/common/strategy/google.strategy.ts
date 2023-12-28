@@ -21,11 +21,10 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
     done: VerifyCallback,
   ): Promise<any> {
     const { id, name, emails, photos } = profile;
-    // console.log(profile);
 
     const user = {
       provider: 'google',
-      providerId: id,
+      id: id,
       email: emails[0].value,
       name: `${name.givenName} ${name.familyName}`,
       firstname: name.givenName,

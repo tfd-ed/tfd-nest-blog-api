@@ -16,12 +16,15 @@ import { TypeOrmCrudService } from '@nestjsx/crud-typeorm';
 import { UserStatus } from '../common/enum/user-status.enum';
 import { RegisterPayload } from '../auth/payloads/register.payload';
 import { UserTypeEnum } from '../common/enum/user-type.enum';
+import { IntegrationEntity } from './entity/integration.entity';
 
 @Injectable()
 export class UsersService extends TypeOrmCrudService<UserEntity> {
   constructor(
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
+    @InjectRepository(IntegrationEntity)
+    private readonly integrationRepository: Repository<IntegrationEntity>,
   ) {
     super(userRepository);
   }
@@ -61,7 +64,14 @@ export class UsersService extends TypeOrmCrudService<UserEntity> {
       .createQueryBuilder('user')
       .where('LOWER(user.email) = LOWER(:email)', { email })
       .getOne();
-    // return await this.userRepository.findOne({ email: email });
+  }
+
+  async getIntegrationById(id: string): Promise<IntegrationEntity[]> {
+    return await this.integrationRepository
+      .createQueryBuilder('integration')
+      .where('integration.byUserId = :userId', { userId: id })
+      .orderBy('integration.createdDate')
+      .getMany();
   }
 
   async update(id: string, updatePayload: UpdatePayload): Promise<any> {

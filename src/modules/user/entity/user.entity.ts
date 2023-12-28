@@ -14,6 +14,7 @@ import { FileEntity } from '../../file/entity/file.entity';
 import { Type } from 'class-transformer';
 import { UserTypeEnum } from '../../common/enum/user-type.enum';
 import { PasswordTransformer } from '../password.transformer';
+import { IntegrationEntity } from './integration.entity';
 
 @Entity({
   name: 'users',
@@ -60,6 +61,9 @@ export class UserEntity extends CommonEntity {
    */
   @Column({ type: 'enum', enum: UserTypeEnum, default: UserTypeEnum.EMAIL })
   registrationType: string;
+
+  @OneToMany(() => IntegrationEntity, (integration) => integration.byUser)
+  integration: IntegrationEntity[];
 
   /**
    * User Profile

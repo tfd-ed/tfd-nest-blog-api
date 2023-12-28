@@ -24,6 +24,9 @@ import { ForgotEntity } from './entity/forgot.entity';
 import { RegisterEmailPayload } from './payloads/register-email.payload';
 import { ResetPayload } from './payloads/reset.payload';
 import { UserTypeEnum } from '../common/enum/user-type.enum';
+import { ProviderEnum } from '../common/enum/provider.enum';
+import { IntegrationEntity } from '../user/entity/integration.entity';
+import { AuthCallbackPayload } from './payloads/auth-callback.payload';
 
 @Injectable()
 export class AuthService {
@@ -36,22 +39,10 @@ export class AuthService {
     private readonly userRepository: Repository<UserEntity>,
     @InjectRepository(ForgotEntity)
     private readonly forgotRepository: Repository<ForgotEntity>,
+    @InjectRepository(IntegrationEntity)
+    private readonly integrationRepository: Repository<IntegrationEntity>,
     private eventEmitter: EventEmitter2,
   ) {}
-
-  async createToken(user: UserEntity) {
-    return {
-      expiresIn: this.configService.get<string>('JWT_EXPIRATION_TIME'),
-      accessToken: this.jwtService.sign(
-        { id: user.id },
-        {
-          secret: this.configService.get<string>('JWT_SECRET_KEY'),
-          expiresIn: Number(this.configService.get('JWT_EXPIRATION_TIME')),
-        },
-      ),
-      user,
-    };
-  }
 
   async validateUser(
     payload: LoginPayload,
@@ -147,7 +138,7 @@ export class AuthService {
     );
   }
 
-  public async decodeConfirmationToken(token: string, i18n: I18nContext) {
+  async decodeConfirmationToken(token: string, i18n: I18nContext) {
     try {
       const payload = await this.jwtService.verify(token, {
         secret: this.configService.get('JWT_VERIFICATION_TOKEN_SECRET'),
@@ -165,7 +156,7 @@ export class AuthService {
     }
   }
 
-  public async confirmEmail(email: string, i18n: I18nContext) {
+  async confirmEmail(email: string, i18n: I18nContext) {
     const user = await this.getByEmail(email);
     if (
       user.status === UserStatus.CONFIRMED ||
@@ -302,5 +293,60 @@ export class AuthService {
         );
       });
     return { message: 'Password reset' };
+  }
+
+  async handleAuthCallback(
+    req,
+    provider: ProviderEnum,
+    usernameField = 'username', // Default usernameField to 'username'
+  ) {
+    const user = req.user;
+
+    // Check if current user with email already exists in the database
+    const exUser = await this.userService.getByEmail(user.email);
+
+    if (exUser) {
+      const integration = await this.userService.getIntegrationById(exUser.id);
+      console.log(integration);
+      // Check if integration with the given provider already exists
+      if (integration.some((obj) => obj.provider === provider)) {
+        const tokens = await this.getTokens(exUser.id);
+        await this.updateRefreshToken(exUser.id, tokens.refreshToken);
+        return tokens;
+      }
+
+      throw new BadRequestException({
+        user: exUser,
+        integration: integration,
+      });
+    }
+
+    // Create payload for registering a new user
+    const payload: AuthCallbackPayload = {
+      email: user.email,
+      firstname: user[usernameField], // Use the specified field for the firstname
+      lastname: ' ',
+    };
+
+    // Persist user in the database
+    const newUser = await this.userService.saveUser(
+      payload,
+      UserStatus.ACTIVE,
+      UserTypeEnum.SSO,
+    );
+
+    // Save integration details
+    await this.integrationRepository.save(
+      this.integrationRepository.create({
+        byUser: newUser.id,
+        provider: provider,
+        integrationId: user.id,
+      }),
+    );
+
+    // Get tokens and update refresh token
+    const tokens = await this.getTokens(newUser.id);
+    await this.updateRefreshToken(newUser.id, tokens.refreshToken);
+    return tokens;
   }
 }
