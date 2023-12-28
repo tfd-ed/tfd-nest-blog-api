@@ -183,10 +183,7 @@ export class AuthController {
         );
         return tokens;
       }
-      throw new BadRequestException(
-        i18n.t('error.user_already_existed') +
-          i18n.t('error.please_login_other_socials'),
-      );
+      throw new BadRequestException(exUser.registrationType.toLowerCase());
     }
     const payload: RegisterPayload = {
       email: user.email,
@@ -239,10 +236,7 @@ export class AuthController {
         );
         return tokens;
       }
-      throw new BadRequestException(
-        i18n.t('error.user_already_existed') +
-          i18n.t('error.please_login_other_socials'),
-      );
+      throw new BadRequestException(exUser.registrationType.toLowerCase());
     }
     const payload: RegisterPayload = {
       email: user.email,
@@ -275,7 +269,7 @@ export class AuthController {
 
   @UseGuards(GithubGuard)
   @NoCache()
-  @Get('github/callback')
+  @Post('github/callback')
   async githubAuthCallback(
     @Req() req,
     @I18n() i18n: I18nContext,
@@ -295,10 +289,7 @@ export class AuthController {
         );
         return tokens;
       }
-      throw new BadRequestException(
-        i18n.t('error.user_already_existed') +
-          i18n.t('error.please_login_other_socials'),
-      );
+      throw new BadRequestException(exUser.registrationType.toLowerCase());
     }
     const payload: RegisterPayload = {
       email: user.email,
@@ -339,6 +330,7 @@ export class AuthController {
   ) {
     return this.authService.register(payload, i18n);
   }
+
   /**
    * User request to confirm email address
    * @param payload
