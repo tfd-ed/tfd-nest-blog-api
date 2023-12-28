@@ -14,7 +14,7 @@ import {
   Logger,
   OnModuleInit,
 } from '@nestjs/common';
-import { UserStatus } from '../common/enum/userStatus.enum';
+import { UserStatus } from '../common/enum/user-status.enum';
 import { InjectBot } from 'nestjs-telegraf';
 import { Context, Telegraf } from 'telegraf';
 import { RuntimeException } from '@nestjs/core/errors/exceptions/runtime.exception';

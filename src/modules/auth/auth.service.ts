@@ -16,13 +16,17 @@ import { UsersService } from '../user/user.service';
 import { UserEntity } from '../user/entity/user.entity';
 import { I18nContext } from 'nestjs-i18n';
 import { AppRoles } from '../common/enum/roles.enum';
-import { UserStatus } from '../common/enum/userStatus.enum';
+import { UserStatus } from '../common/enum/user-status.enum';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { ForgotEntity } from './entity/forgot.entity';
-import { RegisterPayload } from './payloads/register.payload';
+import { RegisterEmailPayload } from './payloads/register-email.payload';
 import { ResetPayload } from './payloads/reset.payload';
+import { UserTypeEnum } from '../common/enum/user-type.enum';
+import { ProviderEnum } from '../common/enum/provider.enum';
+import { IntegrationEntity } from '../user/entity/integration.entity';
+import { AuthCallbackPayload } from './payloads/auth-callback.payload';
 
 @Injectable()
 export class AuthService {
@@ -35,30 +39,16 @@ export class AuthService {
     private readonly userRepository: Repository<UserEntity>,
     @InjectRepository(ForgotEntity)
     private readonly forgotRepository: Repository<ForgotEntity>,
+    @InjectRepository(IntegrationEntity)
+    private readonly integrationRepository: Repository<IntegrationEntity>,
     private eventEmitter: EventEmitter2,
   ) {}
-
-  async createToken(user: UserEntity) {
-    return {
-      expiresIn: this.configService.get<string>('JWT_EXPIRATION_TIME'),
-      accessToken: this.jwtService.sign(
-        { id: user.id },
-        {
-          secret: this.configService.get<string>('JWT_SECRET_KEY'),
-          expiresIn: Number(this.configService.get('JWT_EXPIRATION_TIME')),
-        },
-      ),
-      user,
-    };
-  }
 
   async validateUser(
     payload: LoginPayload,
     i18n: I18nContext,
   ): Promise<UserEntity> {
-    // console.log(payload.email);
     const user = await this.userService.getByEmail(payload.email);
-    // console.log(user);
     if (!user) {
       throw new BadRequestException(i18n.t('error.no_user'));
     }
@@ -88,7 +78,7 @@ export class AuthService {
     return user;
   }
 
-  async register(payload: RegisterPayload, i18n: I18nContext) {
+  async register(payload: RegisterEmailPayload, i18n: I18nContext) {
     // const users = await this.userRepository.find({
     //   // Apply or where condition
     //   where: [{ email: payload.email }],
@@ -102,18 +92,10 @@ export class AuthService {
       throw new BadRequestException(i18n.t('error.user_already_existed'));
     }
     // const hashedPassword = Hash.make(payload.password);
-    const final = await this.userRepository.save(
-      this.userRepository.create({
-        ...payload,
-        username:
-          payload.firstname.toLocaleLowerCase() +
-          '-' +
-          payload.lastname.toLocaleLowerCase() +
-          '-' +
-          Date.now(),
-        status: UserStatus.UNCONFIRMED,
-        // password: hashedPassword,
-      }),
+    const final = await this.userService.saveUser(
+      payload,
+      UserStatus.UNCONFIRMED,
+      UserTypeEnum.EMAIL,
     );
     /**
      * Create and Persist Refresh Token
@@ -154,7 +136,7 @@ export class AuthService {
     );
   }
 
-  public async decodeConfirmationToken(token: string, i18n: I18nContext) {
+  async decodeConfirmationToken(token: string, i18n: I18nContext) {
     try {
       const payload = await this.jwtService.verify(token, {
         secret: this.configService.get('JWT_VERIFICATION_TOKEN_SECRET'),
@@ -172,7 +154,7 @@ export class AuthService {
     }
   }
 
-  public async confirmEmail(email: string, i18n: I18nContext) {
+  async confirmEmail(email: string, i18n: I18nContext) {
     const user = await this.getByEmail(email);
     if (
       user.status === UserStatus.CONFIRMED ||
@@ -217,10 +199,9 @@ export class AuthService {
         },
       ),
     ]);
-
     return {
-      accessToken,
-      refreshToken,
+      accessToken: accessToken,
+      refreshToken: refreshToken,
     };
   }
 
@@ -310,5 +291,51 @@ export class AuthService {
         );
       });
     return { message: 'Password reset' };
+  }
+
+  async handleAuthCallback(
+    req,
+    provider: ProviderEnum,
+    usernameField = 'username',
+  ) {
+    const user = req.user;
+    const exUser = await this.userService.getByEmail(user.email);
+
+    if (exUser) {
+      const integration = await this.userService.getIntegrationById(exUser.id);
+      if (integration.some((obj) => obj.provider === provider)) {
+        const tokens = await this.getTokens(exUser.id);
+        await this.updateRefreshToken(exUser.id, tokens.refreshToken);
+        return tokens;
+      }
+      throw new BadRequestException({
+        user: exUser,
+        integration: integration,
+      });
+    }
+
+    const payload: AuthCallbackPayload = {
+      email: user.email,
+      firstname: user[usernameField], // Use the specified field for the firstname
+      lastname: ' ',
+    };
+
+    const newUser = await this.userService.saveUser(
+      payload,
+      UserStatus.ACTIVE,
+      UserTypeEnum.SSO,
+    );
+
+    await this.integrationRepository.save(
+      this.integrationRepository.create({
+        byUser: newUser.id,
+        provider: provider,
+        integrationId: user.id,
+      }),
+    );
+
+    const tokens = await this.getTokens(newUser.id);
+    await this.updateRefreshToken(newUser.id, tokens.refreshToken);
+    return tokens;
   }
 }

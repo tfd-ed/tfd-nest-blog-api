@@ -1,64 +1,51 @@
 import {
-  Controller,
   Body,
-  Post,
+  Controller,
   Get,
   Param,
+  Post,
   Req,
   UseGuards,
 } from '@nestjs/common';
 import {
-  ApiResponse,
-  ApiTags,
+  ApiBadRequestResponse,
   ApiBearerAuth,
-  ApiOperation,
   ApiForbiddenResponse,
+  ApiOkResponse,
+  ApiOperation,
+  ApiTags,
+  ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { Public } from '../common/decorator/public.decorator';
 import { AuthService } from './auth.service';
 import { LoginPayload } from './payloads/login.payload';
 import { ResetPayload } from './payloads/reset.payload';
-import { UsersService } from '../user/user.service';
 import { I18n, I18nContext } from 'nestjs-i18n';
 import { ForbiddenDto } from '../common/schema/forbidden.dto';
 import { RefreshTokenGuard } from '../common/guard/refresh-guard';
 import RequestWithUser from '../common/interface/request-with-user.interface';
 import { JwtAuthGuard } from '../common/guard/jwt-guard';
-import { RegisterPayload } from './payloads/register.payload';
-import { ConfirmEmail } from './payloads/confirmEmail.payload';
+import { RegisterEmailPayload } from './payloads/register-email.payload';
+import { ConfirmEmail } from './payloads/confirm-email.payload';
 import { ForgotPayload } from './payloads/forgot.payload';
 import { NoCache } from '../common/decorator/no-cache.decorator';
+import { GoogleOauthGuard } from '../common/guard/google-oauth-guard';
+import { FacebookGuard } from '../common/guard/facebook-guard';
+import { GithubGuard } from '../common/guard/github-guard';
+import { ProviderEnum } from '../common/enum/provider.enum';
 
 @Controller({
   path: 'auth',
   version: '1',
 })
 @ApiTags('Authentication')
-// @SerializeOptions({
-//   strategy: 'excludeAll',
-// })
 export class AuthController {
-  /**
-   * Constructor
-   * @param authService auth service
-   * @param userService user service
-   */
-  constructor(
-    private readonly authService: AuthService,
-    private readonly userService: UsersService,
-  ) {}
+  constructor(private readonly authService: AuthService) {}
 
-  /**
-   * Login User
-   * @param payload email, password
-   * @param i18n
-   * @return {token} including expire time, jwt token and user info
-   */
   @Public()
   @Post('login')
-  @ApiResponse({ status: 201, description: 'Successful Login' })
-  @ApiResponse({ status: 400, description: 'Bad Request' })
-  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiOkResponse({ description: 'Successful Login' })
+  @ApiBadRequestResponse({ description: 'Unsuccessful login' })
   async login(
     @Body() payload: LoginPayload,
     @I18n() i18n: I18nContext,
@@ -71,17 +58,11 @@ export class AuthController {
     return tokens;
   }
 
-  /**
-   * Login Admin User
-   * @param payload email, password
-   * @param i18n
-   * @return {token} including expire time, jwt token and user info
-   */
   @Public()
   @Post('admin-login')
-  @ApiResponse({ status: 201, description: 'Successful Login' })
-  @ApiResponse({ status: 400, description: 'Bad Request' })
-  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiOkResponse({ description: 'Successful Login' })
+  @ApiBadRequestResponse({ description: 'Unsuccessful login' })
+  @ApiUnauthorizedResponse({ description: 'Unauthorized login' })
   async adminLogin(
     @Body() payload: LoginPayload,
     @I18n() i18n: I18nContext,
@@ -90,16 +71,13 @@ export class AuthController {
     const tokens = await this.authService.getTokens(user.id);
     await this.authService.updateRefreshToken(user.id, tokens.refreshToken);
     return tokens;
-    // return await this.authService.createToken(user);
   }
 
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @NoCache()
   @Get('logout')
-  @ApiResponse({ status: 201, description: 'Successful Request' })
-  @ApiResponse({ status: 400, description: 'Bad Request' })
-  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiOkResponse({ status: 201, description: 'Successful logout' })
   async logout(@Req() req: RequestWithUser) {
     await this.authService.logout(req.user['id']);
   }
@@ -114,39 +92,45 @@ export class AuthController {
     return this.authService.refreshTokens(userId, refreshToken);
   }
 
-  // /**
-  //  * Change user password
-  //  * @param payload change password payload
-  //  */
-  // @Public()
-  // @Post('changePassword')
-  // @ApiResponse({ status: 201, description: 'Successful Reset' })
-  // @ApiResponse({ status: 400, description: 'Bad Request' })
-  // @ApiResponse({ status: 401, description: 'Unauthorized' })
-  // async resetPassword(@Body() payload: ResetPayload): Promise<any> {
-  //   const user = await this.userService.changPassword(payload);
-  //   return user.toJSON();
-  // }
-
-  /**
-   * Get request's user info
-   * @param req
-   */
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @NoCache()
   @Get('me')
-  @ApiResponse({ status: 200, description: 'Successful Response' })
-  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiOkResponse({ description: 'Successful Response' })
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   async getLoggedInUser(@Req() req: RequestWithUser): Promise<any> {
     return req.user;
   }
 
-  /**
-   * User requests to register
-   * @param payload
-   * @param i18n
-   */
+  @UseGuards(GoogleOauthGuard)
+  @NoCache()
+  @Post('google/callback')
+  async googleAuthCallback(@Req() req): Promise<any> {
+    return this.authService.handleAuthCallback(
+      req,
+      ProviderEnum.GOOGLE,
+      'firstname',
+    );
+  }
+
+  @UseGuards(FacebookGuard)
+  @NoCache()
+  @Post('facebook/callback')
+  async facebookAuthCallback(@Req() req): Promise<any> {
+    return this.authService.handleAuthCallback(
+      req,
+      ProviderEnum.FACEBOOK,
+      'firstname',
+    );
+  }
+
+  @UseGuards(GithubGuard)
+  @NoCache()
+  @Post('github/callback')
+  async githubAuthCallback(@Req() req): Promise<any> {
+    return this.authService.handleAuthCallback(req, ProviderEnum.GITHUB);
+  }
+
   @Public()
   @Post('/register')
   @ApiOperation({ summary: 'Register a user and send mail verification' })
@@ -156,16 +140,12 @@ export class AuthController {
     type: ForbiddenDto,
   })
   async registerUser(
-    @Body() payload: RegisterPayload,
+    @Body() payload: RegisterEmailPayload,
     @I18n() i18n: I18nContext,
   ) {
     return this.authService.register(payload, i18n);
   }
-  /**
-   * User request to confirm email address
-   * @param payload
-   * @param i18n
-   */
+
   @Public()
   @Post('/confirm')
   @ApiOperation({ summary: 'User confirm his email address' })

@@ -1,10 +1,17 @@
-import { Controller, UseGuards } from '@nestjs/common';
+import {
+  BadRequestException,
+  CACHE_MANAGER,
+  Controller,
+  Inject,
+  UseGuards,
+} from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import {
   Crud,
   CrudController,
   CrudRequest,
   Override,
+  ParsedBody,
   ParsedRequest,
 } from '@nestjsx/crud';
 import { Roles } from '../common/decorator/roles.decorator';
@@ -15,6 +22,7 @@ import { JwtAuthGuard } from '../common/guard/jwt-guard';
 import { RolesGuard } from '../common/guard/roles.guard';
 import { NoCache } from '../common/decorator/no-cache.decorator';
 import { SkipThrottle } from '@nestjs/throttler';
+import { Cache } from 'cache-manager';
 
 /**
  * This route is for admin user only
@@ -55,7 +63,10 @@ import { SkipThrottle } from '@nestjs/throttler';
 export class CourseManagementController
   implements CrudController<CourseEntity>
 {
-  constructor(public service: CourseManagementService) {}
+  constructor(
+    public service: CourseManagementService,
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
+  ) {}
 
   get base(): CrudController<CourseEntity> {
     return this;
@@ -71,5 +82,18 @@ export class CourseManagementController
   @Override('getOneBase')
   getOne(@ParsedRequest() req: CrudRequest) {
     return this.base.getOneBase(req);
+  }
+
+  @Override('updateOneBase')
+  async updateAndInvalidateCache(
+    @ParsedRequest() req: CrudRequest,
+    @ParsedBody() dto: CourseEntity,
+  ) {
+    try {
+      await this.base.updateOneBase(req, dto);
+      await this.cacheManager.reset();
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
   }
 }
