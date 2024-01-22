@@ -3,7 +3,6 @@ import { setupSwagger } from './swagger';
 import { CrudConfigService } from '@nestjsx/crud';
 import { useContainer } from 'class-validator';
 import { ValidationPipe, VersioningType } from '@nestjs/common';
-import { AppModule } from './app/app.module';
 import { ConfigService } from '@nestjs/config';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import * as helmet from 'helmet';
@@ -33,6 +32,8 @@ CrudConfigService.load({
     },
   },
 });
+
+import { AppModule } from './app/app.module';
 
 // import { getBotToken } from 'nestjs-telegraf';
 
