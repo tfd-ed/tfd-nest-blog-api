@@ -303,15 +303,25 @@ export class AuthService {
 
     if (exUser) {
       const integration = await this.userService.getIntegrationById(exUser.id);
+
       if (integration.some((obj) => obj.provider === provider)) {
         const tokens = await this.getTokens(exUser.id);
         await this.updateRefreshToken(exUser.id, tokens.refreshToken);
         return tokens;
       }
-      throw new BadRequestException({
-        user: exUser,
-        integration: integration,
-      });
+      await this.integrationRepository.save(
+        this.integrationRepository.create({
+          byUser: exUser.id,
+          provider: provider,
+          integrationId: user.id,
+        }),
+      );
+      await this.markEmailAsConfirmed(user.email);
+
+      // throw new BadRequestException({
+      //   user: exUser,
+      //   integration: integration,
+      // });
     }
 
     const payload: AuthCallbackPayload = {

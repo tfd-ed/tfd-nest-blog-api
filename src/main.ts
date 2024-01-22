@@ -1,6 +1,14 @@
-import { NestFactory, Reflector } from '@nestjs/core';
+import { NestFactory } from '@nestjs/core';
 import { setupSwagger } from './swagger';
 import { CrudConfigService } from '@nestjsx/crud';
+import { useContainer } from 'class-validator';
+import { ValidationPipe, VersioningType } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { NestExpressApplication } from '@nestjs/platform-express';
+import * as helmet from 'helmet';
+import * as cookieParser from 'cookie-parser';
+import * as bodyParser from 'body-parser';
+import { TrimStringsPipe } from './modules/common/transformer/trim-strings.pipe';
 
 /**
  * Configure default Typeorm CRUD behavior
@@ -24,15 +32,9 @@ CrudConfigService.load({
     },
   },
 });
-import { useContainer } from 'class-validator';
-import { ValidationPipe, VersioningType } from '@nestjs/common';
+
 import { AppModule } from './app/app.module';
-import { ConfigService } from '@nestjs/config';
-import { NestExpressApplication } from '@nestjs/platform-express';
-import * as helmet from 'helmet';
-import * as cookieParser from 'cookie-parser';
-import * as bodyParser from 'body-parser';
-import { TrimStringsPipe } from './modules/common/transformer/trim-strings.pipe';
+
 // import { getBotToken } from 'nestjs-telegraf';
 
 async function bootstrap() {
@@ -54,18 +56,21 @@ async function bootstrap() {
       configService.get('FRONTEND_URL'),
       configService.get('ADMIN_URL'),
       configService.get('TEST_URL'),
+      configService.get('TEST_URL_ADMIN'),
     ],
     allowedHeaders: [
       'Content-Type',
       'Authorization',
       'X-Requested-With',
       'X-Forwarded-Proto',
+      'Access-Control-Allow-Origin',
     ],
     exposedHeaders: [
       'Content-Type',
       'Authorization',
       'X-Requested-With',
       'X-Forwarded-Proto',
+      'Access-Control-Allow-Origin',
     ],
   });
   if (configService.get('APP_ENV') !== 'dev') {
