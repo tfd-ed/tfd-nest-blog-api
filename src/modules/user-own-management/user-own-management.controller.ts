@@ -1,5 +1,17 @@
-import { BadRequestException, Controller, UseGuards } from '@nestjs/common';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import {
+  BadRequestException,
+  Controller,
+  Get,
+  Param,
+  ParseUUIDPipe,
+  UseGuards,
+} from '@nestjs/common';
+import {
+  ApiBearerAuth,
+  ApiForbiddenResponse,
+  ApiOperation,
+  ApiTags,
+} from '@nestjs/swagger';
 import {
   Crud,
   CrudAuth,
@@ -16,6 +28,8 @@ import { AppRoles } from '../common/enum/roles.enum';
 import { JwtAuthGuard } from '../common/guard/jwt-guard';
 import { RolesGuard } from '../common/guard/roles.guard';
 import { NoCache } from '../common/decorator/no-cache.decorator';
+import { UsersService } from '../user/user.service';
+import { ForbiddenDto } from '../common/schema/forbidden.dto';
 
 /**
  * This route is for non admin user only
@@ -34,7 +48,7 @@ import { NoCache } from '../common/decorator/no-cache.decorator';
         eager: false,
       },
     },
-    exclude: ['password'],
+    exclude: ['password', 'refreshToken'],
   },
   routes: {
     /**
@@ -60,7 +74,10 @@ import { NoCache } from '../common/decorator/no-cache.decorator';
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard, RolesGuard)
 export class UserOwnManagementController implements CrudController<UserEntity> {
-  constructor(public service: UserOwnManagementService) {}
+  constructor(
+    public service: UserOwnManagementService,
+    private readonly userService: UsersService,
+  ) {}
 
   get base(): CrudController<UserEntity> {
     return this;
@@ -89,5 +106,16 @@ export class UserOwnManagementController implements CrudController<UserEntity> {
     } catch (error) {
       throw new BadRequestException(error);
     }
+  }
+
+  @ApiOperation({ summary: 'User get his integration info' })
+  @ApiForbiddenResponse({
+    status: 403,
+    description: 'Forbidden',
+    type: ForbiddenDto,
+  })
+  @Get(':id/integrations')
+  async getIntegrations(@Param('id', new ParseUUIDPipe()) id: string) {
+    return await this.userService.getIntegrationById(id);
   }
 }
