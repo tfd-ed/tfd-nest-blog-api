@@ -297,51 +297,56 @@ export class AuthService {
     req,
     provider: ProviderEnum,
     usernameField = 'username',
-    add = false,
   ) {
     const user = req.user;
     const exUser = await this.userService.getByEmail(user.email);
-    const createNewUser = async () => {
-      const payload: AuthCallbackPayload = {
-        email: user.email,
-        firstname: user[usernameField],
-        lastname: ' ',
-      };
-
-      const newUser = await this.userService.saveUser(
-        payload,
-        UserStatus.ACTIVE,
-        UserTypeEnum.SSO,
-      );
-
-      await this.integrationRepository.save({
-        byUser: newUser.id,
-        provider: provider,
-        integrationId: user.id,
-      });
-
-      const tokens = await this.getTokens(newUser.id);
-      await this.updateRefreshToken(newUser.id, tokens.refreshToken);
-
-      return tokens;
-    };
 
     if (exUser) {
       const integration = await this.userService.getIntegrationById(exUser.id);
-      if (integration.some((obj) => obj.provider === provider)) {
-        const tokens = await this.getTokens(exUser.id);
-        await this.updateRefreshToken(exUser.id, tokens.refreshToken);
-        return tokens;
+      if (
+        integration.some((obj) => obj.provider != provider) ||
+        integration.length === 0
+      ) {
+        await this.integrationRepository.save(
+          this.integrationRepository.create({
+            byUser: exUser.id,
+            provider: provider,
+            integrationId: user.id,
+          }),
+        );
+        await this.markEmailAsConfirmed(user.email);
       }
-      if (add) {
-        await createNewUser();
-      }
-      throw new BadRequestException({
-        user: exUser,
-        integration: integration,
-      });
+      const tokens = await this.getTokens(exUser.id);
+      await this.updateRefreshToken(exUser.id, tokens.refreshToken);
+      return tokens;
+      // throw new BadRequestException({
+      //   user: exUser,
+      //   integration: integration,
+      // });
     }
 
-    return await createNewUser();
+    const payload: AuthCallbackPayload = {
+      email: user.email,
+      firstname: user[usernameField], // Use the specified field for the firstname
+      lastname: ' ',
+    };
+
+    const newUser = await this.userService.saveUser(
+      payload,
+      UserStatus.ACTIVE,
+      UserTypeEnum.SSO,
+    );
+
+    await this.integrationRepository.save(
+      this.integrationRepository.create({
+        byUser: newUser.id,
+        provider: provider,
+        integrationId: user.id,
+      }),
+    );
+
+    const tokens = await this.getTokens(newUser.id);
+    await this.updateRefreshToken(newUser.id, tokens.refreshToken);
+    return tokens;
   }
 }
