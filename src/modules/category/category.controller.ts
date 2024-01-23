@@ -1,4 +1,4 @@
-import { Controller } from '@nestjs/common';
+import { Controller, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import {
   Crud,
@@ -10,6 +10,7 @@ import {
 import { CategoryEntity } from './entity/category.entity';
 import { CategoryService } from './category.service';
 import { Public } from '../common/decorator/public.decorator';
+import { JwtAuthGuard } from '../common/guard/jwt-guard';
 
 @Crud({
   model: {
@@ -22,6 +23,7 @@ import { Public } from '../common/decorator/public.decorator';
 })
 @ApiTags('Categories')
 @ApiBearerAuth()
+@UseGuards(JwtAuthGuard)
 export class CategoryController implements CrudController<CategoryEntity> {
   constructor(public service: CategoryService) {}
 

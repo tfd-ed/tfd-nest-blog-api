@@ -7,5 +7,9 @@
   "user_not_exist": "មិនមានអ្នកប្រើប្រាស់ជាមួយអ៊ីមែលនេះទេ!",
   "token_not_exist": "សំណើកំណត់ឡើងវិញមិនមានទេ។",
   "token_already_used": "ថូខឹន(Token)បានប្រើរួចហើយ!",
-  "mismatched_email": "អ៊ី\u200Bម៉ែ\u200Bល\u200Bមិន\u200Bត្រូវ\u200Bគ្នា\u200B!"
+  "mismatched_email": "អ៊ី\u200Bម៉ែ\u200Bល\u200Bមិន\u200Bត្រូវ\u200Bគ្នា\u200B!",
+  "no_user": "មិនមានអ្នកប្រើប្រាស់ជាមួយអ៉ីមែលនេះទេ!",
+  "unconfirmed": "អ្នក\u200Bប្រើ\u200Bមិន\u200Bទាន់\u200Bបញ្ជាក់\u200Bអ៊ីមែល\u200Bទេ!",
+  "please_login_with_email" : "សូមចូលដោយប្រើ Email វិញ!",
+  "please_login_other_socials" : "សូមចូលដោយប្រើសេវាផ្សេងវិញ(Google, Facebook, GitHub)"
 }

@@ -1,23 +1,33 @@
-import { Controller } from '@nestjs/common';
 import {
-  ApiBearerAuth,
-  ApiForbiddenResponse,
-  ApiOperation,
-  ApiTags,
-} from '@nestjs/swagger';
-import { Crud, CrudController } from '@nestjsx/crud';
+  BadRequestException,
+  CACHE_MANAGER,
+  Controller,
+  Inject,
+  UseGuards,
+} from '@nestjs/common';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import {
+  Crud,
+  CrudController,
+  CrudRequest,
+  Override,
+  ParsedBody,
+  ParsedRequest,
+} from '@nestjsx/crud';
 import { Roles } from '../common/decorator/roles.decorator';
 import { AppRoles } from '../common/enum/roles.enum';
 import { CourseEntity } from '../course/entity/course.entity';
 import { CourseManagementService } from './course-management.service';
-import { Public } from '../common/decorator/public.decorator';
-import { ForbiddenDto } from '../common/schema/forbidden.dto';
-import { RegisterPayload } from '../user-auth/payloads/register.payload';
-import { I18n, I18nContext } from 'nestjs-i18n';
+import { JwtAuthGuard } from '../common/guard/jwt-guard';
+import { RolesGuard } from '../common/guard/roles.guard';
+import { NoCache } from '../common/decorator/no-cache.decorator';
+import { SkipThrottle } from '@nestjs/throttler';
+import { Cache } from 'cache-manager';
 
 /**
  * This route is for admin user only
  */
+@SkipThrottle()
 @Controller({
   path: 'courses-management',
   version: '1',
@@ -47,10 +57,43 @@ import { I18n, I18nContext } from 'nestjs-i18n';
   },
 })
 @Roles(AppRoles.ADMINS)
+@UseGuards(JwtAuthGuard, RolesGuard)
 @ApiTags('Courses Management')
 @ApiBearerAuth()
 export class CourseManagementController
   implements CrudController<CourseEntity>
 {
-  constructor(public service: CourseManagementService) {}
+  constructor(
+    public service: CourseManagementService,
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
+  ) {}
+
+  get base(): CrudController<CourseEntity> {
+    return this;
+  }
+
+  @NoCache()
+  @Override('getManyBase')
+  getMany(@ParsedRequest() req: CrudRequest) {
+    return this.base.getManyBase(req);
+  }
+
+  @NoCache()
+  @Override('getOneBase')
+  getOne(@ParsedRequest() req: CrudRequest) {
+    return this.base.getOneBase(req);
+  }
+
+  @Override('updateOneBase')
+  async updateAndInvalidateCache(
+    @ParsedRequest() req: CrudRequest,
+    @ParsedBody() dto: CourseEntity,
+  ) {
+    try {
+      await this.base.updateOneBase(req, dto);
+      await this.cacheManager.reset();
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
+  }
 }

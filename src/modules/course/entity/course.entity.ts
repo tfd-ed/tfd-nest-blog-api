@@ -8,7 +8,6 @@ import {
 } from 'typeorm';
 import { CommonEntity } from '../../common/entity/common.entity';
 import { FileEntity } from '../../file/entity/file.entity';
-import { ChapterEntity } from '../../chapter/entity/chapter.entity';
 import { PurchaseEntity } from '../../purchase/entity/purchase.entity';
 import { CategoryEntity } from '../../category/entity/category.entity';
 /**
@@ -19,6 +18,8 @@ import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 import { Type } from 'class-transformer';
 import { InstructorEntity } from '../../instructor/entity/instructor.entity';
 import { CourseEnum } from '../../common/enum/course.enum';
+import { ChapterEntity } from '../../chapter-management/entity/chapter.entity';
+import { CourseTypeEnum } from '../../common/enum/course-type.enum';
 const { CREATE, UPDATE } = CrudValidationGroups;
 
 @Entity({
@@ -33,6 +34,13 @@ export class CourseEntity extends CommonEntity {
   @IsString({ always: true })
   @Column({ length: 255, unique: true })
   title: string;
+
+  /**
+   * Unique URL display title column
+   */
+  @IsOptional({ groups: [UPDATE] })
+  @Column({ length: 255, unique: true, nullable: true })
+  titleURL: string;
 
   /**
    * Short Description column
@@ -119,6 +127,15 @@ export class CourseEntity extends CommonEntity {
   paymentLink: string;
 
   /**
+   * Link to Bakong
+   */
+  @IsOptional({ groups: [UPDATE] })
+  @IsNotEmpty({ groups: [CREATE] })
+  @IsString({ always: true })
+  @Column({ type: 'text', nullable: true })
+  bkPaymentLink: string;
+
+  /**
    * Course duration in second
    */
   @Column({ type: 'int', nullable: true })
@@ -129,4 +146,10 @@ export class CourseEntity extends CommonEntity {
    */
   @Column({ type: 'enum', enum: CourseEnum, default: CourseEnum.DRAFTED })
   status: string;
+
+  /**
+   * Course Type Enum
+   */
+  @Column({ type: 'enum', enum: CourseTypeEnum, default: CourseTypeEnum.FREE })
+  type: string;
 }

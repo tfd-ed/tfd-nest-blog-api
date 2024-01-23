@@ -7,5 +7,9 @@
   "user_not_exist": "User with this email doesn't exist!",
   "token_not_exist": "Reset Token Doesn't Exist",
   "token_already_used": "Token already used!",
-  "mismatched_email": "Mismatched Email!"
+  "mismatched_email": "Mismatched Email!",
+  "no_user": "No user with this email!",
+  "unconfirmed": "User didn't confirm the email yet!",
+  "please_login_with_email" : "Please proceed to login with email!",
+  "please_login_other_socials" : "Please proceed to login with other social services (Google, Facebook, GitHub)!"
 }

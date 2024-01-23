@@ -38,3 +38,7 @@ upload
 # environment
 .env
 .idea/
+
+#DB Backup
+backup_*.sql
+

@@ -5,6 +5,7 @@ import {
   Param,
   ParseUUIDPipe,
   Post,
+  UseGuards,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -26,6 +27,8 @@ import { PurchasePayload } from './payload/purchase.payload';
 import { Public } from '../common/decorator/public.decorator';
 
 import { CourseEnum } from '../common/enum/course.enum';
+import { JwtAuthGuard } from '../common/guard/jwt-guard';
+import { NoCache } from '../common/decorator/no-cache.decorator';
 
 /**
  * This route is for non admin user only
@@ -37,6 +40,13 @@ import { CourseEnum } from '../common/enum/course.enum';
 @Crud({
   model: {
     type: CourseEntity,
+  },
+  params: {
+    titleURL: {
+      field: 'titleURL',
+      type: 'string',
+      primary: true,
+    },
   },
   query: {
     join: {
@@ -84,7 +94,7 @@ export class CourseController implements CrudController<CourseEntity> {
    * @param id
    * @param payload
    */
-  // @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
   @Post(':id/purchase')
   @ApiOperation({ summary: 'User purchase a course' })
   @ApiForbiddenResponse({
@@ -96,7 +106,7 @@ export class CourseController implements CrudController<CourseEntity> {
     @Param('id', new ParseUUIDPipe()) id: string,
     @Body() payload: PurchasePayload,
   ) {
-    return this.service.purchase(id, payload);
+    return await this.service.purchase(id, payload);
   }
 
   /**
@@ -104,7 +114,8 @@ export class CourseController implements CrudController<CourseEntity> {
    * @param id
    * @param userId
    */
-  // @ApiBearerAuth()
+  // @NoCache()
+  @UseGuards(JwtAuthGuard)
   @Get(':id/user-purchase/:userId')
   @ApiOperation({ summary: 'User purchase a course' })
   @ApiForbiddenResponse({
@@ -112,6 +123,8 @@ export class CourseController implements CrudController<CourseEntity> {
     description: 'Forbidden',
     type: ForbiddenDto,
   })
+  // @CacheKey(':userId/fetch_user_purchase')
+  // @CacheTTL(30)
   async pastPurchase(
     @Param('id', new ParseUUIDPipe()) id: string,
     @Param('userId', new ParseUUIDPipe()) userId: string,

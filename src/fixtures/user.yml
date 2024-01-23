@@ -10,7 +10,7 @@ items:
       - ADMIN
       - DEFAULT
     email: 'admin@tfdevs.com'
-  user{2..100}:
+  user{2..10}:
     username: '{{internet.userName}}-{{random.alphaNumeric(5)}}'
     firstname: '{{name.firstName}}'
     lastname: '{{name.lastName}}'

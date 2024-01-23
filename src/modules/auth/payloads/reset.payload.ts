@@ -1,32 +1,31 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, MinLength } from 'class-validator';
+import { IsEmail, IsNotEmpty, MinLength } from 'class-validator';
 import { SameAs } from '../../common/validator/same-as.validator';
 
 export class ResetPayload {
   @ApiProperty({
     required: true,
+    example: 'kimangkheang@gmail.com',
+  })
+  @IsEmail()
+  email: string;
+
+  @ApiProperty({
+    required: true,
+    example: 'sdf23t2nfs',
   })
   @IsNotEmpty()
-  username: string;
+  token: string;
 
   @ApiProperty({
     required: true,
   })
-  @IsNotEmpty()
-  @MinLength(5)
-  currentPassword: string;
+  @MinLength(8)
+  password: string;
 
   @ApiProperty({
     required: true,
   })
-  @IsNotEmpty()
-  @MinLength(5)
-  newPassword: string;
-
-  @ApiProperty({
-    required: true,
-  })
-  @IsNotEmpty()
-  @SameAs('newPassword')
-  confirmPassword: string;
+  @SameAs('password')
+  confirmation: string;
 }

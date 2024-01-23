@@ -7,13 +7,12 @@ export class PasswordTransformer implements ValueTransformer {
    * @param value value to transform
    */
   to(value) {
+    if (value == undefined) {
+      return Hash.make(Date.now().toString());
+    }
     return Hash.make(value);
   }
 
-  /**
-   * Original value
-   * @param value to be transformed
-   */
   from(value) {
     return value;
   }

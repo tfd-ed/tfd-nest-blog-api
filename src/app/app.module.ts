@@ -5,14 +5,13 @@ import { AppService } from './app.service';
 import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { TimeoutInterceptor } from '../modules/common/interceptor/timeout.interceptor';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { JwtAuthGuard } from '../modules/auth/jwt-guard';
 import { CommonModule } from '../modules/common/common.module';
 import { AuthModule } from '../modules/auth/auth.module';
-import { RolesGuard } from '../modules/common/guard/roles.guard';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { BullModule } from '@nestjs/bull';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { AcceptLanguageResolver, I18nModule, QueryResolver } from 'nestjs-i18n';
+
 import { MailmanModule } from '@squareboat/nest-mailman';
 import {
   bullConfig,
@@ -24,14 +23,20 @@ import {
 import { join } from 'path';
 import { FileModule } from '../modules/file/file.module';
 import { CourseModule } from '../modules/course/course.module';
-import { UserAuthModule } from '../modules/user-auth/user-auth.module';
+// import { UserAuthModule } from '../modules/user-auth/user-auth.module';
 import { PurchaseModule } from '../modules/purchase/purchase.module';
 import { UserModule } from '../modules/user/user.module';
 import { CategoryModule } from '../modules/category/category.module';
-import { ChapterModule } from '../modules/chapter/chapter.module';
+import { ChapterManagementModule } from '../modules/chapter-management/chapter-management.module';
 import { InstructorModule } from '../modules/instructor/instructor.module';
 import { CourseManagementModule } from '../modules/course-management/course-management.module';
 import { UserOwnManagementModule } from '../modules/user-own-management/user-own-management.module';
+import { TelegrafModule } from 'nestjs-telegraf';
+import { BotModule } from '../modules/course/bots/bot.module';
+import { NoCacheInterceptor } from '../modules/common/interceptor/no-cache.interceptor';
+import { ThrottlerBehindProxyGuard } from '../modules/common/guard/throttler-behind-proxy.guard';
+
+// import { JwtAuthGuard } from '../modules/common/guard/jwt-guard';
 
 @Module({
   imports: [
@@ -54,6 +59,7 @@ import { UserOwnManagementModule } from '../modules/user-own-management/user-own
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: redisConfig,
+      isGlobal: true,
     }),
     ThrottlerModule.forRootAsync({
       imports: [ConfigModule],
@@ -76,13 +82,21 @@ import { UserOwnManagementModule } from '../modules/user-own-management/user-own
         AcceptLanguageResolver,
       ],
     }),
+    TelegrafModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: async (configService: ConfigService) => ({
+        token: configService.get<string>('TELEGRAM_BOT_TOKEN'),
+        include: [BotModule],
+      }),
+      inject: [ConfigService],
+    }),
+    BotModule,
     AuthModule,
     UserModule,
     FileModule,
     CourseModule,
-    ChapterModule,
+    ChapterManagementModule,
     PurchaseModule,
-    UserAuthModule,
     CategoryModule,
     CommonModule,
     InstructorModule,
@@ -92,18 +106,30 @@ import { UserOwnManagementModule } from '../modules/user-own-management/user-own
   controllers: [AppController],
   providers: [
     AppService,
-    {
-      provide: APP_GUARD,
-      useClass: JwtAuthGuard,
-    },
-    {
-      provide: APP_GUARD,
-      useClass: RolesGuard,
-    },
+    // {
+    //   provide: APP_GUARD,
+    //   useClass: JwtAuthGuard,
+    // },
+    // {
+    //   provide: APP_GUARD,
+    //   useClass: RolesGuard,
+    // },
     {
       provide: APP_INTERCEPTOR,
       useClass: TimeoutInterceptor,
     },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: NoCacheInterceptor,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerBehindProxyGuard,
+    },
+    // {
+    //   provide: APP_INTERCEPTOR,
+    //   useClass: TransformInterceptor,
+    // },
   ],
 })
 export class AppModule {}

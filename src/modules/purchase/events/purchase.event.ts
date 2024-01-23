@@ -7,7 +7,7 @@ import { I18nService } from 'nestjs-i18n';
 const moment = require('moment');
 
 @Injectable()
-export default class PurchaseEvent {
+export class PurchaseEvent {
   private readonly logger = new Logger(PurchaseEvent.name);
   constructor(
     private readonly configService: ConfigService,
@@ -22,7 +22,7 @@ export default class PurchaseEvent {
     const mail = new MailMessage();
     mail
       .subject(
-        this.translateService.t('event.welcome_to_tfdevs', {
+        this.translateService.t('event.thanks_for_purchase', {
           lang: payload.lang,
         }),
       )

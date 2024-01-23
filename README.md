@@ -84,8 +84,4 @@ Fixture lets you play around with sample data. It's not recommended generating i
 #### Generate Sample Data Make sure the docker container is running
 ```bash  
 $ docker exec -it tfd-api-server yarn fixture:generate
-```  
-## Donation
-Kindly donate to the following bank account (Cambodia) if you want to support our works.
-
-<a href="https://imgur.com/fEjLJ0E"><img src="https://i.imgur.com/fEjLJ0E.jpg" title="source: imgur.com" width="350"  /></a>
+```
