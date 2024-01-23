@@ -5,10 +5,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { AbaTransferEntity } from '../../purchase/entity/aba-transfer.entity';
 import { Logger, NotAcceptableException, UseFilters } from '@nestjs/common';
-import { TelegrafFilter } from '../../common/filter/telegraf.filter';
+// import { TelegrafFilter } from '../../common/filter/telegraf.filter';
 
 @Update()
-@UseFilters(TelegrafFilter)
+// @UseFilters(TelegrafFilter)
 export class CourseBot {
   constructor(
     @InjectRepository(AbaTransferEntity)
@@ -19,6 +19,7 @@ export class CourseBot {
   @Public()
   @On('text')
   async hears(@Ctx() ctx: TelegrafContextInterface) {
+    // this.logger.log('Message received: ');
     this.logger.log('Bot message received by ' + ctx.message.from.username);
     if (ctx.message.from.username === 'PayWayByABA_bot') {
       if (ctx.message.text.includes('USD')) {
