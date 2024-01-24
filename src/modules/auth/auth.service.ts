@@ -301,27 +301,30 @@ export class AuthService {
     const user = req.user;
     const exUser = await this.userService.getByEmail(user.email);
 
+    const createToken = async () => {
+      const tokens = await this.getTokens(exUser.id);
+      await this.updateRefreshToken(exUser.id, tokens.refreshToken);
+      return tokens;
+    };
+
     if (exUser) {
       const integration = await this.userService.getIntegrationById(exUser.id);
 
-      if (integration.some((obj) => obj.provider === provider)) {
-        const tokens = await this.getTokens(exUser.id);
-        await this.updateRefreshToken(exUser.id, tokens.refreshToken);
-        return tokens;
+      if (integration.length === 0) {
+        await this.integrationRepository.save(
+          this.integrationRepository.create({
+            byUser: exUser.id,
+            provider: provider,
+            integrationId: user.id,
+          }),
+        );
+        await this.markEmailAsConfirmed(user.email);
+        return await createToken();
       }
-      await this.integrationRepository.save(
-        this.integrationRepository.create({
-          byUser: exUser.id,
-          provider: provider,
-          integrationId: user.id,
-        }),
-      );
-      await this.markEmailAsConfirmed(user.email);
 
-      // throw new BadRequestException({
-      //   user: exUser,
-      //   integration: integration,
-      // });
+      if (integration.some((obj) => obj.provider === provider)) {
+        return await createToken();
+      }
     }
 
     const payload: AuthCallbackPayload = {
