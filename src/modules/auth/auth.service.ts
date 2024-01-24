@@ -300,8 +300,6 @@ export class AuthService {
   ) {
     const user = req.user;
     const exUser = await this.userService.getByEmail(user.email);
-    console.log(user);
-    console.log(exUser);
 
     const createToken = async () => {
       const tokens = await this.getTokens(exUser.id);
@@ -311,7 +309,6 @@ export class AuthService {
 
     if (exUser) {
       const integration = await this.userService.getIntegrationById(exUser.id);
-      console.log(integration);
 
       if (integration.some((obj) => obj.provider === provider)) {
         return await createToken();
