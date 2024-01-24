@@ -114,6 +114,7 @@ export class UserOwnManagementController implements CrudController<UserEntity> {
     description: 'Forbidden',
     type: ForbiddenDto,
   })
+  @NoCache()
   @Get(':id/integrations')
   async getIntegrations(@Param('id', new ParseUUIDPipe()) id: string) {
     return await this.userService.getIntegrationById(id);
