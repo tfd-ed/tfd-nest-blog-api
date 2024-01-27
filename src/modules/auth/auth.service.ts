@@ -310,21 +310,18 @@ export class AuthService {
     if (exUser) {
       const integration = await this.userService.getIntegrationById(exUser.id);
 
-      if (integration.length === 0) {
-        await this.integrationRepository.save(
-          this.integrationRepository.create({
-            byUser: exUser.id,
-            provider: provider,
-            integrationId: user.id,
-          }),
-        );
-        await this.markEmailAsConfirmed(user.email);
-        return await createToken();
-      }
-
       if (integration.some((obj) => obj.provider === provider)) {
         return await createToken();
       }
+
+      await this.integrationRepository.save({
+        byUser: exUser.id,
+        provider: provider,
+        integrationId: user.id,
+      });
+
+      await this.markEmailAsConfirmed(user.email);
+      return await createToken();
     }
 
     const payload: AuthCallbackPayload = {
