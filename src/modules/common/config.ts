@@ -19,7 +19,7 @@ const appRoot = require('app-root-path');
 
 export async function redisConfig(configService: ConfigService) {
   const env = configService.get<string>('APP_ENV');
-  if (env === 'dev') {
+  if (env === 'dev' || env === 'local-prod') {
     return {
       ttl: configService.get('CACHE_TTL'), // seconds
       max: configService.get('CACHE_MAX'), // maximum number of items in cache
@@ -65,7 +65,7 @@ export async function typeormConfig(configService: ConfigService) {
       database: configService.get<string>('DB_DATABASE'),
       maxQueryExecutionTime: 1000,
       // logging: true,
-      synchronize: configService.get<string>('DB_SYNC') !== 'false',
+      synchronize: true,
       migrationsRun: false,
       dropSchema: false,
       entities: [join(__dirname, './../**/**.entity{.ts,.js}')],
@@ -103,16 +103,38 @@ export async function typeormConfig(configService: ConfigService) {
       },
     } as TypeOrmModuleAsyncOptions;
   }
+  if (env === 'local-prod') {
+    return {
+      type: configService.get<string>('DB_TYPE'),
+      host: configService.get<string>('DB_HOST'),
+      port: configService.get<string>('DB_PORT'),
+      username: configService.get<string>('DB_USERNAME'),
+      password: configService.get<string>('DB_PASSWORD'),
+      database: configService.get<string>('DB_DATABASE'),
+      maxQueryExecutionTime: 1000,
+      // logging: true,
+      synchronize: false,
+      migrationsRun: true,
+      dropSchema: false,
+      entities: [join(__dirname, './../**/**.entity{.ts,.js}')],
+      subscribers: [join(__dirname, './../**/**.subscriber{.ts,.js}')],
+      migrations: [join(__dirname, './../../migrations/{.ts,*.js}')],
+      cli: {
+        migrationsDir: 'src/migrations',
+      },
+    } as TypeOrmModuleAsyncOptions;
+  }
 }
 export async function throttlerConfig(configService: ConfigService) {
   const env = configService.get<string>('APP_ENV');
   let redisObj;
-  if (env === 'dev') {
+  if (env === 'dev' || env === 'local-prod') {
     redisObj = {
       host: configService.get('CACHE_HOST'),
       port: configService.get('CACHE_PORT'),
     };
-  } else {
+  }
+  if (env == 'prod') {
     /**
      * REDIS_URL is periodically rotated
      */
@@ -157,7 +179,7 @@ export async function mailMainConfig(configService: ConfigService) {
 }
 export async function bullConfig(configService: ConfigService) {
   const env = configService.get<string>('APP_ENV');
-  if (env === 'dev') {
+  if (env === 'dev' || env === 'local-prod') {
     return {
       redis: {
         host: configService.get('CACHE_HOST'),

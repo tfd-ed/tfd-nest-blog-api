@@ -25,12 +25,12 @@ services:
     ports:
       - '80:80'
   db:
-    image: postgres:14.10
+    image: postgres:14.12
     container_name: tfd-api-db
     environment:
-      POSTGRES_DB: nest
-      POSTGRES_USER: nest
-      POSTGRES_PASSWORD: nest
+      - POSTGRES_DB=${DB_TYPE}
+      - POSTGRES_USER=${DB_USERNAME}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
     ports:
       - '5432:5432'
     volumes:

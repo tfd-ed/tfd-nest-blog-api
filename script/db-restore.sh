@@ -1,5 +1,13 @@
 #!/bin/bash
 
+# Source the .env file
+if [ -f ../.env ]; then
+    export $(grep -v '^#' ../.env | xargs)
+else
+    echo ".env file not found!"
+    exit 1
+fi
+
 remote_user="nest"
 remote_database="nest"
 
@@ -7,7 +15,7 @@ remote_database="nest"
 script_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 # Backup file to restore
-backup_file="$script_dir/backup_20240123_131317.sql"
+backup_file="$script_dir/backup_20240921_194400.sql"
 
 
 # Perform the restore

@@ -1,12 +1,13 @@
 FROM --platform=arm64 node:16.10.0-alpine
 
 WORKDIR /app
-ENV NODE_ENV development
+ENV NODE_ENV local-prod
 COPY package.json yarn.lock ./
 RUN yarn install
+RUN yarn build
 
 COPY . .
 
 EXPOSE 3000
 
-CMD [ "yarn", "deploy" ]
+CMD [ "yarn", "start" ]
